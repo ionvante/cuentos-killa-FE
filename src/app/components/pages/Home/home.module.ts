@@ -6,13 +6,16 @@ import { HeroBannerComponent } from '../../hero-banner/hero-banner.component';
 import { CuentosGridComponent } from '../../cuentos-grid/cuentos-grid.component';
 import { CuentoCardComponent } from '../../cuento-card/cuento-card.component';
 import { HomeComponent } from './home.component';
+import { MatCardModule } from '@angular/material/card';
+
 
 
 @NgModule({
   declarations: [    HomeComponent,    CuentosGridComponent,    HeroBannerComponent,    NavbarComponent, CuentoCardComponent  ],
   imports: [
     CommonModule,
-    HomeRoutingModule
+    HomeRoutingModule,
+    MatCardModule
   ]
 })
 export class HomeModule {}

@@ -1,4 +1,6 @@
 import { Component, Input } from '@angular/core';
+import { Cuento } from '../../model/cuento.model'; // ajusta el path según tu estructura
+
 
 @Component({
   selector: 'app-cuento-card',
@@ -6,6 +8,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./cuento-card.component.scss']
 })
 export class CuentoCardComponent {
-  @Input() titulo = 'Título del cuento';
-  @Input() autor = 'Autor';
+  // @Input() titulo = 'Título del cuento';
+  // @Input() autor = 'Autor';
+  @Input() cuento!: Cuento;
 }

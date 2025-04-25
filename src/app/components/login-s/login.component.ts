@@ -1,21 +1,17 @@
 import { Component } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
-  imports: [],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
   email = '';
   password = '';
   error = '';
-  constructor(private authService: AuthService, private router: Router,private dialogRef: MatDialogRef<LoginComponent>) {}
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     this.authService.login(this.email, this.password).subscribe({
@@ -27,12 +23,5 @@ export class LoginComponent {
         this.error = 'Credenciales inválidas';
       }
     });
-  }
-
-  
-
-  // Método para cerrar el diálogo después del login
-  closeDialog(): void {
-    this.dialogRef.close();
   }
 }

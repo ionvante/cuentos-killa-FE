@@ -1,0 +1,83 @@
+.detalle-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #FFEEAD;
+    border-radius: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+    color: #4B3A2F;
+  }
+  
+  .cuento-imagen {
+    flex: 1 1 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+  }
+  
+  .cuento-info {
+    flex: 1 1 400px;
+  
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #A66E38;
+    }
+  
+    p {
+      margin: 0.5rem 0;
+      font-size: 1.1rem;
+  
+      strong {
+        color: #A66E38;
+      }
+    }
+  
+    .botones {
+      margin-top: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+  
+      button {
+        background-color: #FFAD60;
+        color: #4B3A2F;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #FFA040;
+        }
+      }
+  
+      .volver {
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        background-color: #96CEB4;
+        border-radius: 12px;
+        color: #2C3E50;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          background-color: #7BB8A0;
+        }
+      }
+    }
+  }
+  

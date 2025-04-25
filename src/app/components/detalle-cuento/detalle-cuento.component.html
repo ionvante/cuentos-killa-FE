@@ -1,0 +1,21 @@
+<div *ngIf="cuento" class="detalle-wrapper">
+    <div class="cuento-imagen">
+      <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="Portada de {{ cuento.titulo }}" />
+    </div>
+  
+    <div class="cuento-info">
+      <h2>{{ cuento.titulo }}</h2>
+      <p><strong>Autor:</strong> {{ cuento.autor }}</p>
+      <p><strong>Descripción:</strong> {{ cuento.descripcionCorta }}</p>
+      <p><strong>Editorial:</strong> {{ cuento.editorial }}</p>
+      <p><strong>Tipo de Edición:</strong> {{ cuento.tipoEdicion }}</p>
+      <p><strong>Número de Páginas:</strong> {{ cuento.nroPaginas }}</p>
+      <p><strong>Edad Recomendada:</strong> {{ cuento.edadRecomendada }}</p>
+      <p><strong>Stock Disponible:</strong> {{ cuento.stock }}</p>
+  
+      <div class="botones">
+        <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+        <a routerLink="/" class="volver">Volver a la tienda</a>
+      </div>
+    </div>
+  </div>

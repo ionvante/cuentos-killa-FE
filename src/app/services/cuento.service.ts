@@ -1,19 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Cuento } from '../model/cuento.model';
 
-export interface Cuento {
-  id: number;
-  titulo: string;
-  autor: string;
-  descripcionCorta: string;
-  editorial: string;
-  tipoEdicion: string;
-  nroPaginas: number;
-  fechaPublicacion: string;
-  fechaIngreso: string;
-  edadRecomendada: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class CuentoService {
@@ -23,5 +12,11 @@ export class CuentoService {
 
   obtenerCuentos(): Observable<Cuento[]> {
     return this.http.get<Cuento[]>(this.apiUrl);
+  }
+
+
+  getCuentoById(id: number): Observable<Cuento> {
+    return this.http.get<Cuento>(`${this.apiUrl}/${id}`);
+
   }
 }
