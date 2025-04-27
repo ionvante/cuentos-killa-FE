@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeRoutingModule } from './home-routing.module';
-import { NavbarComponent } from '../../navbar/navbar.component';
 import { HeroBannerComponent } from '../../hero-banner/hero-banner.component';
 import { CuentosGridComponent } from '../../cuentos-grid/cuentos-grid.component';
 import { CuentoCardComponent } from '../../cuento-card/cuento-card.component';
@@ -11,7 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 
 
 @NgModule({
-  declarations: [    HomeComponent,    CuentosGridComponent,    HeroBannerComponent,    NavbarComponent, CuentoCardComponent  ],
+  declarations: [    HomeComponent,    CuentosGridComponent,    HeroBannerComponent,    CuentoCardComponent  ],
   imports: [
     CommonModule,
     HomeRoutingModule,

@@ -1,20 +1,60 @@
-import { Component } from '@angular/core';
+import { Component ,OnInit} from '@angular/core';
 import { LoginComponent } from '../login/login.component';
 import { MatDialog } from '@angular/material/dialog';
+import { CartService } from '../../services/carrito.service';
+
+import {CartModalComponent } from '../cart-modal/cart-modal.component';
+import { AuthService } from '../../services/auth.service';
+import { CommonModule } from '@angular/common';
+
+
 
 
 @Component({
+  standalone: true,
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  imports: [
+    CommonModule, // 🔥 necesario para *ngIf, *ngFor
+    // otros imports que tengas como MatDialogModule, etc.
+  ]
 })
-export class NavbarComponent {
-  constructor(private dialog: MatDialog) {}
+export class NavbarComponent implements OnInit{
+  carritoAbierto = false; // 🔥
+  constructor(private dialog: MatDialog,public  CartService: CartService,public authService: AuthService) {
 
-  openLoginDialog(): void {
+    this.actualizarCantidad();
+    this.userName = this.authService.getUserName();
+  }
+  cantidadItems: number = 0;
+  userName: string | null = null;
+
+
+   abrirCarrito() {
+    this.carritoAbierto = true;
+  }
+  cerrarCarrito() {
+    this.carritoAbierto = false;
+  }
+  openLoginDialog() {
     this.dialog.open(LoginComponent, {
       width: '400px'
     });
+  }  
+  ngOnInit(): void {
+    this.cantidadItems = this.CartService.getItems().length;
+    this.userName = this.authService.getUserName();
+  }
+
+  actualizarCantidad() {
+    this.cantidadItems = this.CartService.getItems().length;
+  }
+
+  logout() {
+    this.authService.cerrarSesion();
+    this.userName = null;
+    window.location.href = '/home';  // 🔥 redirecciona bonito
   }
 
 }

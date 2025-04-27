@@ -3,7 +3,40 @@
   <ul class="nav-links">
     <li><a routerLink="/">Inicio</a></li>
     <li><a routerLink="/cuentos">Cuentos</a></li>
-    <li><a routerLink="/carrito">Carrito</a></li>
-    <li><a routerLink="/login"><button mat-button (click)="openLoginDialog()">Login</button></a></li>
+    <li><a routerLink="/carrito">Carrito</a><button mat-icon-button (click)="abrirCarrito()">
+      🛒
+      <span *ngIf="cantidadItems > 0" class="contador">{{ cantidadItems }}</span>
+    </button></li>
+    <li *ngIf="!userName">
+      <button mat-button>Login</button>
+    </li>
+    <li *ngIf="userName">
+      <span>👋 ¡Hola, {{ userName }}!</span>
+      <button mat-button>Logout</button>
+    </li> 
+
   </ul>
 </nav>
+<!-- Sidebar del Carrito -->
+<div class="cart-sidebar" [class.open]="carritoAbierto">
+  <div class="cart-header">
+    <h3>Mi Carrito</h3>
+    <button (click)="cerrarCarrito()">✖</button>
+  </div>
+  <div class="cart-body">
+    <div *ngIf="cantidadItems === 0">Tu carrito está vacío.</div>
+    <div *ngIf="cantidadItems > 0">
+      <!-- Aquí puedes iterar tus cuentos -->
+      <p *ngFor="let cuento of CartService.getItems()">
+        📖 {{ cuento.titulo }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay -->
+<div   
+  class="overlay" 
+  [class.show]="carritoAbierto" 
+  (click)="cerrarCarrito()">
+</div>

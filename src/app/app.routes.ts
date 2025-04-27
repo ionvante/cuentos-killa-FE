@@ -1,6 +1,12 @@
 import { Routes } from '@angular/router';
+import { LayoutComponent } from './components/layout/layout.component'; // importa tu layout
+
 
 export const routes: Routes = [
+  {
+    path: '',
+  component: LayoutComponent,
+  children: [
   {
     path: 'home',
     loadChildren: () =>
@@ -11,6 +17,10 @@ export const routes: Routes = [
       import('./components/detalle-cuento/detalle-cuenta.module').then(m => m.DetalleCuentoModule),
   },
   {
+    path: 'carrito',
+    loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
+  },
+  {
     path: '',
     redirectTo: '/home',
     pathMatch: 'full',
@@ -18,5 +28,6 @@ export const routes: Routes = [
   {
     path: '**',
     redirectTo: '/home',
+  }]
   }
 ];
