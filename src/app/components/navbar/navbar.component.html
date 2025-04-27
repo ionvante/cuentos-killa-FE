@@ -1,21 +1,14 @@
 <nav class="navbar">
-  <div  class="navbar-brand">Cuentos de Killa</div>
+  <div class="navbar-brand">Cuentos de Killa</div>
   <ul class="nav-links">
     <li><a routerLink="/">Inicio</a></li>
     <li><a routerLink="/cuentos">Cuentos</a></li>
-    <!-- <li><a routerLink="/carrito">Carrito</a><button mat-icon-button (click)="abrirCarrito()">
-      <span class="material-icons">shopping_cart</span>
-      <span *ngIf="cantidadItems > 0" class="contador">{{ cantidadItems }}</span>
-    </button></li> -->
-    <li >
-      <a routerLink="/carrito" >
-      <button mat-icon-button (click)="abrirCarrito()" class="cart-button">
-        <span class="material-icons">shopping_cart</span>
+    <li>
+      <div class="carrito-enlace" (click)="abrirCarrito()">
+        🛒 
+        <span class="carrito-texto">Carrito</span>
         <span *ngIf="cantidadItems > 0" class="contador">{{ cantidadItems }}</span>
-      </button>
-      <span class="carrito-texto">Carrito</span>
-      </a>
-    
+      </div>
     </li>
     <li *ngIf="!userName">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
@@ -24,9 +17,9 @@
       <span>👋 ¡Hola, {{ userName }}!</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
     </li> 
-
   </ul>
 </nav>
+
 <!-- Sidebar del Carrito -->
 <div class="cart-sidebar" [class.open]="carritoAbierto">
   <div class="cart-header">
@@ -36,7 +29,6 @@
   <div class="cart-body">
     <div *ngIf="cantidadItems === 0">Tu carrito está vacío.</div>
     <div *ngIf="cantidadItems > 0">
-      <!-- Aquí puedes iterar tus cuentos -->
       <p *ngFor="let cuento of CartService.getItems()">
         📖 {{ cuento.titulo }}
       </p>
@@ -45,8 +37,4 @@
 </div>
 
 <!-- Overlay -->
-<div   
-  class="overlay" 
-  [class.show]="carritoAbierto" 
-  (click)="cerrarCarrito()">
-</div>
+<div class="overlay" [class.show]="carritoAbierto" (click)="cerrarCarrito()"></div>

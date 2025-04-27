@@ -1,22 +1,38 @@
-<div *ngIf="cuento" class="detalle-wrapper">
-    <div class="cuento-imagen" >
-      
-      <img [src]="cuento.imagenUrl || '../.. /assets/placeholder-cuento.jpg'" alt="Portada de {{ cuento.titulo }}" />
+<div class="detalle-pagina">
+  <div class="detalle-grid">
+    <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+
+    <!-- Imagen del cuento -->
+    <img 
+      [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
+      alt="Imagen del cuento"
+      (error)="cargarImagenPlaceholder($event)"
+      (load)="imagenCargada()"
+      [class.loaded]="!cargandoImagen"
+    />
     </div>
-  
-    <div class="cuento-info">
-      <h2>{{ cuento.titulo }}</h2>
-      <p><strong>Autor:</strong> {{ cuento.autor }}</p>
-      <p><strong>Descripción:</strong> {{ cuento.descripcionCorta }}</p>
-      <p><strong>Editorial:</strong> {{ cuento.editorial }}</p>
-      <p><strong>Tipo de Edición:</strong> {{ cuento.tipoEdicion }}</p>
-      <p><strong>Número de Páginas:</strong> {{ cuento.nroPaginas }}</p>
-      <p><strong>Edad Recomendada:</strong> {{ cuento.edadRecomendada }}</p>
-      <p><strong>Stock Disponible:</strong> {{ cuento.stock }}</p>
-  
-      <div class="botones">
-        <button (click)="agregarAlCarrito()">Agregar al carrito</button>
-        <a routerLink="/" class="volver">Volver a la tienda</a>
+
+    <div class="detalle-info">
+      <h1>{{ cuento?.titulo }}</h1>
+      <h3>Autor: {{ cuento?.autor }}</h3>
+
+      <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+
+      <div class="extra-info">
+        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
+        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
+        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
+        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
+        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+      </div>
+
+      <div class="acciones">
+        <button class="boton-dorado" (click)="agregarAlCarrito()">
+          Agregar al carrito
+        </button>
+        <button class="boton-volver" routerLink="/">
+          Volver
+        </button>
       </div>
     </div>
-  </div>
+</div>
