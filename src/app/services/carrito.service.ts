@@ -9,21 +9,28 @@ import { Cuento } from '../model/cuento.model';
 export class CartService {
   private cartKey = 'cart';
   private items: Cuento[] = [];
+  private itemsSubject = new BehaviorSubject<Cuento[]>([]);
+  items$ = this.itemsSubject.asObservable();
+
 
   constructor() {
-    const savedCart = localStorage.getItem(this.cartKey);
-    if (savedCart) {
-      this.items = JSON.parse(savedCart);
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const carritoGuardado = localStorage.getItem('carrito');
+      if (carritoGuardado) {
+        this.items = JSON.parse(carritoGuardado);
+        this.itemsSubject.next(this.items);
+      }
     }
   }
 
   getItems(): Cuento[] {
-    return [...this.items];
+    return this.items;
   }
 
   addItem(cuento: Cuento): void {
     this.items.push(cuento);
-    this.saveCart();
+    this.itemsSubject.next(this.items);
+    localStorage.setItem('carrito', JSON.stringify(this.items));
   }
 
   removeItem(cuentoId: number): void {
@@ -33,7 +40,8 @@ export class CartService {
 
   clearCart(): void {
     this.items = [];
-    this.saveCart();
+    this.itemsSubject.next(this.items);
+    localStorage.removeItem('carrito');
   }
 
   private saveCart(): void {

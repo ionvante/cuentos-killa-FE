@@ -43,7 +43,10 @@ export class NavbarComponent implements OnInit{
     });
   }  
   ngOnInit(): void {
-    this.cantidadItems = this.CartService.getItems().length;
+    this.CartService.items$.subscribe(items => {
+      this.cantidadItems = items.length;
+    });
+
     this.userName = this.authService.getUserName();
   }
 

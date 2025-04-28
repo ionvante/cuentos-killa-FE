@@ -4,11 +4,17 @@ import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  public token: string | null;
   private apiUrl = 'http://localhost:8080/auth/login';
   private userName: string | null = null;
 
   constructor(private http: HttpClient, private router: Router) {
     const savedUser = localStorage.getItem('user');
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      this.token = localStorage.getItem('token');
+    } else {
+      this.token = null;
+    }
     if (savedUser) {
       this.userName = savedUser;
     }

@@ -28,10 +28,22 @@
 }
 
 .navbar-brand {
-  font-size: 24px;
-  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
+.logo-img {
+  height: 40px; /* 🔥 Controla tamaño de logo */
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-text {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
 .nav-links {
   list-style: none;
   display: flex;
