@@ -8,8 +8,8 @@ import { Cuento } from '../model/cuento.model';
 })
 export class CartService {
   private cartKey = 'cart';
-  private items: Cuento[] = [];
-  private itemsSubject = new BehaviorSubject<Cuento[]>([]);
+  private items: { cuento: Cuento, cantidad: number }[] = [];
+  private itemsSubject = new BehaviorSubject<{ cuento: Cuento, cantidad: number }[]>([]);
   items$ = this.itemsSubject.asObservable();
 
 
@@ -23,19 +23,33 @@ export class CartService {
     }
   }
 
-  getItems(): Cuento[] {
+  obtenerItems(): { cuento: Cuento, cantidad: number }[] {
     return this.items;
   }
 
   addItem(cuento: Cuento): void {
-    this.items.push(cuento);
+    const itemExistente = this.items.find(item => item.cuento.id === cuento.id);
+    if (itemExistente) {
+      itemExistente.cantidad += 1;
+    } else {
+      this.items.push({ cuento, cantidad: 1 });
+    }
+    this.actualizarCarrito();
+    // this.items.push(cuento);
+    // this.itemsSubject.next(this.items);
+    // localStorage.setItem('carrito', JSON.stringify(this.items));
+  }
+
+  actualizarCarrito(): void {
     this.itemsSubject.next(this.items);
     localStorage.setItem('carrito', JSON.stringify(this.items));
   }
-
   removeItem(cuentoId: number): void {
-    this.items = this.items.filter(item => item.id !== cuentoId);
-    this.saveCart();
+    // this.items = this.items.filter(item => item.id !== cuentoId);
+    // this.saveCart();
+
+    this.items = this.items.filter(item => item.cuento.id !== cuentoId);
+    this.actualizarCarrito();
   }
 
   clearCart(): void {

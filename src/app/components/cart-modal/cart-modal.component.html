@@ -5,8 +5,8 @@
 </div>
 
 <div *ngFor="let cuento of cuentos" class="item-carrito">
-  <p>{{ cuento.titulo }}</p>
-  <button (click)="eliminar(cuento.id)">❌</button>
+  <p>{{ cuento.cuento.titulo }}</p>
+  <button (click)="eliminar(cuento.cuento.id)">❌</button>
 </div>
 
 <button *ngIf="cuentos.length > 0" (click)="vaciar()">Vaciar todo</button>

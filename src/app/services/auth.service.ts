@@ -10,8 +10,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {
     const savedUser = localStorage.getItem('user');
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+    if (typeof window !== 'undefined' && localStorage) {
       this.token = localStorage.getItem('token');
+      console.log('Token encontrado:', this.token);
     } else {
       this.token = null;
     }

@@ -71,6 +71,7 @@
 
 /* Estilos del carrito (ícono + texto) */
 .carrito-enlace {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -84,10 +85,10 @@
   }
 
   &:hover {
-    color: #ffeead;
+    color: #d3ce84;
 
     span {
-      color: #ffeead;
+      color: #d3ce84;
     }
   }
 }
@@ -180,5 +181,46 @@
   &.show {
     opacity: 1;
     pointer-events: all;
+  }
+}
+.cart-badge {
+  background-color: #ffeb3b; /* Amarillo suave */
+  color: #5d4037; /* Café oscuro */
+  font-size: 12px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+  right: -10px;
+}
+
+.cart-label {
+  margin-left: 4px;
+}
+
+.carrito-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+
+  i {
+    color: #5d4037;
+  }
+
+  .cantidad {
+    color: #757575;
+    font-size: 12px;
+  }
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+    color: #e57373;
+    font-size: 18px;
   }
 }

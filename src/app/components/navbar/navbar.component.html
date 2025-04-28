@@ -9,8 +9,8 @@
     <li>
       <div class="carrito-enlace" (click)="abrirCarrito()">
         🛒 
-        <span class="carrito-texto">Carrito</span>
-        <span *ngIf="cantidadItems > 0" class="contador">{{ cantidadItems }}</span>
+        <span class="cart-badge" *ngIf="cantidadTotalItems > 0">{{ cantidadTotalItems }}</span>
+        <span class="cart-label">Carrito</span>
       </div>
     </li>
     <li *ngIf="!userName">
@@ -26,15 +26,21 @@
 <!-- Sidebar del Carrito -->
 <div class="cart-sidebar" [class.open]="carritoAbierto">
   <div class="cart-header">
-    <h3>Mi Carrito</h3>
+    <h3>Mi Carritoxxxx</h3>
     <button (click)="cerrarCarrito()">✖</button>
   </div>
   <div class="cart-body">
-    <div *ngIf="cantidadItems === 0">Tu carrito está vacío.</div>
+    <!-- <div *ngIf="cantidadItems === 0">Tu carrito está vacío.</div>
     <div *ngIf="cantidadItems > 0">
-      <p *ngFor="let cuento of CartService.getItems()">
-        📖 {{ cuento.titulo }}
+      <p *ngFor="let cuento of CartService.obtenerItems()">
+        📖 {{ cuento.cuento.titulo }}
       </p>
+    </div> -->
+    <div class="carrito-item" *ngFor="let item of itemsCarrito">
+      <i class="fa fa-book"></i>
+      <span>{{ item.cuento?.titulo }}</span>
+      <span *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>
+      <button (click)="CartService.removeItem(item.cuento.id)">🗑️</button>
     </div>
   </div>
 </div>

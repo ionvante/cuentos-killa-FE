@@ -12,17 +12,17 @@ import { CommonModule } from '@angular/common';
 })
 
 export class CartComponent implements OnInit {
-  cuentos: Cuento[] = [];
+  cuentos: { cuento: Cuento, cantidad: number }[] = [];
 
   constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.cuentos = this.cartService.getItems();
+    this.cuentos = this.cartService.obtenerItems();
   }
 
   eliminarDelCarrito(id: number) {
     this.cartService.removeItem(id);
-    this.cuentos = this.cartService.getItems(); // refresca
+    this.cuentos = this.cartService.obtenerItems(); // refresca
   }
 
   limpiarCarrito() {

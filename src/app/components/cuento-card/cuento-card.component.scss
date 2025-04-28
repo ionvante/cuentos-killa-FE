@@ -22,3 +22,17 @@
     border-radius: 5px;
   }
 }
+.cuento-card-imagen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff8e1;
+  height: 180px; /* Ajusta según tu diseño */
+  overflow: hidden;
+
+  img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+}

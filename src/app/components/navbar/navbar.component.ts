@@ -6,6 +6,7 @@ import { CartService } from '../../services/carrito.service';
 import {CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Cuento } from '../../model/cuento.model';
 
 
 
@@ -27,6 +28,7 @@ export class NavbarComponent implements OnInit{
     this.actualizarCantidad();
     this.userName = this.authService.getUserName();
   }
+  public itemsCarrito: {  cuento: Cuento, cantidad: number }[] = [];
   cantidadItems: number = 0;
   userName: string | null = null;
 
@@ -44,14 +46,18 @@ export class NavbarComponent implements OnInit{
   }  
   ngOnInit(): void {
     this.CartService.items$.subscribe(items => {
-      this.cantidadItems = items.length;
+      this.itemsCarrito = this.CartService.obtenerItems();
     });
 
     this.userName = this.authService.getUserName();
   }
 
   actualizarCantidad() {
-    this.cantidadItems = this.CartService.getItems().length;
+    this.itemsCarrito = this.CartService.obtenerItems();       
+  }
+
+  get cantidadTotalItems(): number {
+    return this.itemsCarrito.reduce((total, item) => total + item.cantidad, 0);
   }
 
   logout() {

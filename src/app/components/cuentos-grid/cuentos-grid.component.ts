@@ -2,6 +2,7 @@ import { Component, OnInit  } from '@angular/core';
 import { CuentoService } from '../../services/cuento.service';
 import { Cuento } from '../../model/cuento.model';
 import { Router } from '@angular/router';
+import { CartService } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-cuentos-grid',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 export class CuentosGridComponent implements OnInit {
 
   cuentos: Cuento[] = [];
-  constructor(private cuentoService: CuentoService,private router: Router) {}
+  constructor(private cuentoService: CuentoService,private cartService: CartService,private router: Router) {}
   ngOnInit(): void {
     this.cuentoService.obtenerCuentos().subscribe(data => {
       this.cuentos = data;
@@ -22,6 +23,11 @@ export class CuentosGridComponent implements OnInit {
   verDetalle(id: number) {
     this.router.navigate(['/cuento', id]);
   }  
+  
+  agregarAlCarrito(cuento: Cuento):void {
+    this.cartService.addItem(cuento);
+  }
+
 }  
 
   

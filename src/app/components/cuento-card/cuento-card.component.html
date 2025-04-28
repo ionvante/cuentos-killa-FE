@@ -1,6 +1,15 @@
-<div class="card">
-  <img src="https://placehold.co/150x100?text=cuento" alt="Portada del cuento" />
-  <h2>{{ cuento.titulo }}</h2>
-  <p>{{ cuento.autor }}</p>
-  <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+<div class="cuento-card">
+  <div class="cuento-card-imagen">
+      <img 
+        [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
+        alt="{{ cuento?.titulo }}" 
+        (error)="cargarImagenPlaceholder($event)"
+      />
+    </div>
+  <div class="cuento-card-info">  
+    <h2>{{ cuento.titulo }}</h2>
+    <p>{{ cuento.autor }}</p>
+    <p>{{ cuento.descripcionCorta }}</p>
+    <button (click)="verDetalle(cuento.id)">Ver detalle</button>
+  </div>
 </div>
