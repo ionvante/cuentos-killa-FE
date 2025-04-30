@@ -2,6 +2,7 @@ import { Component ,OnInit} from '@angular/core';
 import { LoginComponent } from '../login/login.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
+import { Router } from '@angular/router';
 
 import {CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
@@ -23,7 +24,12 @@ import { Cuento } from '../../model/cuento.model';
 })
 export class NavbarComponent implements OnInit{
   carritoAbierto = false; // 🔥
-  constructor(private dialog: MatDialog,public  CartService: CartService,public authService: AuthService) {
+  constructor(
+    private dialog: MatDialog,
+    public  CartService: CartService,
+    public authService: AuthService,
+    private router: Router
+  ) {
 
     this.actualizarCantidad();
     this.userName = this.authService.getUserName();
@@ -59,7 +65,14 @@ export class NavbarComponent implements OnInit{
   get cantidadTotalItems(): number {
     return this.itemsCarrito.reduce((total, item) => total + item.cantidad, 0);
   }
-
+  calcularSubtotal(): number {
+    return this.itemsCarrito.reduce((total, item) => total + (item.cuento.precio * item.cantidad), 0);
+  }
+  
+  irACheckout() {
+    this.cerrarCarrito(); // para cerrar el sidebar si está abierto
+    this.router.navigate(['/checkout']);
+  }
   logout() {
     this.authService.cerrarSesion();
     this.userName = null;

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Cuento } from '../../model/cuento.model'; // ajusta el path según tu estructura
 import { CartService } from '../../services/carrito.service';
 import { Router } from '@angular/router';
@@ -12,15 +12,24 @@ import { Router } from '@angular/router';
 })
 export class CuentoCardComponent {
   @Input() cuento!: Cuento;
+  @Output() agregar = new EventEmitter<Cuento>();
+  @Output() detalle = new EventEmitter<number>();
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   constructor(private cartService: CartService,private router: Router) {}
 
-  agregarAlCarrito() {
-    this.cartService.addItem(this.cuento);
+  // agregarAlCarrito() {
+  //   this.cartService.addItem(this.cuento);
+  // }
+  // verDetalle(id: number): void {
+  //   this.router.navigate(['/cuento', id]);
+  // }
+  verDetalle(): void {
+    this.detalle.emit(this.cuento.id);
   }
-  verDetalle(id: number): void {
-    this.router.navigate(['/cuento', id]);
-  }
+
+  agregarAlCarrito(): void {
+    this.agregar.emit(this.cuento);
+  }  
   cargarImagenPlaceholder(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.onerror = null; // 🔥 MUY IMPORTANTE: eliminar el listener para evitar loop

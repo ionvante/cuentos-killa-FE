@@ -10,6 +10,7 @@ export interface Cuento {
     fechaIngreso: string;
     edadRecomendada: string;
     stock: number;
+    precio: number;
     imagenUrl: string;
   }
   

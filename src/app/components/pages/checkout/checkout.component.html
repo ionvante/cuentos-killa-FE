@@ -1,0 +1,34 @@
+<div class="checkout-container">
+    <h2>
+      Finalizar compra</h2>
+  
+    <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
+      <label>
+        Nombre:
+        <input formControlName="nombre" type="text" required />
+      </label>
+      <label>
+        Correo:
+        <input formControlName="correo" type="email" required />
+      </label>
+      <label>
+        Dirección:
+        <input formControlName="direccion" type="text" required />
+      </label>
+      <label>
+        Teléfono:
+        <input formControlName="telefono" type="tel" required />
+      </label>
+  
+      <div class="resumen-carrito">
+        <h3>Resumen del carrito</h3>
+        <div *ngFor="let item of itemsCarrito">
+          {{ item.cuento.titulo }} (x{{ item.cantidad }}) - S/ {{ item.cuento.precio * item.cantidad | number:'1.2-2' }}
+        </div>
+        <p><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN' }}</p>
+      </div>
+  
+      <button type="submit" class="btn-primary">Confirmar Pedido</button>
+    </form>
+  </div>
+  
