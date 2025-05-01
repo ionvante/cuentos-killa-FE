@@ -1,0 +1,41 @@
+// admin-dashboard.component.scss
+.dashboard-container {
+    padding: 2rem;
+    background-color: #fffaf5;
+  
+    h2 {
+      font-size: 24px;
+      font-weight: bold;
+      color: #3c2f2f;
+      margin-bottom: 1.5rem;
+    }
+  
+    .cards {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+  
+    .card {
+      background-color: #ffecb3;
+      border-radius: 12px;
+      padding: 1rem;
+      flex: 1;
+      min-width: 180px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  
+      h4 {
+        font-size: 14px;
+        margin-bottom: 0.5rem;
+        color: #704b26;
+      }
+  
+      p {
+        font-size: 24px;
+        font-weight: bold;
+        color: #a66e38;
+      }
+    }
+  }
+  

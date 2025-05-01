@@ -25,11 +25,17 @@ export const routes: Routes = [
   },
   { path: 'checkout', component: CheckoutComponent,canActivate: [authGuard] },
   { path: 'login', component: LoginComponent },
-  // {
-  //   path: 'admin',
-  //   component: AdminDashboardComponent,
-  //   canActivate: [AuthGuard]
-  // }
+  {
+    path: 'admin',
+    canActivate: [authGuard],
+    component: AdminLayoutComponent,
+    children: [
+      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'pedidos', component: AdminPedidosComponent },
+      { path: 'cuentos', component: AdminCuentosComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+    ]
+  }
   {
     path: '',
     redirectTo: '/home',

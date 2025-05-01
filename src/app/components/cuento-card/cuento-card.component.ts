@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-cuento-card',
   templateUrl: './cuento-card.component.html',
-  styleUrls: ['./cuento-card.component.scss']
+  styleUrls: ['./cuento-card.component.scss'],
+  
 })
 export class CuentoCardComponent {
   @Input() cuento!: Cuento;
@@ -17,12 +18,6 @@ export class CuentoCardComponent {
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   constructor(private cartService: CartService,private router: Router) {}
 
-  // agregarAlCarrito() {
-  //   this.cartService.addItem(this.cuento);
-  // }
-  // verDetalle(id: number): void {
-  //   this.router.navigate(['/cuento', id]);
-  // }
   verDetalle(): void {
     this.detalle.emit(this.cuento.id);
   }
