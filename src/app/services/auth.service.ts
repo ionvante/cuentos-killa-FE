@@ -6,49 +6,42 @@ import { User } from '../model/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  public token: string | null;
   private apiUrl = 'http://localhost:8080/auth/login';
-  private userName: string | null = null;
-
-  private storageKey = 'userData';
-
+  private tokenKey = 'token';
+  private userKey = 'userData';
 
   constructor(private http: HttpClient, private router: Router) {
-    const savedUser = localStorage.getItem('user');
-    if (typeof window !== 'undefined' && localStorage) {
-      this.token = localStorage.getItem('token');
-      console.log('Token encontrado:', this.token);
-    } else {
-      this.token = null;
-    }
-    if (savedUser) {
-      this.userName = savedUser;
-    }
+   
   }
 
-  login(usuario: User): void {
-    localStorage.setItem(this.storageKey, JSON.stringify(usuario));
+  login(correo: string, password: string) {
+    return this.http.post<any>(`${this.apiUrl}/login`, { correo, password });
   }
 
   guardarToken(token: string) {
-    localStorage.setItem('token', token);
+    localStorage.setItem(this.tokenKey, token);
+
   }
 
+  guardarUsuario(user: User) {
+    localStorage.setItem(this.userKey, JSON.stringify(user));
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
   cerrarSesion() {
-    localStorage.removeItem(this.storageKey);
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+    this.router.navigate(['/login']);
   }
 
   estaAutenticado(): boolean {
     return !!this.getUser();
   }
-  getUser(): User | null {
-    try {
-      const data = localStorage.getItem(this.storageKey);
-      return data ? JSON.parse(data) as User : null;
-    } catch (e) {
-      console.error('Error al parsear userData de localStorage');
-      return null;
-    }
+    getUser(): User | null {
+    const user = localStorage.getItem(this.userKey);
+    return user ? JSON.parse(user) : null;
   }
 
 

@@ -51,7 +51,7 @@ export class NavbarComponent implements OnInit{
   }
   openLoginDialog() {
     this.dialog.open(LoginComponent, {
-      width: '400px'
+      width: '1200px'
     });
   }  
   ngOnInit(): void {

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component'; // importa tu layout
 import { CheckoutComponent } from './components/pages/checkout/checkout.component';
 import { LoginComponent } from './components/pages/login/login.component';
+import { authGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [
@@ -22,8 +23,13 @@ export const routes: Routes = [
     path: 'carrito',
     loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
   },
-  { path: 'checkout', component: CheckoutComponent },
-  { path: 'login', component: LoginComponent }
+  { path: 'checkout', component: CheckoutComponent,canActivate: [authGuard] },
+  { path: 'login', component: LoginComponent },
+  // {
+  //   path: 'admin',
+  //   component: AdminDashboardComponent,
+  //   canActivate: [AuthGuard]
+  // }
   {
     path: '',
     redirectTo: '/home',

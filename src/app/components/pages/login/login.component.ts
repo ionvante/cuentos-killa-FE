@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
+import { AuthService} from '../../../services/auth.service';
 
 @Component({
   standalone: true,
@@ -19,7 +19,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private authService:AuthService
   ) {}
 
   ngOnInit(): void {
@@ -32,22 +33,29 @@ export class LoginComponent implements OnInit {
   }
 
   iniciarSesion(): void {
-    if (this.loginForm.invalid) return;
-
     const { correo, password } = this.loginForm.value;
 
-    // Aquí deberías reemplazar con tu lógica real de autenticación
-    if (correo === 'test@killa.com' && password === '123456') {
-      const usuario = {
-        nombre: 'Daniel',
-        correo,
-        telefono: '999999999'
-      };
-
-      localStorage.setItem('userData', JSON.stringify(usuario));
-      this.router.navigateByUrl(this.returnTo);
-    } else {
-      this.error = 'Credenciales inválidas';
-    }
-  }
+    this.authService.login(correo, password).subscribe({
+      next: (res) => {
+        const usuario = res.usuario;
+        console.log(usuario);
+        this.authService.guardarToken(res.token);
+        this.authService.guardarUsuario(usuario); // o res.user, según tu backend
+        
+        const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+        // Redirección dinámica según el rol
+      if (returnTo) {
+        this.router.navigateByUrl(returnTo);
+      } else if (usuario.rol === 'ADMIN') {
+        this.router.navigate(['/admin/dashboard']);
+      } else {
+        this.router.navigate(['/home']);
+      }
+      },
+      error: (err) => {
+        this.error = 'Correo o contraseña inválidos.';
+        console.error(err);
+      }
+    });
+}
 }
