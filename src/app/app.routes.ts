@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component'; // importa tu layout
 import { CheckoutComponent } from './components/pages/checkout/checkout.component';
+import { LoginComponent } from './components/pages/login/login.component';
 
 
 export const routes: Routes = [
@@ -22,7 +23,7 @@ export const routes: Routes = [
     loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
   },
   { path: 'checkout', component: CheckoutComponent },
-
+  { path: 'login', component: LoginComponent }
   {
     path: '',
     redirectTo: '/home',

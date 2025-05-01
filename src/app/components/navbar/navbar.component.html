@@ -13,11 +13,11 @@
         <span class="cart-label">Carrito</span>
       </div>
     </li>
-    <li *ngIf="!userName">
+    <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
     </li>
-    <li *ngIf="userName">
-      <span>👋 ¡Hola, {{ userName }}!</span>
+    <li *ngIf="user?.nombre">
+      <span>👋 ¡Hola, {{ user?.nombre }}!</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
     </li> 
   </ul>

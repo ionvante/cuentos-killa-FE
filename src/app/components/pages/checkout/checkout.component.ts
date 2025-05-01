@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CartService } from '../../../services/carrito.service';
-import { CommonModule } from '@angular/common';
+import { PedidoService } from '../../../services/pedido.service';
+import { AuthService} from '../../../services/auth.service';
+import { Pedido, PedidoItem } from '../../../model/pedido.model';
+import { User } from '../../../model/user.model';
+import { Router } from '@angular/router';
+
 
 @Component({
   standalone: true,
@@ -11,36 +17,64 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
+  
   checkoutForm!: FormGroup;
   itemsCarrito: any[] = [];
+  user: User | null;
 
-  constructor(private fb: FormBuilder, private cartService: CartService) {}
+  constructor(
+    private fb: FormBuilder,
+    private cartService: CartService,
+    private pedidoService: PedidoService,
+    private authService: AuthService,
+    private router: Router,
+
+  ) {
+    this.user = this.authService.getUser();
+  }
 
   ngOnInit(): void {
     this.itemsCarrito = this.cartService.obtenerItems(); // método debe existir
     this.checkoutForm = this.fb.group({
-      nombre: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]],
+      nombre: [this.user?.nombre || '', Validators.required],
+      correo: [this.user?.correo || '', [Validators.required, Validators.email]],
       direccion: ['', Validators.required],
-      telefono: ['', Validators.required],
+      telefono: [this.user?.telefono || '', Validators.required],
     });
+    
   }
-
   calcularSubtotal(): number {
     return this.itemsCarrito.reduce((acc, item) => acc + item.cuento.precio * item.cantidad, 0);
   }
 
   registrarPedido(): void {
     if (this.checkoutForm.invalid) return;
-
-    const datosPedido = {
-      ...this.checkoutForm.value,
-      items: this.itemsCarrito,
+  
+    const formData = this.checkoutForm.value;
+  
+    const pedido: Pedido = {
+      nombre: formData.nombre,
+      correo: formData.correo,
+      direccion: formData.direccion,
+      telefono: formData.telefono,
+      items: this.itemsCarrito.map(item => ({
+        cuentoId: item.cuento.id,
+        cantidad: item.cantidad
+      })),
       total: this.calcularSubtotal(),
       estado: 'PAGO PENDIENTE'
     };
-
-    // Aquí deberías conectar con tu API (o Firebase)
-    console.log('Registrando pedido:', datosPedido);
+  
+    this.pedidoService.registrarPedido(pedido).subscribe({
+      next: (resp) => {
+        console.log('Pedido registrado con éxito:', resp);
+        alert('Pedido registrado correctamente');
+        this.cartService.clearCart();
+      },
+      error: (err) => {
+        console.error('Error al registrar pedido:', err);
+        alert('Ocurrió un error al registrar el pedido');
+      }
+    });
   }
 }

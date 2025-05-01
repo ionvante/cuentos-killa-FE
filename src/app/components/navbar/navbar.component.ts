@@ -1,5 +1,5 @@
 import { Component ,OnInit} from '@angular/core';
-import { LoginComponent } from '../login/login.component';
+import { LoginComponent } from '../pages/login/login.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import {CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Cuento } from '../../model/cuento.model';
+import { User } from '../../model/user.model';
 
 
 
@@ -24,6 +25,9 @@ import { Cuento } from '../../model/cuento.model';
 })
 export class NavbarComponent implements OnInit{
   carritoAbierto = false; // 🔥
+  cantidadItems: number = 0;
+  //userName: string | null = null;  
+  user: User | null;
   constructor(
     private dialog: MatDialog,
     public  CartService: CartService,
@@ -32,11 +36,11 @@ export class NavbarComponent implements OnInit{
   ) {
 
     this.actualizarCantidad();
-    this.userName = this.authService.getUserName();
+    this.user = this.authService.getUser() || null;
+
   }
   public itemsCarrito: {  cuento: Cuento, cantidad: number }[] = [];
-  cantidadItems: number = 0;
-  userName: string | null = null;
+
 
 
    abrirCarrito() {
@@ -53,9 +57,8 @@ export class NavbarComponent implements OnInit{
   ngOnInit(): void {
     this.CartService.items$.subscribe(items => {
       this.itemsCarrito = this.CartService.obtenerItems();
+      this.user = this.authService.getUser();
     });
-
-    this.userName = this.authService.getUserName();
   }
 
   actualizarCantidad() {
@@ -75,7 +78,7 @@ export class NavbarComponent implements OnInit{
   }
   logout() {
     this.authService.cerrarSesion();
-    this.userName = null;
+    this.router.navigate(['/']);
     window.location.href = '/home';  // 🔥 redirecciona bonito
   }
 
