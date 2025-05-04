@@ -1,0 +1,36 @@
+.admin-layout {
+    display: flex;
+    height: 100vh;
+  
+    .sidebar {
+      width: 240px;
+      background-color: #a66e38;
+      color: white;
+      padding: 2rem 1rem;
+  
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+      }
+  
+      nav a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        margin: 1rem 0;
+        font-weight: 500;
+  
+        &.active {
+          text-decoration: underline;
+        }
+      }
+    }
+  
+    .content {
+      flex: 1;
+      padding: 2rem;
+      background-color: #fffaf5;
+      overflow-y: auto;
+    }
+  }
+  

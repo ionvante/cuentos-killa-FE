@@ -1,19 +1,74 @@
-// admin-cuentos.component.scss
-.cuentos-container {
-    padding: 2rem;
-    background-color: #fffaf5;
+.cuento-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  max-width: 300px;
+  margin: auto;
   
-    h2 {
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 1.5rem;
-      color: #3c2f2f;
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  .acciones {
+    margin-top: 0.5rem;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  h3 {
+    color: #A66E38;
+    margin: 0.5rem 0;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    background-color: #a6d4b8;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+  
+    &:hover {
+      background-color: #8cbfa3;
+      transform: scale(1.05);
     }
   
-    .cuentos-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
+    &:active {
+      transform: scale(0.98);
     }
   }
-  
+}
+.cuento-card-imagen {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff8e1;
+  height: 180px; /* Ajusta según tu diseño */
+  overflow: hidden;
+
+  img {
+    max-height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+:host {
+  display: block;
+  border-radius: 12px;
+  background-color: #fff9db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 1rem;
+  text-align: center;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+}

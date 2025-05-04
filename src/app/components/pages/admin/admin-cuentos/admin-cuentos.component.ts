@@ -1,23 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit } from '@angular/core';
 import { Cuento } from '../../../../model/cuento.model';
+import { CuentoService } from '../../../../services/cuento.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-cuentos',
-  standalone: true,
-  imports: [],
   templateUrl: './admin-cuentos.component.html',
   styleUrl: './admin-cuentos.component.scss'
 })
 export class AdminCuentosComponent implements OnInit {
-  // cuentos = [
-  //   { titulo: 'Mi primer cuento', autor: 'Daniel Pérez', stock: 12, precio: 40 },
-  //   { titulo: 'Animales domésticos', autor: 'Killary', stock: 8, precio: 35 }
-  // ];
-
-  constructor() {}
+  cuentos: Cuento[] = [];
+  cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
+  
+  constructor(private cuentoService: CuentoService,private router: Router) {}
 
   ngOnInit(): void {
+    this.cuentoService.obtenerCuentos().subscribe(data => {
+      this.cuentos = data;
+    });
+  }
 
-
+  cargarImagenPlaceholder(event: Event): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.onerror = null; // 🔥 MUY IMPORTANTE: eliminar el listener para evitar loop
+    imgElement.src = 'assets/placeholder-cuento.jpg';
+    this.cargandoImagen = false; // 🔥 Ya no hay que seguir mostrando skeleton
+  }
+  imagenCargada(): void {
+    this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+  verDetalle(id: number) {
+    this.router.navigate(['/cuento', id]);
   }
 }

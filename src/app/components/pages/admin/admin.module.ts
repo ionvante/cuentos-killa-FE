@@ -5,12 +5,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AdminLayoutComponent } from './layout/admin-layout.component';
-import { AdminDashboardComponent } from './pages/dashboard/admin-dashboard.component';
-import { AdminCuentosComponent } from './pages/cuentos/admin-cuentos.component';
-import { AdminPedidosComponent } from './pages/pedidos/admin-pedidos.component';
-import { AdminUsuariosComponent } from './pages/usuarios/admin-usuarios.component';
-import { SharedModule } from '../../Shared.module';
+ import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminCuentosComponent } from './admin-cuentos/admin-cuentos.component';
+import { AdminPedidosComponent } from './admin-pedidos/admin-pedidos.component';
+import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
+import { SharedModule } from '../../shared.module'; 
 
 
 const routes: Routes = [
@@ -39,6 +39,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     HttpClientModule,
+    RouterModule,
     RouterModule.forChild(routes),
     SharedModule
   ]

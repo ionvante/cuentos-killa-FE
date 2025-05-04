@@ -33,7 +33,7 @@
     <div class="carrito-item" *ngFor="let item of itemsCarrito">
       <i class="fa fa-book"></i>
       <button class="delete-btn"(click)="CartService.removeItem(item.cuento.id)">❌</button>
-      <span class="titulo-cuento">{{ item.cuento?.titulo }}</span>
+      <span class="titulo-cuento">{{ item.cuento.titulo }}</span>
       <span  *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>      
       <span class="precio-item">
         S/ {{ (item.cuento.precio * item.cantidad) | number:'1.2-2' }}

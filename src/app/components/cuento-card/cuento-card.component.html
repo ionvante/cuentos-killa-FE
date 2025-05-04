@@ -1,16 +1,3 @@
-<!-- <div class="cuento-card">
-      <img 
-        [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
-        alt="{{ cuento?.titulo }}" 
-        (error)="cargarImagenPlaceholder($event)"
-      />
-  <div class="cuento-card-info">  
-    <h2>{{ cuento.titulo }}</h2>
-    <p>{{ cuento.autor }}</p>
-    <p>{{ cuento.descripcionCorta }}</p>
-    <button (click)="verDetalle(cuento.id)">Ver detalle</button>
-  </div>
-</div> -->
 <div class="cuento-card">
   <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (error)="cargarImagenPlaceholder($event)">
   <h3>{{ cuento.titulo }}</h3>

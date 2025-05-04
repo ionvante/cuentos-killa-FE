@@ -3,6 +3,10 @@ import { LayoutComponent } from './components/layout/layout.component'; // impor
 import { CheckoutComponent } from './components/pages/checkout/checkout.component';
 import { LoginComponent } from './components/pages/login/login.component';
 import { authGuard } from './guards/auth.guard';
+import { AdminDashboardComponent } from './components/pages/admin/admin-dashboard/admin-dashboard.component';
+import { AdminPedidosComponent } from './components/pages/admin/admin-pedidos/admin-pedidos.component';
+import { AdminCuentosComponent } from './components/pages/admin/admin-cuentos/admin-cuentos.component';
+import { AdminLayoutComponent } from './components/pages/admin/admin-layout/admin-layout.component';
 
 
 export const routes: Routes = [
@@ -35,7 +39,8 @@ export const routes: Routes = [
       { path: 'cuentos', component: AdminCuentosComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
-  }
+  },
+  
   {
     path: '',
     redirectTo: '/home',
