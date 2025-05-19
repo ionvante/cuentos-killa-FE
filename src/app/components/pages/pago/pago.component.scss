@@ -1,0 +1,67 @@
+.container {
+    max-width: 40rem;
+    margin: 3rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    border-radius: 1rem;
+    text-align: center;
+  }
+  
+  .container h2 {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #a66e38; /* color primario del proyecto */
+    margin-bottom: 1rem;
+  }
+  
+  .container p {
+    font-size: 1.125rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .payment-options {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+  
+  .btn-killa {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+  }
+  
+  .btn-voucher {
+    background-color: #ffad60;
+  }
+  
+  .btn-voucher:hover {
+    background-color: #ffaa40;
+  }
+  
+  .btn-mercado {
+    background-color: #96ceb4;
+  }
+  
+  .btn-mercado:hover {
+    background-color: #7cc9aa;
+  }
+  

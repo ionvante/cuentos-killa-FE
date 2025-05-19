@@ -208,33 +208,6 @@
   margin-left: 4px;
 }
 
-// .carrito-item {
-//   display: flex;
-//   align-items: center;
-//   gap: 8px;
-//   margin-bottom: 10px;
-//   font-size: 14px;
-
-//   i {
-//     color: #5d4037;
-//   }
-
-//   .cantidad {
-//     color: #757575;
-//     font-size: 12px;
-//   }
-
-//   // button {
-//   //   background: none;
-//   //   border: none;
-//   //   cursor: pointer;
-//   //   margin-left: auto;
-//   //   color: #e57373;
-//   //   font-size: 18px;
-//   // }
-// }
-
-
 .sidebar-container {
   padding: 1rem;
   width: 300px;
@@ -327,3 +300,24 @@
   }
 }
 
+
+
+.navbar .btn-login,
+.navbar .btn-logout {
+  border: 2px solid #fff;
+  padding: 0.4rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.navbar .btn-logout:hover {
+  background-color: #fff7ed;
+  color: #a66e38;
+}
+
+.navbar span {
+  font-weight: 600;
+  color: #fff;
+  margin-right: 1rem;
+}

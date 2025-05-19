@@ -1,12 +1,3 @@
-<!-- <div class="grid-cuentos">
-  <div class="cuento-card" *ngFor="let cuento of cuentos" (click)="verDetalle(cuento.id)">
-    <h3>{{ cuento.titulo }}</h3>
-    <p>{{ cuento.autor }}</p>
-    <p>{{ cuento.descripcionCorta }}</p>
-    <button (click)="verDetalle(cuento.id)">Ver detalle</button>
-    <button (click)="agregarAlCarrito(cuento)">Agregar al carrito</button>
-  </div>
-</div> -->
 <div class="grid-cuentos">
   <app-cuento-card 
     *ngFor="let cuento of cuentos"

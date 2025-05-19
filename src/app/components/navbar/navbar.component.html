@@ -8,7 +8,7 @@
     <li><a routerLink="/cuentos">Cuentos</a></li>
     <li>
       <div class="carrito-enlace" (click)="abrirCarrito()">
-        🛒 
+        🛒
         <span class="cart-badge" *ngIf="cantidadTotalItems > 0">{{ cantidadTotalItems }}</span>
         <span class="cart-label">Carrito</span>
       </div>
@@ -19,7 +19,7 @@
     <li *ngIf="user?.nombre">
       <span>👋 ¡Hola, {{ user?.nombre }}!</span>
       <button class="btn-logout" (click)="logout()">Logout</button>
-    </li> 
+    </li>
   </ul>
 </nav>
 
@@ -32,9 +32,9 @@
   <div class="cart-body">
     <div class="carrito-item" *ngFor="let item of itemsCarrito">
       <i class="fa fa-book"></i>
-      <button class="delete-btn"(click)="CartService.removeItem(item.cuento.id)">❌</button>
+      <button class="delete-btn" (click)="CartService.removeItem(item.cuento.id)">❌</button>
       <span class="titulo-cuento">{{ item.cuento.titulo }}</span>
-      <span  *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>      
+      <span *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>
       <span class="precio-item">
         S/ {{ (item.cuento.precio * item.cantidad) | number:'1.2-2' }}
       </span>

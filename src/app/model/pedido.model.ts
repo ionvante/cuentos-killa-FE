@@ -11,5 +11,7 @@ export interface PedidoItem {
     items: PedidoItem[];
     total: number;
     estado: string; // ejemplo: 'PAGO PENDIENTE'
+    userId: number;
+    correoUsuario:string;
   }
   

@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService} from '../../../services/auth.service';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   standalone: true,
@@ -20,7 +21,9 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService:AuthService
+    private authService:AuthService,
+    @Optional() private dialogRef?: MatDialogRef<LoginComponent> // 👈 usando @Optional()
+
   ) {}
 
   ngOnInit(): void {
@@ -37,24 +40,27 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(correo, password).subscribe({
       next: (res) => {
-        const usuario = res.usuario;
-        console.log(usuario);
+        const usuario = res.user;
+        console.log('Login exitoso', usuario.role||usuario.nombre||usuario.email||usuario.documento);
         this.authService.guardarToken(res.token);
         this.authService.guardarUsuario(usuario); // o res.user, según tu backend
         
         const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
-        // Redirección dinámica según el rol
+        // Redirección dinámica según el rol        
       if (returnTo) {
         this.router.navigateByUrl(returnTo);
-      } else if (usuario.rol === 'ADMIN') {
+      } else if (usuario.role === 'ADMIN') {
         this.router.navigate(['/admin/dashboard']);
       } else {
         this.router.navigate(['/home']);
       }
+
+      // CIERRA el modal
+      this.dialogRef?.close(); // 👈 Solo si existe
       },
       error: (err) => {
-        this.error = 'Correo o contraseña inválidos.';
-        console.error(err);
+        this.error=err;
+        console.error('Error al iniciar sesión',err);
       }
     });
 }

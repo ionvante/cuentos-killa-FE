@@ -1,0 +1,17 @@
+<div class="container">
+    <h2>¡Gracias por tu pedido!</h2>
+    <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
+  
+    <h3>Selecciona tu método de pago:</h3>
+  
+    <div class="payment-options">
+      <a [routerLink]="['/voucher', pedidoId]" class="btn-killa btn-voucher">
+        Subir voucher de pago (Yape / Plin)
+      </a>
+  
+      <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
+        Pagar con Mercado Pago
+      </button>
+    </div>
+  </div>
+  

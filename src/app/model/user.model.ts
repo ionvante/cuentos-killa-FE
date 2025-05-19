@@ -1,9 +1,10 @@
 export interface User {
     id?: number;
     nombre: string;
-    correo: string;
+    apellido: string;
+    email: string;
     telefono: string;
     documento?: string;
-    rol?: 'USER' | 'ADMIN';
+    role?: 'USER' | 'ADMIN';
   }
   

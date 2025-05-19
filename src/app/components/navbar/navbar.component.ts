@@ -1,10 +1,10 @@
-import { Component ,OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LoginComponent } from '../pages/login/login.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
 import { Router } from '@angular/router';
 
-import {CartModalComponent } from '../cart-modal/cart-modal.component';
+import { CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Cuento } from '../../model/cuento.model';
@@ -23,46 +23,46 @@ import { User } from '../../model/user.model';
     // otros imports que tengas como MatDialogModule, etc.
   ]
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   carritoAbierto = false; // 🔥
   cantidadItems: number = 0;
-  //userName: string | null = null;  
-  user: User | null;
+  user: User | null = null;
   constructor(
     private dialog: MatDialog,
-    public  CartService: CartService,
+    public CartService: CartService,
     public authService: AuthService,
     private router: Router
   ) {
 
     this.actualizarCantidad();
-    this.user = this.authService.getUser() || null;
 
   }
-  public itemsCarrito: {  cuento: Cuento, cantidad: number }[] = [];
+  public itemsCarrito: { cuento: Cuento, cantidad: number }[] = [];
 
 
 
-   abrirCarrito() {
-    this.carritoAbierto = true;
-  }
-  cerrarCarrito() {
-    this.carritoAbierto = false;
-  }
+
   openLoginDialog() {
     this.dialog.open(LoginComponent, {
-      width: '1200px'
+      maxWidth: '50vw',
+      width: '80%',
+      panelClass: 'custom-login-dialog'
     });
-  }  
+  }
   ngOnInit(): void {
     this.CartService.items$.subscribe(items => {
       this.itemsCarrito = this.CartService.obtenerItems();
       this.user = this.authService.getUser();
+
+      // 👇 Escucha cambios de login
+      this.authService.usuarioLogueado$.subscribe((nuevoUsuario) => {
+        this.user = nuevoUsuario;
+      });
     });
   }
 
   actualizarCantidad() {
-    this.itemsCarrito = this.CartService.obtenerItems();       
+    this.itemsCarrito = this.CartService.obtenerItems();
   }
 
   get cantidadTotalItems(): number {
@@ -71,11 +71,25 @@ export class NavbarComponent implements OnInit{
   calcularSubtotal(): number {
     return this.itemsCarrito.reduce((total, item) => total + (item.cuento.precio * item.cantidad), 0);
   }
-  
-  irACheckout() {
-    this.cerrarCarrito(); // para cerrar el sidebar si está abierto
-    this.router.navigate(['/checkout']);
+  abrirCarrito() {
+    this.carritoAbierto = true;
   }
+  cerrarCarrito() {
+    this.carritoAbierto = false;
+  }
+  irACheckout() {
+    const usuario = this.user;
+    this.cerrarCarrito();
+
+    if (!usuario) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnTo: '/checkout' }
+      });
+    } else {
+      this.router.navigate(['/checkout']);
+    }
+  }
+
   logout() {
     this.authService.cerrarSesion();
     this.router.navigate(['/']);

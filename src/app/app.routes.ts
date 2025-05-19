@@ -7,48 +7,44 @@ import { AdminDashboardComponent } from './components/pages/admin/admin-dashboar
 import { AdminPedidosComponent } from './components/pages/admin/admin-pedidos/admin-pedidos.component';
 import { AdminCuentosComponent } from './components/pages/admin/admin-cuentos/admin-cuentos.component';
 import { AdminLayoutComponent } from './components/pages/admin/admin-layout/admin-layout.component';
+import { PagoComponent } from './components/pages/pago/pago.component';
+import { VoucherComponent } from './components/pages/voucher/voucher.component';
 
 
 export const routes: Routes = [
   {
     path: '',
-  component: LayoutComponent,
-  children: [
-  {
-    path: 'home',
-    loadChildren: () =>
-      import('./components/pages/Home/home.module').then((m) => m.HomeModule),
-  },{
-    path: 'cuento/:id',
-    loadChildren: () =>
-      import('./components/detalle-cuento/detalle-cuenta.module').then(m => m.DetalleCuentoModule),
-  },
-  {
-    path: 'carrito',
-    loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
-  },
-  { path: 'checkout', component: CheckoutComponent,canActivate: [authGuard] },
-  { path: 'login', component: LoginComponent },
-  {
-    path: 'admin',
-    canActivate: [authGuard],
-    component: AdminLayoutComponent,
+    component: LayoutComponent,
     children: [
-      { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'pedidos', component: AdminPedidosComponent },
-      { path: 'cuentos', component: AdminCuentosComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
-  },
-  
-  {
-    path: '',
-    redirectTo: '/home',
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    redirectTo: '/home',
-  }]
+      {
+        path: 'home',
+        loadChildren: () =>
+          import('./components/pages/Home/home.module').then((m) => m.HomeModule),
+      }, {
+        path: 'cuento/:id',
+        loadChildren: () =>
+          import('./components/detalle-cuento/detalle-cuenta.module').then(m => m.DetalleCuentoModule),
+      },
+      {
+        path: 'carrito',
+        loadComponent: () => import('./components/cart/cart.component').then(m => m.CartComponent)
+      },
+      { path: 'checkout', component: CheckoutComponent },
+      { path: 'pago/:id', component: PagoComponent },
+      { path: 'voucher/:id', component: VoucherComponent }, // si vas a subir comprobante
+      { path: 'login', component: LoginComponent },
+      {
+        path: 'admin',
+        loadChildren: () => import('./components/pages/admin/admin.module').then(m => m.AdminModule)
+      },
+      {
+        path: '',
+        redirectTo: '/home',
+        pathMatch: 'full',
+      },
+      {
+        path: '**',
+        redirectTo: '/home',
+      }]
   }
 ];
