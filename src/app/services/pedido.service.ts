@@ -14,4 +14,14 @@ export class PedidoService {
   registrarPedido(pedido: Pedido): Observable<any> {
     return this.http.post(this.apiUrl, pedido);
   }
+
+  uploadVoucher(pedidoId: number, voucherFile: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('voucherFile', voucherFile);
+    return this.http.post(`${this.apiUrl}/${pedidoId}/voucher`, formData);
+  }
+
+  getOrderStatus(pedidoId: number): Observable<{ estado: string }> {
+    return this.http.get<{ estado: string }>(`${this.apiUrl}/${pedidoId}/status`);
+  }
 }
