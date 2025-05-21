@@ -1,17 +1,20 @@
 <div class="container">
     <h2>¡Gracias por tu pedido!</h2>
     <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
+    <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
   
-    <h3>Selecciona tu método de pago:</h3>
+    <div *ngIf="orderStatus !== 'Pago Verificado'">
+      <h3>Selecciona tu método de pago:</h3>
   
-    <div class="payment-options">
-      <a [routerLink]="['/voucher', pedidoId]" class="btn-killa btn-voucher">
-        Subir voucher de pago (Yape / Plin)
-      </a>
+      <div class="payment-options">
+        <div>
+          <input type="file" #voucherInput (change)="onVoucherSelected($event)" accept=".jpg" class="form-control">
+          <button (click)="uploadVoucher()" class="btn-killa btn-voucher" [disabled]="!selectedFile">Subir Voucher</button>
+        </div>
   
-      <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
-        Pagar con Mercado Pago
-      </button>
+        <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
+          Pagar con Mercado Pago
+        </button>
+      </div>
     </div>
   </div>
-  
