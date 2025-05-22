@@ -2,6 +2,10 @@
     <h2>¡Gracias por tu pedido!</h2>
     <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
     <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
+
+    <div *ngIf="orderStatus === 'Pago Verificado'" class="payment-success-message">
+      <p>Tu pago ha sido verificado exitosamente.</p>
+    </div>
   
     <div *ngIf="orderStatus !== 'Pago Verificado'">
       <h3>Selecciona tu método de pago:</h3>
