@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { PedidoService } from '../../../services/pedido.service';
+import { PedidoService } from '../../../../services/pedido/pedido.service';
 
 @Component({
   selector: 'app-pago',
@@ -15,11 +15,52 @@ export class PagoComponent implements OnInit {
   selectedFile: File | null = null;
   orderStatus: string = 'PENDIENTE DE PAGO'; // Default status
 
-  constructor(private route: ActivatedRoute, private pedidoService: PedidoService) {}
+  constructor(
+    private route: ActivatedRoute,
+    private pedidoService: PedidoService,
+    private pagoService: PagoService // Injected PagoService
+  ) {}
 
   ngOnInit(): void {
+    // Get pedidoId from route params
     this.pedidoId = Number(this.route.snapshot.paramMap.get('id'));
-    this.fetchOrderStatus();
+    this.fetchOrderStatus(); // Initial status fetch
+
+    // Check for Mercado Pago callback query parameters
+    this.route.queryParamMap.subscribe(params => {
+      const paymentStatus = params.get('status'); // Mercado Pago uses 'status'
+      const externalReference = params.get('external_reference');
+      const collectionStatus = params.get('collection_status'); // More specific status
+
+      console.log('Mercado Pago callback params:', { paymentStatus, externalReference, collectionStatus, pedidoId: this.pedidoId });
+
+      // It's common for external_reference to be the order ID.
+      // Mercado Pago status 'approved' usually means success.
+      if (collectionStatus === 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
+        console.log(`Attempting to confirm Mercado Pago payment for order ${this.pedidoId}`);
+        this.pagoService.confirmarPagoMercadoPago(this.pedidoId).subscribe(
+          response => {
+            console.log('Payment confirmation successful:', response);
+            this.orderStatus = 'Pago Verificado';
+            alert('¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.');
+            // Optionally, re-fetch to ensure consistency, though direct update is good for UI
+            this.fetchOrderStatus(); 
+          },
+          error => {
+            console.error('Error confirming Mercado Pago payment:', error);
+            alert('Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.');
+            // Potentially fetch status again to see if it was processed despite error, or leave as is
+            this.fetchOrderStatus();
+          }
+        );
+      } else if (paymentStatus && paymentStatus !== 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
+        // Handle cases like 'pending', 'rejected', etc.
+        console.log(`Mercado Pago payment status for order ${this.pedidoId}: ${paymentStatus}`);
+        alert(`El pago con Mercado Pago está ${paymentStatus}.`);
+        // We might still want to fetch the order status from our backend
+        this.fetchOrderStatus();
+      }
+    });
   }
 
   fetchOrderStatus(): void {
