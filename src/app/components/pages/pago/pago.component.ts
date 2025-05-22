@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { PedidoService } from '../../../../services/pedido/pedido.service';
+import { PedidoService } from '../../../services/pedido.service';
+import { PagoService } from '../../../services/pago.service'; // Added PagoService import
 
 @Component({
   selector: 'app-pago',
