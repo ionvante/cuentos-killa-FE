@@ -1,0 +1,33 @@
+<div class="order-list-container">
+  <h2>Mis Pedidos</h2>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Cargando pedidos...</p>
+    <!-- Puedes agregar un spinner aquí si lo deseas -->
+  </div>
+
+  <div *ngIf="errorMensaje && !isLoading" class="error-mensaje">
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMensaje && pedidos.length === 0" class="no-orders-mensaje">
+    <p>Aún no tienes pedidos.</p>
+    <button routerLink="/cuentos" class="btn btn-primary">Explorar Cuentos</button>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMensaje && pedidos.length > 0" class="orders-grid">
+    <div *ngFor="let pedido of pedidos" class="order-card" (click)="verDetalle(pedido.id)" role="button" tabindex="0" (keydown.enter)="verDetalle(pedido.id)">
+      <div class="card-header">
+        <h3>Pedido #{{ pedido.id }}</h3>
+      </div>
+      <div class="card-content">
+        <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span></p>
+        <p><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-secondary">Ver Detalle</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -9,6 +9,8 @@ import { AdminCuentosComponent } from './components/pages/admin/admin-cuentos/ad
 import { AdminLayoutComponent } from './components/pages/admin/admin-layout/admin-layout.component';
 import { PagoComponent } from './components/pages/pago/pago.component';
 import { VoucherComponent } from './components/pages/voucher/voucher.component';
+import { OrderListComponent } from './pages/order-list/order-list.component';
+import { OrderDetailComponent } from './pages/order-detail/order-detail.component';
 
 
 export const routes: Routes = [
@@ -33,6 +35,8 @@ export const routes: Routes = [
       { path: 'pago/:id', component: PagoComponent },
       { path: 'voucher/:id', component: VoucherComponent }, // si vas a subir comprobante
       { path: 'login', component: LoginComponent },
+      { path: 'pedidos', component: OrderListComponent, canActivate: [authGuard] },
+      { path: 'pedidos/:id', component: OrderDetailComponent, canActivate: [authGuard] },
       {
         path: 'admin',
         loadChildren: () => import('./components/pages/admin/admin.module').then(m => m.AdminModule)

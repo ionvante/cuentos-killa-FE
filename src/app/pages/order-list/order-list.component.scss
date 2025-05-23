@@ -1,0 +1,145 @@
+@import '../../../styles.scss'; // Ajusta la ruta si es necesario
+
+.order-list-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h2 {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+  }
+
+  .loading-indicator,
+  .error-mensaje,
+  .no-orders-mensaje {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+
+  .error-mensaje {
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid var(--danger-color);
+  }
+
+  .no-orders-mensaje {
+    .btn-primary {
+      margin-top: 1rem;
+      background-color: var(--secondary-color);
+      border-color: var(--secondary-color);
+      color: #fff;
+
+      &:hover {
+        background-color: var(--secondary-dark);
+        border-color: var(--secondary-dark);
+      }
+    }
+  }
+
+  .orders-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .order-card {
+    background-color: var(--background-light);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-header {
+      h3 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 1px solid var(--grey-light);
+        padding-bottom: 0.5rem;
+      }
+    }
+
+    .card-content {
+      p {
+        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        color: var(--text-color-light);
+
+        strong {
+          color: var(--text-color);
+        }
+      }
+
+      .status {
+        font-weight: bold;
+        padding: 0.25rem 0.5rem;
+        border-radius: var(--border-radius-sm);
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+
+        // Colores de estado (ejemplos, ajusta según tus estados reales)
+        &.status-pago-pendiente { background-color: var(--warning-color); }
+        &.status-pagado { background-color: var(--success-color); }
+        &.status-enviado { background-color: var(--info-color); }
+        &.status-entregado { background-color: var(--primary-color); }
+        &.status-cancelado { background-color: var(--danger-color); }
+        // ...otros estados
+      }
+    }
+
+    .card-footer {
+      margin-top: 1rem;
+      text-align: right;
+
+      .btn-secondary {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        color: #fff;
+
+        &:hover {
+          background-color: var(--accent-dark);
+          border-color: var(--accent-dark);
+        }
+      }
+    }
+  }
+}
+
+// Media queries para responsiveness
+@media (max-width: 768px) {
+  .order-list-container {
+    padding: 1rem;
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  .orders-grid {
+    grid-template-columns: 1fr; // Una columna en pantallas pequeñas
+  }
+
+  .order-card {
+    padding: 1rem;
+    .card-header h3 {
+      font-size: 1.3rem;
+    }
+    .card-content p {
+      font-size: 0.9rem;
+    }
+  }
+}
