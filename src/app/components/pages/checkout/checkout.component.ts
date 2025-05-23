@@ -81,8 +81,11 @@ export class CheckoutComponent implements OnInit {
       direccion: formData.direccion,
       telefono: formData.telefono,
       items: this.itemsCarrito.map(item => ({
-        cuentoId: item.cuento.id,
-        cantidad: item.cantidad
+        nombreCuento: item.cuento.nombre,
+        imagenUrl: item.cuento.imagenUrl,
+        precioUnitario: item.cuento.precio,
+        cantidad: item.cantidad,
+        subtotal: item.cuento.precio * item.cantidad
       })),
       total: this.calcularSubtotal(),
       estado: 'PAGO PENDIENTE',

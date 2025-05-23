@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Pedido } from '../../model/pedido.model';
 import { PedidoService } from '../../services/pedido.service';
+import { CommonModule } from '@angular/common'; // Import CommonModule
 
 @Component({
   selector: 'app-order-list',
+  standalone: true, // Ensure standalone is true
+  imports: [CommonModule], // Add CommonModule here
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss']
 })
