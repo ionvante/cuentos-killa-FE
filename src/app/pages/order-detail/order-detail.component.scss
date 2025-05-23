@@ -1,0 +1,223 @@
+@import '../../../styles.scss'; // Ajusta la ruta si es necesario
+
+.order-detail-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 2rem auto;
+  background-color: var(--background-light);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+
+  .btn-volver {
+    display: inline-flex;
+    align-items: center;
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    background-color: transparent;
+    border: none;
+    padding: 0.5rem 0;
+
+    i {
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      color: var(--primary-dark);
+      text-decoration: underline;
+    }
+  }
+
+  .loading-indicator,
+  .error-mensaje,
+  .no-data-mensaje {
+    text-align: center;
+    padding: 2rem;
+    border-radius: var(--border-radius-md);
+    margin: 2rem 0;
+    font-size: 1.2rem;
+    color: var(--text-color);
+  }
+
+  .error-mensaje {
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+    border: 1px solid var(--danger-color);
+  }
+
+  .no-data-mensaje {
+    background-color: var(--warning-light);
+    color: var(--warning-dark);
+    border: 1px solid var(--warning-color);
+  }
+
+  .pedido-content {
+    h2 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.2rem;
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 0.5rem;
+    }
+
+    section {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background-color: #fff; // Lighter background for sections
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-sm);
+
+      h3 {
+        color: var(--secondary-color);
+        font-size: 1.6rem;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--grey-light);
+      }
+    }
+
+    .pedido-info-general {
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+
+        p {
+          font-size: 1rem;
+          color: var(--text-color-light);
+          margin-bottom: 0.5rem;
+          background-color: var(--background-very-light);
+          padding: 0.75rem;
+          border-radius: var(--border-radius-sm);
+
+          strong {
+            color: var(--text-color);
+          }
+        }
+        .total-amount {
+          font-weight: bold;
+          font-size: 1.2rem;
+          color: var(--success-color);
+        }
+        .status {
+          font-weight: bold;
+          padding: 0.25rem 0.5rem;
+          border-radius: var(--border-radius-sm);
+          color: #fff;
+          text-transform: uppercase;
+          font-size: 0.9rem;
+          display: inline-block; // Para que el padding y background se apliquen bien
+
+          // Colores de estado (ejemplos, ajusta según tus estados reales)
+          &.status-pago-pendiente, &.status-pendiente { background-color: var(--warning-color); }
+          &.status-pagado { background-color: var(--success-color); }
+          &.status-enviado { background-color: var(--info-color); }
+          &.status-entregado { background-color: var(--primary-color); }
+          &.status-cancelado { background-color: var(--danger-color); }
+        }
+      }
+    }
+
+    .pedido-items {
+      .item-card {
+        display: flex;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid var(--grey-light);
+        border-radius: var(--border-radius-md);
+        background-color: var(--background-very-light);
+
+        .item-imagen {
+          flex-shrink: 0;
+          width: 100px; // Ajusta según necesidad
+          height: 100px; // Ajusta según necesidad
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: var(--border-radius-sm);
+          }
+        }
+
+        .item-detalles {
+          flex-grow: 1;
+          h4 {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+          }
+          p {
+            margin-bottom: 0.25rem;
+            font-size: 0.95rem;
+            color: var(--text-color-light);
+            strong {
+              color: var(--text-color);
+            }
+          }
+        }
+      }
+      .noItems p {
+        font-style: italic;
+        color: var(--text-color-light);
+      }
+    }
+
+    .acciones-pedido {
+      text-align: center;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--grey-light);
+
+      .btn-pagar {
+        background-color: var(--success-color);
+        border-color: var(--success-color);
+        color: #fff;
+        font-size: 1.2rem;
+        padding: 0.75rem 1.5rem;
+
+        i {
+          margin-right: 0.75rem;
+        }
+
+        &:hover {
+          background-color: var(--success-dark);
+          border-color: var(--success-dark);
+        }
+      }
+    }
+  }
+}
+
+// Media queries
+@media (max-width: 768px) {
+  .order-detail-container {
+    padding: 1rem;
+    margin: 1rem;
+
+    .pedido-content {
+      h2 {
+        font-size: 1.8rem;
+      }
+      section h3 {
+        font-size: 1.4rem;
+      }
+      .pedido-info-general .info-grid {
+        grid-template-columns: 1fr; // Una columna en pantallas pequeñas
+      }
+      .item-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        .item-imagen {
+          margin-bottom: 1rem;
+          width: 120px;
+          height: 120px;
+        }
+      }
+    }
+  }
+}

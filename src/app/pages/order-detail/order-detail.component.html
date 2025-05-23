@@ -1,0 +1,63 @@
+<div class="order-detail-container">
+  <button (click)="volverAPedidos()" class="btn btn-link btn-volver">
+    <i class="fas fa-arrow-left"></i> Volver a mis pedidos
+  </button>
+
+  <div *ngIf="isLoading" class="loading-indicator">
+    <p>Cargando detalle del pedido...</p>
+  </div>
+
+  <div *ngIf="errorMensaje && !isLoading" class="error-mensaje">
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <div *ngIf="!isLoading && !pedido && !errorMensaje" class="no-data-mensaje">
+    <p>No se encontró el pedido solicitado.</p>
+  </div>
+
+  <div *ngIf="pedido && !isLoading" class="pedido-content">
+    <h2>Detalle del Pedido #{{ pedido.id }}</h2>
+
+    <section class="pedido-info-general">
+      <h3>Información General</h3>
+      <div class="info-grid">
+        <p><strong>ID del Pedido:</strong> {{ pedido.id }}</p>
+        <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span></p>
+        <p><strong>Nombre:</strong> {{ pedido.nombre }}</p>
+        <p><strong>Correo:</strong> {{ pedido.correo }}</p>
+        <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
+        <p><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
+        <p><strong>Total del Pedido:</strong> <span class="total-amount">{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</span></p>
+      </div>
+    </section>
+
+    <section class="pedido-items">
+      <h3>Items del Pedido</h3>
+      <div *ngIf="pedido.items && pedido.items.length > 0; else noItems">
+        <div *ngFor="let item of pedido.items" class="item-card">
+          <div class="item-imagen">
+            <img [src]="item.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item.nombreCuento" class="img-fluid">
+          </div>
+          <div class="item-detalles">
+            <h4>{{ item.nombreCuento }}</h4>
+            <p><strong>Precio Unitario:</strong> {{ item.precioUnitario | currency:'USD':'symbol':'1.2-2' }}</p>
+            <p><strong>Cantidad:</strong> {{ item.cantidad }}</p>
+            <p><strong>Subtotal:</strong> {{ item.subtotal | currency:'USD':'symbol':'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+      <ng-template #noItems>
+        <p>No hay items en este pedido.</p>
+      </ng-template>
+    </section>
+
+    <section class="acciones-pedido" *ngIf="!isLoading">
+      <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
+        <i class="fas fa-credit-card"></i> Pagar ahora
+      </button>
+      <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
+    </section>
+
+  </div>
+</div>

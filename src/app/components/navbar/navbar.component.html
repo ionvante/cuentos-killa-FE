@@ -13,6 +13,9 @@
         <span class="cart-label">Carrito</span>
       </div>
     </li>
+    <li *ngIf="user">
+      <a routerLink="/pedidos" routerLinkActive="active">Mis Pedidos</a>
+    </li>
     <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
     </li>

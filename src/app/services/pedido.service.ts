@@ -24,4 +24,12 @@ export class PedidoService {
   getOrderStatus(pedidoId: number): Observable<{ estado: string }> {
     return this.http.get<{ estado: string }>(`${this.apiUrl}/${pedidoId}/status`);
   }
+
+  getOrders(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(this.apiUrl);
+  }
+
+  getOrderById(id: number): Observable<Pedido> {
+    return this.http.get<Pedido>(`${this.apiUrl}/${id}`);
+  }
 }
