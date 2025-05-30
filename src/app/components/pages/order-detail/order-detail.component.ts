@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Pedido, PedidoItem } from '../../model/pedido.model';
-import { PedidoService } from '../../services/pedido.service';
+import { Pedido, PedidoItem } from '../../../model/pedido.model';
+import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 
 @Component({
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common'; // Import CommonModule
   styleUrls: ['./order-detail.component.scss']
 })
 export class OrderDetailComponent implements OnInit {
-  pedido?: Pedido;
+  pedido: Pedido|null =null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
@@ -23,12 +23,14 @@ export class OrderDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('id');
+    const idParam = this.route.snapshot.paramMap.get('cuentoId');
     if (idParam) {
       const pedidoId = +idParam; // Convert string to number
       this.pedidoService.getOrderById(pedidoId).subscribe({
         next: (data) => {
-          this.pedido = data;
+          // this.pedido = data;
+          this.pedido = { ...data, items: data.items ?? [] };
+          console.log('Detalle del pedido:', this.pedido);
           this.isLoading = false;
         },
         error: (err) => {
@@ -51,7 +53,7 @@ export class OrderDetailComponent implements OnInit {
   pagarAhora(): void {
     // Lógica de pago real podría ir aquí
     // Por ahora, solo un log y/o redirección a una página de placeholder
-    console.log('Intento de pago para el pedido:', this.pedido?.id);
+    console.log('Intento de pago para el pedido:', this.pedido?.Id);
     if (this.pedido) {
       // Ejemplo: Redirigir a una ruta de pago simulada o real
       // this.router.navigate(['/pago', this.pedido.id]);
@@ -61,6 +63,6 @@ export class OrderDetailComponent implements OnInit {
 
   // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
-    return this.pedido?.estado?.toUpperCase() === 'PAGO PENDIENTE' || this.pedido?.estado?.toUpperCase() === 'PENDIENTE';
+    return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE' ;
   }
 }

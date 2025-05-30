@@ -4,8 +4,8 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { OrderDetailComponent } from './order-detail.component';
-import { PedidoService } from '../../services/pedido.service';
-import { Pedido, PedidoItem } from '../../model/pedido.model';
+import { PedidoService } from '../../../services/pedido.service';
+import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { CommonModule } from '@angular/common'; // For pipes
 
 describe('OrderDetailComponent', () => {
@@ -28,7 +28,7 @@ describe('OrderDetailComponent', () => {
       { nombreCuento: 'Cuento 2', imagenUrl: 'img2.jpg', precioUnitario: 15, cantidad: 2, subtotal: 30 }
     ],
     total: 40,
-    estado: 'PAGO PENDIENTE',
+    estado: 'PAGO_PENDIENTE',
     userId: 1,
     correoUsuario: 'a@a.com'
   };
@@ -120,15 +120,15 @@ describe('OrderDetailComponent', () => {
   });
   
   describe('isPagoPendiente', () => {
-    it('should return true if estado is PAGO PENDIENTE', () => {
-      component.pedido = { ...mockPedidoData, estado: 'PAGO PENDIENTE' };
+    it('should return true if estado is PAGO_ENDIENTE', () => {
+      component.pedido = { ...mockPedidoData, estado: 'PAGO_PENDIENTE' };
       expect(component.isPagoPendiente()).toBeTrue();
     });
     it('should return true if estado is PENDIENTE (case insensitive)', () => {
       component.pedido = { ...mockPedidoData, estado: 'pendiente' };
       expect(component.isPagoPendiente()).toBeTrue();
     });
-    it('should return false if estado is not PAGO PENDIENTE', () => {
+    it('should return false if estado is not PAGO_PENDIENTE', () => {
       component.pedido = { ...mockPedidoData, estado: 'ENTREGADO' };
       expect(component.isPagoPendiente()).toBeFalse();
     });
@@ -170,15 +170,15 @@ describe('OrderDetailComponent', () => {
       // Add checks for precioUnitario, subtotal, imagenUrl
     });
 
-    it('should display "Pagar ahora" button if order status is PAGO PENDIENTE', () => {
-      component.pedido = { ...mockPedidoData, estado: 'PAGO PENDIENTE' };
+    it('should display "Pagar ahora" button if order status is PAGO_PENDIENTE', () => {
+      component.pedido = { ...mockPedidoData, estado: 'PAGO_PENDIENTE' };
       fixture.detectChanges();
       const pagarButton = fixture.debugElement.query(By.css('.btn-pagar'));
       expect(pagarButton).toBeTruthy();
       expect(pagarButton.nativeElement.textContent).toContain('Pagar ahora');
     });
 
-    it('should NOT display "Pagar ahora" button if order status is not PAGO PENDIENTE', () => {
+    it('should NOT display "Pagar ahora" button if order status is not PAGO_PENDIENTE', () => {
       component.pedido = { ...mockPedidoData, estado: 'ENTREGADO' };
       fixture.detectChanges();
       const pagarButton = fixture.debugElement.query(By.css('.btn-pagar'));
@@ -187,7 +187,7 @@ describe('OrderDetailComponent', () => {
     
     it('should call pagarAhora when "Pagar ahora" button is clicked', () => {
       spyOn(component, 'pagarAhora');
-      component.pedido = { ...mockPedidoData, estado: 'PAGO PENDIENTE' };
+      component.pedido = { ...mockPedidoData, estado: 'PAGO_PENDIENTE' };
       fixture.detectChanges();
       const pagarButton = fixture.debugElement.query(By.css('.btn-pagar'));
       pagarButton.triggerEventHandler('click', null);

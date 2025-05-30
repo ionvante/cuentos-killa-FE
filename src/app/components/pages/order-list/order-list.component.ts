@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Pedido } from '../../model/pedido.model';
-import { PedidoService } from '../../services/pedido.service';
+import { Pedido } from '../../../model/pedido.model';
+import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 
 @Component({

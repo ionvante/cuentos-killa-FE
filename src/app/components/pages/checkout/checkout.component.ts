@@ -18,9 +18,11 @@ import { Router } from '@angular/router';
 })
 export class CheckoutComponent implements OnInit {
   
+
   checkoutForm!: FormGroup;
   itemsCarrito: any[] = [];
   user: User | null;
+  // pedido:Pedido|null=null;
 
   constructor(
     private fb: FormBuilder,
@@ -76,11 +78,14 @@ export class CheckoutComponent implements OnInit {
     const formData = this.checkoutForm.value;
   
     const pedido: Pedido = {
+      Id: 0, // O usa UUID temporal si se espera del backend
+      fecha: new Date().toISOString(), // Convert Date to ISO string      
       nombre: formData.nombre,
       correo: formData.correo,
       direccion: formData.direccion,
       telefono: formData.telefono,
       items: this.itemsCarrito.map(item => ({
+        cuentoId: item.cuento.id,
         nombreCuento: item.cuento.nombre,
         imagenUrl: item.cuento.imagenUrl,
         precioUnitario: item.cuento.precio,
@@ -88,7 +93,7 @@ export class CheckoutComponent implements OnInit {
         subtotal: item.cuento.precio * item.cantidad
       })),
       total: this.calcularSubtotal(),
-      estado: 'PAGO PENDIENTE',
+      estado: 'PAGO_PENDIENTE',
       userId: this.user?.id || 0,
       correoUsuario: this.user?.email || ''
     };
@@ -96,7 +101,7 @@ export class CheckoutComponent implements OnInit {
     this.pedidoService.registrarPedido(pedido).subscribe({
       next: (resp) => {
         console.log('Pedido registrado con éxito:', resp);
-        alert('Pedido registrado correctamente');
+        // alert('Pedido registrado correctamente');
         this.cartService.clearCart();
         const pedidoId = resp.id;
         this.router.navigate(['/pago', pedidoId]); // Redirigir a página de pago

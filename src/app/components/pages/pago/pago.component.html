@@ -12,7 +12,7 @@
   
       <div class="payment-options">
         <div>
-          <input type="file" #voucherInput (change)="onVoucherSelected($event)" accept=".jpg" class="form-control">
+          <input type="file" #voucherInput (change)="onVoucherSelected($event)" accept=".jpg" class="file-input">
           <button (click)="uploadVoucher()" class="btn-killa btn-voucher" [disabled]="!selectedFile">Subir Voucher</button>
         </div>
   

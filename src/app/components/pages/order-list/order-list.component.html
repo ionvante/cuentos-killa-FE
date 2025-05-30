@@ -16,9 +16,9 @@
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && pedidos.length > 0" class="orders-grid">
-    <div *ngFor="let pedido of pedidos" class="order-card" (click)="verDetalle(pedido.id)" role="button" tabindex="0" (keydown.enter)="verDetalle(pedido.id)">
+    <div *ngFor="let pedido of pedidos" class="order-card" (click)="verDetalle(pedido.Id)" role="button" tabindex="0" (keydown.enter)="verDetalle(pedido.Id)">
       <div class="card-header">
-        <h3>Pedido #{{ pedido.id }}</h3>
+        <h3>Pedido #{{ pedido.Id }}</h3>
       </div>
       <div class="card-content">
         <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy' }}</p>

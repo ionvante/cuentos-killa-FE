@@ -35,9 +35,6 @@ export class CartService {
       this.items.push({ cuento, cantidad: 1 });
     }
     this.actualizarCarrito();
-    // this.items.push(cuento);
-    // this.itemsSubject.next(this.items);
-    // localStorage.setItem('carrito', JSON.stringify(this.items));
   }
 
   actualizarCarrito(): void {
@@ -45,9 +42,6 @@ export class CartService {
     localStorage.setItem('carrito', JSON.stringify(this.items));
   }
   removeItem(cuentoId: number): void {
-    // this.items = this.items.filter(item => item.id !== cuentoId);
-    // this.saveCart();
-
     this.items = this.items.filter(item => item.cuento.id !== cuentoId);
     this.actualizarCarrito();
   }

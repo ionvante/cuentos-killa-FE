@@ -65,3 +65,34 @@
     background-color: #7cc9aa;
   }
   
+ .custom-file-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  background-color: #FFAD60;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.file-label:hover {
+  background-color: #e7964e;
+}
+
+.file-name {
+  font-size: 14px;
+  color: #444;
+}

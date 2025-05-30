@@ -1,4 +1,5 @@
 export interface PedidoItem {
+  cuentoId:number;
   nombreCuento: string;
   imagenUrl: string;
   precioUnitario: number;
@@ -7,7 +8,7 @@ export interface PedidoItem {
 }
 
 export interface Pedido {
-  id: number;
+  Id: number;
   fecha: string; // O Date, dependiendo de la API
   nombre: string;
   correo: string;
@@ -15,7 +16,7 @@ export interface Pedido {
   telefono: string;
   items: PedidoItem[];
   total: number;
-  estado: string; // ejemplo: 'PAGO PENDIENTE', 'PAGADO', 'ENVIADO', 'ENTREGADO'
+  estado: string; // ejemplo: 'PAGO_PENDIENTE', 'PAGADO', 'ENVIADO', 'ENTREGADO'
   userId: number;
   correoUsuario: string;
 }

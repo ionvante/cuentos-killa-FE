@@ -3,8 +3,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { OrderListComponent } from './order-list.component';
-import { PedidoService } from '../../services/pedido.service';
-import { Pedido } from '../../model/pedido.model';
+import { PedidoService } from '../../../services/pedido.service';
+import { Pedido } from '../../../model/pedido.model';
 import { Router } from '@angular/router';
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common'; // Import CommonModule
 
@@ -16,7 +16,7 @@ describe('OrderListComponent', () => {
 
   const mockPedidosData: Pedido[] = [
     { id: 1, fecha: '2023-01-15T10:00:00Z', nombre: 'Cliente A', correo: 'a@a.com', direccion: 'Dir A', telefono: '123', items: [], total: 100, estado: 'ENTREGADO', userId: 1, correoUsuario: 'a@a.com' },
-    { id: 2, fecha: '2023-01-16T11:00:00Z', nombre: 'Cliente B', correo: 'b@b.com', direccion: 'Dir B', telefono: '456', items: [], total: 200, estado: 'PAGO PENDIENTE', userId: 2, correoUsuario: 'b@b.com' }
+    { id: 2, fecha: '2023-01-16T11:00:00Z', nombre: 'Cliente B', correo: 'b@b.com', direccion: 'Dir B', telefono: '456', items: [], total: 200, estado: 'PAGO_PENDIENTE', userId: 2, correoUsuario: 'b@b.com' }
   ];
 
   beforeEach(async () => {

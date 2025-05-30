@@ -16,28 +16,28 @@
   </div>
 
   <div *ngIf="pedido && !isLoading" class="pedido-content">
-    <h2>Detalle del Pedido #{{ pedido?.id }}</h2>
+    <h2>Detalle del Pedido #{{ pedido.Id }}</h2>
 
     <section class="pedido-info-general">
       <h3>Información General</h3>
       <div class="info-grid">
-        <p><strong>ID del Pedido:</strong> {{ pedido?.id }}</p>
-        <p><strong>Fecha:</strong> {{ pedido?.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido?.estado?.toLowerCase().replace(' ', '-')">{{ pedido?.estado }}</span></p>
-        <p><strong>Nombre:</strong> {{ pedido?.nombre }}</p>
-        <p><strong>Correo:</strong> {{ pedido?.correo }}</p>
-        <p><strong>Dirección:</strong> {{ pedido?.direccion }}</p>
-        <p><strong>Teléfono:</strong> {{ pedido?.telefono }}</p>
-        <p><strong>Total del Pedido:</strong> <span class="total-amount">{{ pedido?.total | currency:'USD':'symbol':'1.2-2' }}</span></p>
+        <p><strong>ID del Pedido:</strong> {{ pedido.Id }}</p>
+        <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
+        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span></p>
+        <p><strong>Nombre:</strong> {{ pedido.nombre }}</p>
+        <p><strong>Correo:</strong> {{ pedido.correo }}</p>
+        <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
+        <p><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
+        <p><strong>Total del Pedido:</strong> <span class="total-amount">{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</span></p>
       </div>
     </section>
 
     <section class="pedido-items">
       <h3>Items del Pedido</h3>
-      <div *ngIf="pedido?.items && pedido?.items.length > 0; else noItems">
+      <div *ngIf="pedido?.items && pedido.items.length > 0; else noItems">
         <div *ngFor="let item of pedido?.items" class="item-card">
           <div class="item-imagen">
-            <img [src]="item.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item.nombreCuento" class="img-fluid">
+            <img [src]="item?.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item?.nombreCuento" class="img-fluid">
           </div>
           <div class="item-detalles">
             <h4>{{ item.nombreCuento }}</h4>
