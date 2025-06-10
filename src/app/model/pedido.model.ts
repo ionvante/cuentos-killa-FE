@@ -17,6 +17,7 @@ export interface Pedido {
   items: PedidoItem[];
   total: number;
   estado: string; // ejemplo: 'PAGO_PENDIENTE', 'PAGADO', 'ENVIADO', 'ENTREGADO'
+  tipoPago?: string;
   userId: number;
   correoUsuario: string;
 }
