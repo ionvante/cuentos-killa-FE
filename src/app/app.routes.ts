@@ -24,6 +24,10 @@ export const routes: Routes = [
         loadChildren: () =>
           import('./components/pages/Home/home.module').then((m) => m.HomeModule),
       }, {
+        path: 'cuentos',
+        loadChildren: () =>
+          import('./components/pages/Cuentos/cuentos.module').then(m => m.CuentosModule),
+      }, {
         path: 'cuento/:id',
         loadChildren: () =>
           import('./components/detalle-cuento/detalle-cuento.module').then(m => m.DetalleCuentoModule),
