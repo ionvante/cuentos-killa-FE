@@ -5,8 +5,8 @@ import { Pedido } from '../../../../model/pedido.model';
 
 @Component({
   selector: 'app-admin-pedidos',
-  standalone: true,
-  imports: [CommonModule],
+  // standalone: true,
+  // imports: [CommonModule],
   templateUrl: './admin-pedidos.component.html',
   styleUrl: './admin-pedidos.component.scss'
 })
@@ -20,10 +20,10 @@ export class AdminPedidosComponent implements OnInit {
   ngOnInit(): void {
     this.pedidoService.getOrders().subscribe({
       next: data => {
-        this.pedidos = data
-          .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-          .slice(0, 5);
-        this.isLoading = false;
+         this.pedidos = data
+        //   .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
+        //   .slice(0, 5);
+       this.isLoading = false; 
       },
       error: err => {
         console.error('Error fetching orders:', err);

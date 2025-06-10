@@ -10,6 +10,7 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { AdminCuentosComponent } from './admin-cuentos/admin-cuentos.component';
 import { AdminPedidosComponent } from './admin-pedidos/admin-pedidos.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
+import { SharedModule } from "../../shared.module";
 
 // import { SharedModule } from '../../shared.module'; 
 
@@ -41,7 +42,8 @@ const routes: Routes = [
     FormsModule,
     // HttpClientModule,
     RouterModule,
-    RouterModule.forChild(routes),    
-  ]
+    RouterModule.forChild(routes),
+    SharedModule
+]
 })
 export class AdminModule {}

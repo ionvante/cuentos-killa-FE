@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Cuento } from '../../../../model/cuento.model';
 import { CuentoService } from '../../../../services/cuento.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { CartService } from '../../../../services/carrito.service';
   styleUrl: './admin-cuentos.component.scss'
 })
 export class AdminCuentosComponent implements OnInit {
+  @Input() cuento!: Cuento;
   cuentos: Cuento[] = [];
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
 
