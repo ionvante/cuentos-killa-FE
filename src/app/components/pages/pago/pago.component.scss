@@ -51,19 +51,33 @@
   
   .btn-voucher {
     background-color: #ffad60;
+    width: 220px;
+    text-align: center;    
   }
   
   .btn-voucher:hover {
     background-color: #ffaa40;
   }
   
-  .btn-mercado {
-    background-color: #96ceb4;
-  }
+ .btn-mercado {
+  background-color: #96ceb4;
+  color: white;
+  border: none; // ✅ Elimina el borde negro
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-mercado:hover {
+  background-color: #7cc9aa;
+}
+  .btn-voucher,
+.btn-mercado {
   
-  .btn-mercado:hover {
-    background-color: #7cc9aa;
-  }
+  text-align: center;
+}
   
  .custom-file-container {
   display: flex;
@@ -74,7 +88,7 @@
 }
 
 .file-input {
-  display: none;
+  // display: none;
 }
 
 .file-label {
@@ -95,4 +109,47 @@
 .file-name {
   font-size: 14px;
   color: #444;
+}
+
+.custom-file-upload {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.file-label {
+  background-color: #ffad60;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+.file-label:hover {
+  background-color: #e8954e;
+}
+
+.file-name {
+  color: #444;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.payment-buttons-row {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-top: 10px;
+
+  button {
+    min-width: 200px; // Ajusta si quieres que ambos botones tengan mismo ancho
+    padding: 10px 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 }

@@ -8,6 +8,7 @@
       alt="Imagen del cuento"
       (error)="cargarImagenPlaceholder($event)"
       (load)="imagenCargada()"
+       style="cursor: pointer;"
       [class.loaded]="!cargandoImagen"
     />
     </div>
@@ -27,12 +28,10 @@
       </div>
 
       <div class="acciones">
-        <button class="boton-dorado" (click)="agregarAlCarrito()">
+        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()">
           Agregar al carrito
         </button>
-        <button class="boton-volver" routerLink="/">
-          Volver
-        </button>
+        <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
       </div>
     </div>
 </div>

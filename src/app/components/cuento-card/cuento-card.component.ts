@@ -19,7 +19,8 @@ export class CuentoCardComponent {
   constructor(private cartService: CartService,private router: Router) {}
 
   verDetalle(): void {
-    this.detalle.emit(this.cuento.id);
+    // this.detalle.emit(this.cuento.id);
+    this.router.navigate(['/cuento', this.cuento.id]);
   }
 
   agregarAlCarrito(): void {

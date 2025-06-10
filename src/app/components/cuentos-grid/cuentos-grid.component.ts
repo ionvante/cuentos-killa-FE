@@ -21,7 +21,7 @@ export class CuentosGridComponent implements OnInit {
     });
   }
 
-  verDetalle(id: number) {
+  verDetalle(id: number) :void {
     this.router.navigate(['/cuento', id]);
   }
 

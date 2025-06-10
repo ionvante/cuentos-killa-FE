@@ -31,6 +31,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  text-decoration: none;
+  background-color: transparent;
 }
 
 .logo-img {
@@ -40,7 +42,7 @@
 }
 
 .brand-text {
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: bold;
   color: white;
 }
@@ -55,6 +57,7 @@
   li {
     display: flex;
     align-items: center;
+    cursor: pointer; // ✅ Esto es lo que falta
 
     a {
       color: white;

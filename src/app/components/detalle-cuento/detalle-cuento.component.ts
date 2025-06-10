@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { CuentoService } from './../../services/cuento.service';
 import { Cuento } from './../../model/cuento.model';
 import { CartService } from '../../services/carrito.service';
-
+import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -18,7 +19,9 @@ export class DetalleCuentoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private cuentoService: CuentoService,
-    private carritoService: CartService
+    private carritoService: CartService   ,
+    private location: Location,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -42,5 +45,9 @@ export class DetalleCuentoComponent implements OnInit {
   }
   imagenCargada(): void {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+
+  volver() {
+  this.location.back();
   }
 }

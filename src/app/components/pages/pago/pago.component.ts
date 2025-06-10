@@ -15,6 +15,7 @@ export class PagoComponent implements OnInit {
   pedidoId: number = 0;
   selectedFile: File | null = null;
   orderStatus: string = 'PENDIENTE DE PAGO'; // Default status
+  nombreArchivo: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -104,4 +105,13 @@ export class PagoComponent implements OnInit {
     // Redirige o llama al backend para generar link de MercadoPago
     window.location.href = `http://localhost:8080/api/mercado-pago/pagar/${this.pedidoId}`;
   }
+
+
+  onFileSelected(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files.length > 0) {
+    this.nombreArchivo = input.files[0].name;
+    // Aquí podrías almacenar el archivo en una variable para enviarlo al backend luego
+  }
+}
 }

@@ -1,24 +1,29 @@
 <div class="container">
-    <h2>¡Gracias por tu pedido!</h2>
-    <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
-    <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
+  <h2>¡Gracias por tu pedido!</h2>
+  <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
+  <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
 
-    <div *ngIf="orderStatus === 'Pago Verificado'" class="payment-success-message">
-      <p>Tu pago ha sido verificado exitosamente.</p>
-    </div>
-  
-    <div *ngIf="orderStatus !== 'Pago Verificado'">
-      <h3>Selecciona tu método de pago:</h3>
-  
+  <div *ngIf="orderStatus === 'Pago Verificado'" class="payment-success-message">
+    <p>Tu pago ha sido verificado exitosamente.</p>
+  </div>
+
+  <div *ngIf="orderStatus !== 'Pago Verificado'">
+    <h3>Selecciona tu método de pago:</h3>
+    <div class="payment-buttons-row">
+      <div class="custom-file-upload">
+        <input type="file" id="voucherFile" (change)="onFileSelected($event)" hidden />
+        <label for="voucherFile" class="file-label">
+          📎 Seleccionar comprobante
+        </label>
+        <br />
+        <span class="file-name">{{ nombreArchivo || 'Sin archivos seleccionados' }}</span>
+      </div>
+
       <div class="payment-options">
-        <div>
-          <input type="file" #voucherInput (change)="onVoucherSelected($event)" accept=".jpg" class="file-input">
-          <button (click)="uploadVoucher()" class="btn-killa btn-voucher" [disabled]="!selectedFile">Subir Voucher</button>
-        </div>
-  
         <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
           Pagar con Mercado Pago
         </button>
       </div>
     </div>
   </div>
+</div>
