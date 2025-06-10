@@ -1,1 +1,29 @@
-<p>admin-pedidos works!</p>
+<div class="admin-pedidos-container">
+  <h2>Pedidos Recientes</h2>
+
+  <div *ngIf="isLoading">Cargando pedidos...</div>
+  <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
+
+  <table *ngIf="!isLoading && !errorMensaje">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha/Hora</th>
+        <th>Total</th>
+        <th>Estado Pago</th>
+        <th>Tipo Pago</th>
+        <th>Correo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let pedido of pedidos">
+        <td>{{ pedido.Id }}</td>
+        <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+        <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>{{ pedido.estado }}</td>
+        <td>{{ pedido.tipoPago || 'N/A' }}</td>
+        <td>{{ pedido.correo }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
