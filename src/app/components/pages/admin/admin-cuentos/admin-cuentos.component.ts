@@ -1,7 +1,8 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Cuento } from '../../../../model/cuento.model';
 import { CuentoService } from '../../../../services/cuento.service';
 import { Router } from '@angular/router';
+import { CartService } from '../../../../services/carrito.service';
 
 @Component({
   selector: 'app-admin-cuentos',
@@ -11,8 +12,12 @@ import { Router } from '@angular/router';
 export class AdminCuentosComponent implements OnInit {
   cuentos: Cuento[] = [];
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
-  
-  constructor(private cuentoService: CuentoService,private router: Router) {}
+
+  constructor(
+    private cuentoService: CuentoService,
+    private cartService: CartService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.cuentoService.obtenerCuentos().subscribe(data => {
@@ -31,5 +36,9 @@ export class AdminCuentosComponent implements OnInit {
   }
   verDetalle(id: number) {
     this.router.navigate(['/cuento', id]);
+  }
+
+  agregarAlCarrito(cuento: Cuento): void {
+    this.cartService.addItem(cuento);
   }
 }
