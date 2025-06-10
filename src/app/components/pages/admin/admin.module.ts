@@ -17,7 +17,7 @@ import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.componen
 const routes: Routes = [
   {
     path: '',
-    // component: AdminLayoutComponent,
+    component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: AdminDashboardComponent },
