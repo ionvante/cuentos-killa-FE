@@ -1,9 +1,18 @@
 <div class="dashboard-container">
-    <h2>Bienvenido, Admin!</h2>
-    <div class="cards">
-      <div class="card"> <h4>CUENTOS PUBLICADOS</h4><p>{{ cuentosPublicados }}</p> </div>
-      <div class="card"> <h4>PEDIDOS EN PROCESO</h4><p>{{ pedidosEnProceso }}</p> </div>
-      <div class="card"> <h4>USUARIOS REGISTRADOS</h4><p>{{ usuariosRegistrados }}</p> </div>
-      <div class="card"> <h4>VENTAS TOTALES</h4><p>S/ {{ ventasTotales }}</p> </div>
-    </div>
+  <h2>Bienvenido, Admin!</h2>
+
+  <div class="loading-indicator" *ngIf="isLoading">
+    <p>Cargando datos...</p>
   </div>
+
+  <div class="error-mensaje" *ngIf="errorMensaje">
+    <p>{{ errorMensaje }}</p>
+  </div>
+
+  <div class="cards" *ngIf="!isLoading && !errorMensaje">
+    <div class="card"> <h4>CUENTOS PUBLICADOS</h4><p>{{ cuentosPublicados }}</p> </div>
+    <div class="card"> <h4>PEDIDOS EN PROCESO</h4><p>{{ pedidosEnProceso }}</p> </div>
+    <div class="card"> <h4>USUARIOS REGISTRADOS</h4><p>{{ usuariosRegistrados }}</p> </div>
+    <div class="card"> <h4>VENTAS TOTALES</h4><p>S/ {{ ventasTotales }}</p> </div>
+  </div>
+</div>
