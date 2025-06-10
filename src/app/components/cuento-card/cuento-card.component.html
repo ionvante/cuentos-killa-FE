@@ -2,6 +2,8 @@
   <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (error)="cargarImagenPlaceholder($event)">
   <h3>{{ cuento.titulo }}</h3>
   <p>{{ cuento.autor }}</p>
+  <p>S/ {{ cuento.precio | number:'1.2-2' }}</p>
+  <p>Agregado: {{ cuento.fechaIngreso | date:'shortDate' }}</p>
 
   <div class="acciones">
     <button (click)="verDetalle()">Ver detalle</button>
