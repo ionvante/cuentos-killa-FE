@@ -3,6 +3,7 @@ import { LayoutComponent } from './components/layout/layout.component'; // impor
 import { CheckoutComponent } from './components/pages/checkout/checkout.component';
 import { LoginComponent } from './components/pages/login/login.component';
 import { authGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
 import { AdminDashboardComponent } from './components/pages/admin/admin-dashboard/admin-dashboard.component';
 import { AdminPedidosComponent } from './components/pages/admin/admin-pedidos/admin-pedidos.component';
 import { AdminCuentosComponent } from './components/pages/admin/admin-cuentos/admin-cuentos.component';
@@ -39,7 +40,8 @@ export const routes: Routes = [
       { path: 'pedidos/:id', component: OrderDetailComponent, canActivate: [authGuard] },
       {
         path: 'admin',
-        loadChildren: () => import('./components/pages/admin/admin.module').then(m => m.AdminModule)
+        loadChildren: () => import('./components/pages/admin/admin.module').then(m => m.AdminModule),
+        canActivate: [AdminGuard]
       },
       {
         path: '',
