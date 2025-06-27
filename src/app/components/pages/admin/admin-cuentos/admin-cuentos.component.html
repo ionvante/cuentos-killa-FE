@@ -1,12 +1,22 @@
-<div class="cuentos-container">
+<div class="cuentos-admin-container"> <!-- Changed class for clarity -->
   <h2>Gestión de Cuentos</h2>
+
+  <div class="admin-acciones-globales">
+    <button (click)="abrirModalAgregarCuento()" class="boton-agregar">
+      <i class="fas fa-plus"></i> Agregar Nuevo Cuento
+    </button>
+  </div>
+
   <div class="grid-cuentos">
     <app-cuento-card
       *ngFor="let cuento of cuentos"
       [cuento]="cuento"
-      (agregar)="agregarAlCarrito($event)"
+      [isAdmin]="true"
       (detalle)="verDetalle(cuento.id)"
+      (editar)="editarCuento($event)"
+      (deshabilitar)="deshabilitarCuento($event)"
+      class="admin-cuento-card"
     ></app-cuento-card>
+    <!-- (agregar) ya no se maneja aquí, sino dentro de la tarjeta si es necesario -->
   </div>
 </div>
-  
