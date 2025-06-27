@@ -3,11 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { User } from '../model/user.model';
 import { Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/auth';
+  private apiUrl = `${environment.apiBaseUrl}/auth`;
   private tokenKey = 'token';
   private userKey = 'userData';
   usuarioLogueado$ = new Subject<User>(); // 👈 Nuevo

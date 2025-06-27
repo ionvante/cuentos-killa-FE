@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cuento } from '../model/cuento.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class CuentoService {
-  private apiUrl = 'http://localhost:8080/api/cuentos'; // ajustable según tu backend
+  private apiUrl = `${environment.apiBaseUrl}/cuentos`; // ajustable según tu backend
 
   constructor(private http: HttpClient) {}
 
