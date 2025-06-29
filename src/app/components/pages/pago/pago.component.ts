@@ -78,6 +78,11 @@ export class PagoComponent implements OnInit {
 
   onVoucherSelected(event: any): void {
     this.selectedFile = event.target.files[0] ?? null;
+    if (this.selectedFile) {
+      this.nombreArchivo = this.selectedFile.name;
+    } else {
+      this.nombreArchivo = '';
+    }
   }
 
   uploadVoucher(): void {
@@ -108,10 +113,13 @@ export class PagoComponent implements OnInit {
 
 
   onFileSelected(event: Event): void {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    this.nombreArchivo = input.files[0].name;
-    // Aquí podrías almacenar el archivo en una variable para enviarlo al backend luego
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0]; // Almacena el archivo seleccionado
+      this.nombreArchivo = input.files[0].name;
+    } else {
+      this.selectedFile = null;
+      this.nombreArchivo = '';
+    }
   }
-}
 }
