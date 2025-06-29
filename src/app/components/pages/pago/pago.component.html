@@ -7,7 +7,11 @@
     <p>Tu pago ha sido verificado exitosamente.</p>
   </div>
 
-  <div *ngIf="orderStatus !== 'Pago Verificado'">
+  <div *ngIf="orderStatus === 'PAGO_PENDIENTE'" class="pending-validation-message">
+    <p>Su pedido está en proceso de validación, nosotros lo notificaremos pronto para darle detalles de su pedido.</p>
+  </div>
+
+  <div *ngIf="orderStatus !== 'Pago Verificado' && orderStatus !== 'PAGO_PENDIENTE'">
     <h3>Selecciona tu método de pago:</h3>
     <div class="payment-buttons-row">
       <div class="custom-file-upload">
@@ -18,6 +22,9 @@
         <br />
         <span class="file-name">{{ nombreArchivo || 'Sin archivos seleccionados' }}</span>
       </div>
+      <button (click)="uploadVoucher()" class="btn-killa btn-confirmar" [disabled]="!selectedFile">
+        Confirmar Subida
+      </button>
 
       <div class="payment-options">
         <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
