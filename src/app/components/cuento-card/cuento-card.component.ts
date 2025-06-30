@@ -3,36 +3,46 @@ import { Cuento } from '../../model/cuento.model'; // ajusta el path según tu e
 import { CartService } from '../../services/carrito.service';
 import { Router } from '@angular/router';
 
-
-
 @Component({
   selector: 'app-cuento-card',
   templateUrl: './cuento-card.component.html',
   styleUrls: ['./cuento-card.component.scss'],
-  
 })
 export class CuentoCardComponent {
   @Input() cuento!: Cuento;
+  @Input() isAdmin: boolean = false; // Nueva entrada para modo admin
   @Output() agregar = new EventEmitter<Cuento>();
   @Output() detalle = new EventEmitter<number>();
-  cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
-  constructor(private cartService: CartService,private router: Router) {}
+  @Output() editar = new EventEmitter<Cuento>(); // Nuevo evento para editar
+  @Output() deshabilitar = new EventEmitter<Cuento>(); // Nuevo evento para deshabilitar
+  cargandoImagen: boolean = true;
+
+  constructor(private cartService: CartService, private router: Router) {}
 
   verDetalle(): void {
-    // this.detalle.emit(this.cuento.id);
     this.router.navigate(['/cuento', this.cuento.id]);
   }
 
   agregarAlCarrito(): void {
     this.agregar.emit(this.cuento);
-  }  
+  }
+
+  editarCuento(): void {
+    this.editar.emit(this.cuento);
+  }
+
+  deshabilitarCuento(): void {
+    this.deshabilitar.emit(this.cuento);
+  }
+
   cargarImagenPlaceholder(event: Event): void {
     const imgElement = event.target as HTMLImageElement;
-    imgElement.onerror = null; // 🔥 MUY IMPORTANTE: eliminar el listener para evitar loop
+    imgElement.onerror = null;
     imgElement.src = 'assets/placeholder-cuento.jpg';
-    this.cargandoImagen = false; // 🔥 Ya no hay que seguir mostrando skeleton
+    this.cargandoImagen = false;
   }
+
   imagenCargada(): void {
-    this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+    this.cargandoImagen = false;
   }
 }
