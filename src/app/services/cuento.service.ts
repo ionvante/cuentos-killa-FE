@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpHeaders
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cuento } from '../model/cuento.model';
 import { environment } from '../../environments/environment';
@@ -19,14 +19,13 @@ export class CuentoService {
   }
 
   // POST: /api/cuentos
-  crearCuento(cuentoData: FormData): Observable<Cuento> {
-    // No es necesario establecer Content-Type: multipart/form-data manualmente.
-    // Angular HttpClient lo hace automáticamente cuando el cuerpo es FormData.
+  crearCuento(cuentoData: Partial<Cuento>): Observable<Cuento> {
+    // El backend ahora espera un JSON con los datos del cuento.
     return this.http.post<Cuento>(this.apiUrl, cuentoData);
   }
 
   // PUT: /api/cuentos/{id}
-  actualizarCuento(id: number, cuentoData: FormData): Observable<Cuento> {
+  actualizarCuento(id: number, cuentoData: Partial<Cuento>): Observable<Cuento> {
     return this.http.put<Cuento>(`${this.apiUrl}/${id}`, cuentoData);
   }
 

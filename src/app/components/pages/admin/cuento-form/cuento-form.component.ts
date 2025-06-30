@@ -15,6 +15,7 @@ export class CuentoFormComponent implements OnInit {
   cuentoId?: number;
   imagePreview: string | null = null;
   selectedFile?: File;
+  imagenBase64: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -64,24 +65,26 @@ export class CuentoFormComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
-      reader.onload = e => (this.imagePreview = reader.result as string);
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+        this.imagenBase64 = reader.result as string;
+      };
       reader.readAsDataURL(this.selectedFile);
     }
   }
 
   guardar(): void {
     if (this.cuentoForm.invalid) return;
-    const formData = new FormData();
-    Object.entries(this.cuentoForm.value).forEach(([key, value]) => {
-      formData.append(key, value as any);
-    });
-    if (this.selectedFile) {
-      formData.append('imagen', this.selectedFile);
+    const cuentoData: Partial<Cuento> = {
+      ...this.cuentoForm.value
+    };
+    if (this.imagenBase64) {
+      cuentoData.imagenUrl = this.imagenBase64;
     }
 
     const request$ = this.isEditMode && this.cuentoId
-      ? this.cuentoService.actualizarCuento(this.cuentoId, formData)
-      : this.cuentoService.crearCuento(formData);
+      ? this.cuentoService.actualizarCuento(this.cuentoId, cuentoData)
+      : this.cuentoService.crearCuento(cuentoData);
 
     request$.subscribe(() => this.router.navigate(['/admin/cuentos']));
   }
