@@ -18,6 +18,12 @@ export class PagoComponent implements OnInit {
   nombreArchivo: string = '';
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' | '' = '';
+  isUploading = false;
+  previewUrl: string | null = null;
+  isImage = false;
+  isPdf = false;
+  showMercadoModal = false;
+  orderTotal = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,6 +35,12 @@ export class PagoComponent implements OnInit {
     // Get pedidoId from route params
     this.pedidoId = Number(this.route.snapshot.paramMap.get('id'));
     this.fetchOrderStatus(); // Initial status fetch
+    this.pedidoService.getOrderById(this.pedidoId).subscribe({
+      next: (pedido) => {
+        this.orderTotal = pedido.total;
+      },
+      error: (err) => console.error('Error fetching order detail:', err)
+    });
 
     // Check for Mercado Pago callback query parameters
     this.route.queryParamMap.subscribe(params => {
@@ -78,12 +90,62 @@ export class PagoComponent implements OnInit {
     );
   }
 
-  onVoucherSelected(event: any): void {
-    this.selectedFile = event.target.files[0] ?? null;
-    if (this.selectedFile) {
-      this.nombreArchivo = this.selectedFile.name;
+
+  pagarConMercadoPagoConfirmado(): void {
+    window.location.href = `http://localhost:8080/api/mercado-pago/pagar/${this.pedidoId}`;
+  }
+
+  openMercadoPagoModal(): void {
+    this.showMercadoModal = true;
+  }
+
+  closeMercadoPagoModal(): void {
+    this.showMercadoModal = false;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+
+      if (!allowedTypes.includes(file.type)) {
+        this.mensaje = 'Formato no permitido';
+        this.mensajeTipo = 'error';
+        this.selectedFile = null;
+        this.nombreArchivo = '';
+        this.previewUrl = null;
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        this.mensaje = 'El archivo supera los 5 MB';
+        this.mensajeTipo = 'error';
+        this.selectedFile = null;
+        this.nombreArchivo = '';
+        this.previewUrl = null;
+        return;
+      }
+
+      this.selectedFile = file;
+      this.nombreArchivo = file.name;
+      this.mensaje = '';
+
+      if (file.type.startsWith('image/')) {
+        this.isImage = true;
+        this.isPdf = false;
+        const reader = new FileReader();
+        reader.onload = (e: any) => (this.previewUrl = e.target.result);
+        reader.readAsDataURL(file);
+      } else {
+        this.isImage = false;
+        this.isPdf = true;
+        this.previewUrl = 'pdf';
+      }
     } else {
+      this.selectedFile = null;
       this.nombreArchivo = '';
+      this.previewUrl = null;
     }
   }
 
@@ -94,35 +156,22 @@ export class PagoComponent implements OnInit {
       return;
     }
 
-    this.pedidoService.uploadVoucher(this.pedidoId, this.selectedFile).subscribe(
-      response => {
+    this.isUploading = true;
+    this.pedidoService.uploadVoucher(this.pedidoId, this.selectedFile).subscribe({
+      next: () => {
         this.orderStatus = 'Confirmación de Pago Enviada';
         this.mensaje = 'Voucher subido exitosamente. El estado del pedido se actualizará en breve.';
         this.mensajeTipo = 'success';
         this.fetchOrderStatus();
       },
-      error => {
+      error: (error) => {
         console.error('Error uploading voucher:', error);
         this.mensaje = 'Error al subir el voucher. Por favor, inténtalo de nuevo.';
         this.mensajeTipo = 'error';
+      },
+      complete: () => {
+        this.isUploading = false;
       }
-    );
-  }
-
-  pagarConMercadoPago(): void {
-    // Redirige o llama al backend para generar link de MercadoPago
-    window.location.href = `http://localhost:8080/api/mercado-pago/pagar/${this.pedidoId}`;
-  }
-
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0]; // Almacena el archivo seleccionado
-      this.nombreArchivo = input.files[0].name;
-    } else {
-      this.selectedFile = null;
-      this.nombreArchivo = '';
-    }
+    });
   }
 }

@@ -23,22 +23,49 @@
     <h3>Selecciona tu método de pago:</h3>
     <div class="payment-buttons-row">
       <div class="custom-file-upload">
-        <input type="file" id="voucherFile" (change)="onFileSelected($event)" hidden />
+        <input
+          type="file"
+          id="voucherFile"
+          accept="image/*,application/pdf"
+          (change)="onFileSelected($event)"
+          hidden
+        />
         <label for="voucherFile" class="file-label">
           📎 Seleccionar comprobante
         </label>
         <br />
         <span class="file-name">{{ nombreArchivo || 'Sin archivos seleccionados' }}</span>
+        <div class="preview" *ngIf="previewUrl">
+          <img *ngIf="isImage" [src]="previewUrl" alt="Vista previa" class="thumbnail" />
+          <span *ngIf="isPdf" class="material-icons pdf-icon">picture_as_pdf</span>
+        </div>
       </div>
-      <button (click)="uploadVoucher()" class="btn-killa btn-confirmar" [disabled]="!selectedFile">
+      <button
+        (click)="uploadVoucher()"
+        class="btn-killa btn-confirmar"
+        [disabled]="!selectedFile || isUploading"
+      >
         Confirmar Subida
+        <span *ngIf="isUploading" class="spinner"></span>
       </button>
 
       <div class="payment-options">
-        <button (click)="pagarConMercadoPago()" class="btn-killa btn-mercado">
+        <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
           Pagar con Mercado Pago
         </button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" *ngIf="showMercadoModal">
+  <div class="mercado-modal">
+    <h3>Pagar con Mercado Pago</h3>
+    <p>Monto a pagar: {{ orderTotal | currency:'USD':'symbol':'1.2-2' }}</p>
+    <p>Tu estado cambiará a 'Pago Verificado' en 1–2 minutos tras la transacción.</p>
+    <div class="modal-buttons">
+      <button class="btn-killa" (click)="pagarConMercadoPagoConfirmado()">Continuar</button>
+      <button class="btn-killa btn-cancel" (click)="closeMercadoPagoModal()">Cancelar</button>
     </div>
   </div>
 </div>

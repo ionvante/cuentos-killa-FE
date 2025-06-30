@@ -172,23 +172,23 @@ describe('PagoComponent', () => {
     }));
   });
 
-  describe('pagarConMercadoPago', () => {
+describe('pagarConMercadoPagoConfirmado', () => {
     it('should redirect to the correct Mercado Pago URL', () => {
-      component.pedidoId = 5; // Set a pedidoId for the component instance
+      component.pedidoId = 5;
       fixture.detectChanges();
-      
-      component.pagarConMercadoPago();
+
+      component.pagarConMercadoPagoConfirmado();
       // @ts-ignore
       expect(window.location.href).toBe('http://localhost:8080/api/mercado-pago/pagar/5');
     });
   });
   
-  // Example test for onVoucherSelected and uploadVoucher (not part of this subtask but good for completeness)
+  // Example test for onFileSelected and uploadVoucher (not part of this subtask but good for completeness)
   describe('Voucher Upload', () => {
-    it('onVoucherSelected should set selectedFile', () => {
+    it('onFileSelected should set selectedFile', () => {
       const mockFile = new File([''], 'voucher.jpg', { type: 'image/jpeg' });
-      const event = { target: { files: [mockFile] } };
-      component.onVoucherSelected(event);
+      const event = { target: { files: [mockFile] } } as any;
+      component.onFileSelected(event);
       expect(component.selectedFile).toBe(mockFile);
     });
 
