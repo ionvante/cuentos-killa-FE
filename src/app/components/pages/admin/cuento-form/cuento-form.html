@@ -1,1 +1,56 @@
-<p>cuento-form works!</p>
+<div class="form-container">
+  <h2>{{ isEditMode ? 'Editar Cuento' : 'Nuevo Cuento' }}</h2>
+
+  <form [formGroup]="cuentoForm" (ngSubmit)="guardar()" class="cuento-form">
+    <label>
+      Título
+      <input type="text" formControlName="titulo" required />
+    </label>
+    <label>
+      Autor
+      <input type="text" formControlName="autor" required />
+    </label>
+    <label>
+      Descripción
+      <textarea formControlName="descripcionCorta" required></textarea>
+    </label>
+    <label>
+      Editorial
+      <input type="text" formControlName="editorial" />
+    </label>
+    <label>
+      Tipo de Edición
+      <input type="text" formControlName="tipoEdicion" />
+    </label>
+    <label>
+      Número de Páginas
+      <input type="number" formControlName="nroPaginas" required />
+    </label>
+    <label>
+      Fecha de Publicación
+      <input type="date" formControlName="fechaPublicacion" />
+    </label>
+    <label>
+      Edad Recomendada
+      <input type="text" formControlName="edadRecomendada" />
+    </label>
+    <label>
+      Stock
+      <input type="number" formControlName="stock" required />
+    </label>
+    <label>
+      Precio
+      <input type="number" formControlName="precio" required />
+    </label>
+    <label>
+      Imagen
+      <input type="file" (change)="onFileChange($event)" />
+    </label>
+    <img *ngIf="imagePreview" [src]="imagePreview" class="preview" />
+
+    <div class="acciones">
+      <button type="submit">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
+      <button type="button" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</div>
