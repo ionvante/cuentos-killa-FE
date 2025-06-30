@@ -59,8 +59,6 @@ describe('PagoComponent', () => {
     component = fixture.componentInstance;
     // fixture.detectChanges(); // We'll call this in each test or after setting queryParams
 
-    // Spy on window.alert
-    spyOn(window, 'alert').and.stub();
     // Spy on console.log and console.error
     spyOn(console, 'log').and.stub();
     spyOn(console, 'error').and.stub();
@@ -102,7 +100,8 @@ describe('PagoComponent', () => {
 
       expect(mockPagoService.confirmarPagoMercadoPago).toHaveBeenCalledWith(1);
       expect(component.orderStatus).toBe('Pago Verificado');
-      expect(window.alert).toHaveBeenCalledWith('¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.');
+      expect(component.mensaje).toBe('¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.');
+      expect(component.mensajeTipo).toBe('success');
       expect(mockPedidoService.getOrderStatus).toHaveBeenCalledTimes(2); // Initial + after MP confirmation
     }));
 
@@ -116,12 +115,13 @@ describe('PagoComponent', () => {
       tick();
 
       expect(mockPagoService.confirmarPagoMercadoPago).toHaveBeenCalledWith(1);
-      expect(window.alert).toHaveBeenCalledWith('Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.');
+      expect(component.mensaje).toBe('Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.');
+      expect(component.mensajeTipo).toBe('error');
       expect(component.orderStatus).not.toBe('Pago Verificado'); // or check it remains initial/fetched one
       expect(mockPedidoService.getOrderStatus).toHaveBeenCalledTimes(2); // Initial + after MP error
     }));
 
-    it('should alert and fetch status if payment status is not "approved" but external_reference matches', fakeAsync(() => {
+    it('should show info message if payment status is not "approved" but external_reference matches', fakeAsync(() => {
       mockActivatedRoute.setQueryParamMap({
         status: 'pending', // General status from MP
         collection_status: 'pending', // More specific status
@@ -131,7 +131,8 @@ describe('PagoComponent', () => {
       tick();
 
       expect(mockPagoService.confirmarPagoMercadoPago).not.toHaveBeenCalled();
-      expect(window.alert).toHaveBeenCalledWith('El pago con Mercado Pago está pending.');
+      expect(component.mensaje).toBe('El pago con Mercado Pago está pending.');
+      expect(component.mensajeTipo).toBe('info');
       expect(mockPedidoService.getOrderStatus).toHaveBeenCalledTimes(2); // Initial + after MP pending
     }));
     
@@ -156,9 +157,8 @@ describe('PagoComponent', () => {
       tick();
 
       expect(mockPagoService.confirmarPagoMercadoPago).not.toHaveBeenCalled();
-       // The component logic also checks for 'status' if 'collection_status' isn't 'approved'.
-       // If status is also not 'approved' (e.g. 'rejected'), it alerts.
-      expect(window.alert).toHaveBeenCalledWith('El pago con Mercado Pago está rejected.');
+      expect(component.mensaje).toBe('El pago con Mercado Pago está rejected.');
+      expect(component.mensajeTipo).toBe('info');
       expect(component.orderStatus).toBe('PENDIENTE DE PAGO'); // Stays initial
     }));
 
@@ -201,15 +201,17 @@ describe('PagoComponent', () => {
       component.uploadVoucher();
       
       expect(mockPedidoService.uploadVoucher).toHaveBeenCalledWith(1, mockFile);
-      expect(window.alert).toHaveBeenCalledWith('Voucher subido exitosamente. El estado del pedido se actualizará en breve.');
+      expect(component.mensaje).toBe('Voucher subido exitosamente. El estado del pedido se actualizará en breve.');
+      expect(component.mensajeTipo).toBe('success');
       expect(component.orderStatus).toBe('Confirmación de Pago Enviada'); // Temporary status
       expect(mockPedidoService.getOrderStatus).toHaveBeenCalledTimes(1); // Assuming initial fetch + this one
     });
 
-    it('uploadVoucher should alert if no file is selected', () => {
+    it('uploadVoucher should show error message if no file is selected', () => {
       component.selectedFile = null;
       component.uploadVoucher();
-      expect(window.alert).toHaveBeenCalledWith('Por favor, selecciona un archivo de voucher.');
+      expect(component.mensaje).toBe('Por favor, selecciona un archivo de voucher.');
+      expect(component.mensajeTipo).toBe('error');
       expect(mockPedidoService.uploadVoucher).not.toHaveBeenCalled();
     });
   });
