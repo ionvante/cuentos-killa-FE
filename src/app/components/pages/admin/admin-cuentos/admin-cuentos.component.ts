@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-admin-cuentos',
   templateUrl: './admin-cuentos.component.html',
-  styleUrl: './admin-cuentos.component.scss'
+  styleUrls: ['./admin-cuentos.component.scss']
 })
 export class AdminCuentosComponent implements OnInit {
   // @Input() cuento!: Cuento; // This Input seems unused here, more for a detail/card component

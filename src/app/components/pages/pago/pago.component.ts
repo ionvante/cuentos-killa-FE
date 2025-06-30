@@ -9,7 +9,7 @@ import { PagoService } from '../../../services/pago.service'; // Added PagoServi
   standalone: true,
   imports: [RouterModule, CommonModule],
   templateUrl: './pago.component.html',
-  styleUrl: './pago.component.scss'
+  styleUrls: ['./pago.component.scss']
 })
 export class PagoComponent implements OnInit {
   pedidoId: number = 0;

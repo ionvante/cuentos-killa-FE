@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   // standalone: true,
   // imports: [],
   templateUrl: './admin-usuarios.component.html',
-  styleUrl: './admin-usuarios.component.scss'
+  styleUrls: ['./admin-usuarios.component.scss']
 })
 export class AdminUsuariosComponent {
 

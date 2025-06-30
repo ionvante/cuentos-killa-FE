@@ -8,7 +8,7 @@ import { Pedido } from '../../../../model/pedido.model';
   // standalone: true,
   // imports: [CommonModule],
   templateUrl: './admin-pedidos.component.html',
-  styleUrl: './admin-pedidos.component.scss'
+  styleUrls: ['./admin-pedidos.component.scss']
 })
 export class AdminPedidosComponent implements OnInit {
   pedidos: Pedido[] = [];
