@@ -1,5 +1,5 @@
 <div class="admin-pedidos-container">
-  <h2>Pedidos Recientes</h2>
+  <h2>Listado de Pedidos</h2>
 
   <div *ngIf="isLoading">Cargando pedidos...</div>
   <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
@@ -9,20 +9,26 @@
       <tr>
         <th>ID</th>
         <th>Fecha/Hora</th>
-        <th>Total</th>
+        <th>Nombre</th>
+        <th>Correo</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
         <th>Estado Pago</th>
         <th>Tipo Pago</th>
-        <th>Correo</th>
+        <th>Total</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let pedido of pedidos">
-        <td>{{ pedido.Id }}</td>
+        <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>{{ pedido.nombre }}</td>
+        <td>{{ pedido.correo }}</td>
+        <td>{{ pedido.direccion }}</td>
+        <td>{{ pedido.telefono }}</td>
         <td>{{ pedido.estado }}</td>
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
-        <td>{{ pedido.correo }}</td>
+        <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
       </tr>
     </tbody>
   </table>
