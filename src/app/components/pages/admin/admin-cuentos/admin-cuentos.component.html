@@ -19,4 +19,11 @@
     ></app-cuento-card>
     <!-- (agregar) ya no se maneja aquí, sino dentro de la tarjeta si es necesario -->
   </div>
+
+  <app-confirm-dialog
+    *ngIf="cuentoParaDeshabilitar"
+    [message]="'¿Desea dar de baja el cuento?'"
+    (confirm)="confirmarDeshabilitar()"
+    (cancel)="cancelarDeshabilitar()">
+  </app-confirm-dialog>
 </div>

@@ -15,7 +15,9 @@
   .acciones {
     margin-top: 0.5rem;
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 
     // Estilos para botones de admin
     button.admin-button { // More specific selector
