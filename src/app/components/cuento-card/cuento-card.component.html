@@ -7,7 +7,7 @@
 
   <div class="acciones">
     <button (click)="verDetalle()">Ver detalle</button>
-    <button (click)="agregarAlCarrito()">Agregar al carrito</button>
+    <button *ngIf="!isAdmin" (click)="agregarAlCarrito()">Agregar al carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento()" class="admin-button editar">Editar</button>
       <button (click)="deshabilitarCuento()" class="admin-button deshabilitar">Deshabilitar</button>
