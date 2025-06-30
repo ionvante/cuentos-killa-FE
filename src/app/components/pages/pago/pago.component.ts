@@ -16,6 +16,8 @@ export class PagoComponent implements OnInit {
   selectedFile: File | null = null;
   orderStatus: string = 'PENDIENTE DE PAGO'; // Default status
   nombreArchivo: string = '';
+  mensaje: string = '';
+  mensajeTipo: 'success' | 'error' | 'info' | '' = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -40,26 +42,26 @@ export class PagoComponent implements OnInit {
       // Mercado Pago status 'approved' usually means success.
       if (collectionStatus === 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
         console.log(`Attempting to confirm Mercado Pago payment for order ${this.pedidoId}`);
-        this.pagoService.confirmarPagoMercadoPago(this.pedidoId).subscribe(
-          response => {
-            console.log('Payment confirmation successful:', response);
+        this.pagoService.confirmarPagoMercadoPago(this.pedidoId).subscribe({
+          next: () => {
+            console.log('Payment confirmation successful');
             this.orderStatus = 'Pago Verificado';
-            alert('¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.');
-            // Optionally, re-fetch to ensure consistency, though direct update is good for UI
-            this.fetchOrderStatus(); 
+            this.mensaje = '¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.';
+            this.mensajeTipo = 'success';
+            this.fetchOrderStatus();
           },
-          error => {
+          error: (error) => {
             console.error('Error confirming Mercado Pago payment:', error);
-            alert('Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.');
-            // Potentially fetch status again to see if it was processed despite error, or leave as is
+            this.mensaje = 'Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.';
+            this.mensajeTipo = 'error';
             this.fetchOrderStatus();
           }
-        );
+        });
       } else if (paymentStatus && paymentStatus !== 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
         // Handle cases like 'pending', 'rejected', etc.
         console.log(`Mercado Pago payment status for order ${this.pedidoId}: ${paymentStatus}`);
-        alert(`El pago con Mercado Pago está ${paymentStatus}.`);
-        // We might still want to fetch the order status from our backend
+        this.mensaje = `El pago con Mercado Pago está ${paymentStatus}.`;
+        this.mensajeTipo = 'info';
         this.fetchOrderStatus();
       }
     });
@@ -87,21 +89,22 @@ export class PagoComponent implements OnInit {
 
   uploadVoucher(): void {
     if (!this.selectedFile) {
-      alert('Por favor, selecciona un archivo de voucher.');
+      this.mensaje = 'Por favor, selecciona un archivo de voucher.';
+      this.mensajeTipo = 'error';
       return;
     }
 
     this.pedidoService.uploadVoucher(this.pedidoId, this.selectedFile).subscribe(
       response => {
-        // Assuming the backend might not immediately return the final "Pago Verificado" status,
-        // so setting a general confirmation message and then refreshing.
-        this.orderStatus = "Confirmación de Pago Enviada"; // Temporary status
-        alert('Voucher subido exitosamente. El estado del pedido se actualizará en breve.');
-        this.fetchOrderStatus(); // Refresh order status from backend
+        this.orderStatus = 'Confirmación de Pago Enviada';
+        this.mensaje = 'Voucher subido exitosamente. El estado del pedido se actualizará en breve.';
+        this.mensajeTipo = 'success';
+        this.fetchOrderStatus();
       },
       error => {
         console.error('Error uploading voucher:', error);
-        alert('Error al subir el voucher. Por favor, inténtalo de nuevo.');
+        this.mensaje = 'Error al subir el voucher. Por favor, inténtalo de nuevo.';
+        this.mensajeTipo = 'error';
       }
     );
   }
