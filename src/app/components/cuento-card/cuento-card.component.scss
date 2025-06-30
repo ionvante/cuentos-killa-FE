@@ -16,6 +16,25 @@
     margin-top: 0.5rem;
     display: flex;
     justify-content: space-around;
+
+    // Estilos para botones de admin
+    button.admin-button { // More specific selector
+      &.editar { // Class for edit button
+        background-color: #ffc107; // Amarillo para "Editar"
+        color: black;
+        &:hover {
+          background-color: #e0a800;
+        }
+      }
+
+      &.deshabilitar { // Class for disable button
+        background-color: #dc3545; // Rojo para "Deshabilitar"
+        color: white;
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
   }
 
   h3 {

@@ -1,82 +1,87 @@
-.cuento-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  max-width: 300px;
+.cuentos-admin-container {
+  padding: 20px;
+  max-width: 1200px;
   margin: auto;
-  
-  img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-  }
-  .acciones {
-    margin-top: 0.5rem;
-    display: flex;
-    justify-content: space-around;
-  }
 
-  h3 {
-    color: #A66E38;
-    margin: 0.5rem 0;
-  }
-
-  button {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 6px;
-    background-color: #a6d4b8;
+  h2 {
+    margin-bottom: 25px;
+    text-align: center;
     color: #333;
-    font-weight: 500;
-    transition: background-color 0.2s ease, transform 0.2s ease;
-  
-    &:hover {
-      background-color: #8cbfa3;
-      transform: scale(1.05);
+    font-size: 2em;
+  }
+
+  .admin-acciones-globales {
+    margin-bottom: 25px;
+    text-align: right;
+
+    .boton-agregar {
+      background-color: #28a745; // Green
+      color: white;
+      padding: 12px 18px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.05em;
+      transition: background-color 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+      i { // Assuming Font Awesome or similar for icons
+        margin-right: 8px;
+      }
+
+      &:hover {
+        background-color: #218838;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      }
+      &:active {
+        background-color: #1e7e34;
+      }
     }
-  
-    &:active {
-      transform: scale(0.98);
+  }
+
+  .grid-cuentos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); // Slightly larger minmax for cards
+    gap: 25px; // Increased gap
+
+    .admin-cuento-card {
+      // If CuentoCardComponent's :host styling is sufficient, this might not be needed.
+      // However, you can add overrides or additional container styling here.
+      // For example, if you want a specific border around the card in the admin view:
+      // border: 1px solid #ddd;
+      // border-radius: 12px; // Should match card's border-radius
     }
   }
 }
-.cuento-card-imagen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #fff8e1;
-  height: 180px; /* Ajusta según tu diseño */
-  overflow: hidden;
 
-  img {
-    max-height: 100%;
-    width: auto;
-    object-fit: contain;
+// Responsive adjustments if necessary
+@media (max-width: 768px) {
+  .cuentos-admin-container h2 {
+    font-size: 1.8em;
+  }
+  .admin-acciones-globales {
+    text-align: center;
+    .boton-agregar {
+      width: 100%;
+      margin-bottom: 15px;
+    }
+  }
+  .grid-cuentos {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
   }
 }
 
-:host {
-  display: block;
-  border-radius: 12px;
-  background-color: #fff9db;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  padding: 1rem;
-  text-align: center;
-
-  &:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
+@media (max-width: 480px) {
+  .cuentos-admin-container h2 {
+    font-size: 1.5em;
   }
-}
-
-.grid-cuentos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.5rem;
-  padding: 2rem;
-  background-color: #fffaf0;
+   .grid-cuentos {
+    grid-template-columns: 1fr; // Single column on very small screens
+    gap: 15px;
+  }
+  .admin-acciones-globales .boton-agregar {
+    font-size: 1em;
+    padding: 10px 15px;
+  }
 }
