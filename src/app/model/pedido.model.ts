@@ -8,7 +8,10 @@ export interface PedidoItem {
 }
 
 export interface Pedido {
+  /** Identificador único del pedido. El backend puede devolverlo como
+   *  `Id` o `id`, por lo que ambos campos se mantienen para compatibilidad. */
   Id: number;
+  id?: number;
   fecha: string; // O Date, dependiendo de la API
   nombre: string;
   correo: string;
