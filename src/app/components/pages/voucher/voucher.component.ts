@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './voucher.component.html',
-  styleUrl: './voucher.component.scss'
+  styleUrls: ['./voucher.component.scss']
 })
 export class VoucherComponent {
 

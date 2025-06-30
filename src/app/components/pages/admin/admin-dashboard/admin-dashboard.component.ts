@@ -9,7 +9,7 @@ import { UserService } from '../../../../services/user.service';
   // standalone: true,
   // imports: [],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.scss'
+  styleUrls: ['./admin-dashboard.component.scss']
 })
 export class AdminDashboardComponent implements OnInit {
   cuentosPublicados = 0;

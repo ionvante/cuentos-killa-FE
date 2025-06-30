@@ -7,8 +7,7 @@ import { CartService } from '../../services/carrito.service';
 @Component({
   selector: 'app-cuentos-grid',
   templateUrl: './cuentos-grid.component.html',
-  styleUrls: ['./cuentos-grid.component.scss'
-  ],
+  styleUrls: ['./cuentos-grid.component.scss'],
 })
 
 export class CuentosGridComponent implements OnInit {

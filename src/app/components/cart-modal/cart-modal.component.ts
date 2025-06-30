@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule, // 🔥 necesario para *ngIf, *ngFor
   ],
   templateUrl: './cart-modal.component.html',
-  styleUrl: './cart-modal.component.scss',
+  styleUrls: ['./cart-modal.component.scss'],
   
 })
 export class CartModalComponent implements OnInit {
