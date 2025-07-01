@@ -1,9 +1,9 @@
+@import '../../../styles/variables';
+@import '../../../styles/mixins';
+
 .cuento-card {
-  background-color: #fff;
-  border-radius: 12px;
-  padding: 1rem;
+  @include card-style;
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   max-width: 300px;
   margin: auto;
   
@@ -11,6 +11,18 @@
     width: 100%;
     height: auto;
     border-radius: 10px;
+  }
+
+  .image-wrapper {
+    position: relative;
+  }
+
+  .image-placeholder {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.2s ease infinite;
   }
   .acciones {
     margin-top: 0.5rem;
@@ -68,7 +80,34 @@
       transform: scale(0.98);
     }
   }
+
+  .share-buttons {
+    display: none;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+
+    button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      color: $primary;
+    }
+  }
+
+  .badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: $accent;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: $border-radius;
+    font-size: 0.75rem;
+  }
 }
+
 .cuento-card-imagen {
   display: flex;
   justify-content: center;
@@ -98,4 +137,13 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     cursor: pointer;
   }
+}
+
+:host(:hover) .share-buttons {
+  display: flex;
+}
+
+@keyframes skeleton-loading {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
