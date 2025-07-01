@@ -49,7 +49,7 @@ export class NavbarComponent implements OnInit {
     this.dialog.open(LoginComponent, {
       maxWidth: '50vw',
       width: '80%',
-      panelClass: 'custom-login-dialog'
+      panelClass: 'login-modal'
     });
   }
   ngOnInit(): void {
