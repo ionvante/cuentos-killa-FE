@@ -7,7 +7,9 @@
     </button>
   </div>
 
-  <div class="grid-cuentos">
+  <div *ngIf="isLoading">Cargando cuentos...</div>
+  <div class="error-mensaje" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+  <div class="grid-cuentos" *ngIf="!isLoading && !errorMensaje">
     <app-cuento-card
       *ngFor="let cuento of cuentos"
       [cuento]="cuento"
