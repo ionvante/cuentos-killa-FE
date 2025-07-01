@@ -15,7 +15,10 @@
 
     <div class="detalle-info">
       <h1>{{ cuento?.titulo }}</h1>
-      <h3>Autor: {{ cuento?.autor }}</h3>
+      <div class="autor-precio">
+        <h3>Autor: {{ cuento?.autor }}</h3>
+        <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
+      </div>
 
       <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
 
