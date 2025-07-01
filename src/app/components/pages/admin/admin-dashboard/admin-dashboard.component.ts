@@ -26,6 +26,11 @@ export class AdminDashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarEstadisticas();
+  }
+
+  cargarEstadisticas(): void {
+    this.errorMensaje = null;
     this.isLoading = true;
     forkJoin([
       this.cuentoService.obtenerCuentos(),
@@ -39,7 +44,7 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       },
       error: () => {
-        this.errorMensaje = 'No se pudieron cargar las estadísticas';
+        this.errorMensaje = 'Error al cargar estadísticas. Reintentar';
         this.isLoading = false;
       }
     });

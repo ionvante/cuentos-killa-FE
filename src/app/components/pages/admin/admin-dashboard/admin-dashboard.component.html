@@ -1,12 +1,13 @@
-<div class="dashboard-container">
+<div class="dashboard-content">
   <h2>Bienvenido, Admin!</h2>
 
   <div class="loading-indicator" *ngIf="isLoading">
-    <p>Cargando datos...</p>
+    <div class="spinner"></div>
   </div>
 
   <div class="error-mensaje" *ngIf="errorMensaje">
     <p>{{ errorMensaje }}</p>
+    <button (click)="cargarEstadisticas()">Reintentar</button>
   </div>
 
   <div class="cards" *ngIf="!isLoading && !errorMensaje">
