@@ -16,3 +16,11 @@ th, td {
 th {
   background-color: #f2f2f2;
 }
+
+@media (max-width: 600px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}

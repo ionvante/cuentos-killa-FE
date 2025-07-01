@@ -6,6 +6,13 @@
   background-color: #fffaf0;
 }
 
+@media (max-width: 600px) {
+  .grid-cuentos {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    padding: 1rem;
+  }
+}
+
 .cuento-card {
   background-color: #FFEEAD;
   border-radius: 16px;
