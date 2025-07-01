@@ -132,7 +132,7 @@ describe('OrderListComponent', () => {
       expect(orderRows.length).toBe(2);
 
       const firstRow = orderRows[0];
-      expect(firstRow.query(By.css('.detail-column h3')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
+      expect(firstRow.query(By.css('.detail-column h2')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
       
       // Use DatePipe for formatting date as in component
       const datePipe = new DatePipe('en-US');
@@ -154,7 +154,7 @@ describe('OrderListComponent', () => {
       tick();
       fixture.detectChanges();
 
-      const detailBtn = fixture.debugElement.query(By.css('.detail-column .btn-secondary'));
+      const detailBtn = fixture.debugElement.query(By.css('.detail-column .btn-detail'));
       detailBtn.triggerEventHandler('click', null);
       expect(component.verDetalle).toHaveBeenCalledWith(mockPedidosData[0].id);
     }));

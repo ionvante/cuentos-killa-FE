@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Pedido } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
@@ -37,7 +37,8 @@ export class OrderListComponent implements OnInit {
   constructor(
     private pedidoService: PedidoService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -55,12 +56,17 @@ export class OrderListComponent implements OnInit {
           ? data.filter(p => p.correoUsuario === usuario.email)
           : [];
         this.estadosUnicos = Array.from(new Set(this.pedidos.map(p => p.estado)));
+        this.currentPage = 1;
+        this.searchTerm = '';
+        this.estadoFilter = '';
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: (error) => {
         console.error('Error fetching orders:', error);
         this.errorMensaje = 'No se pudieron cargar los pedidos. Intente más tarde.';
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
@@ -73,10 +79,15 @@ export class OrderListComponent implements OnInit {
     this.router.navigate(['/pago', pedidoId]);
   }
 
+  getPedidoId(p: Pedido): number {
+    return (p.Id ?? (p as any).id) as number;
+  }
+
   get filteredPedidos(): Pedido[] {
     return this.pedidos.filter(p => {
+      const idStr = this.getPedidoId(p).toString();
       const matchesSearch = this.searchTerm
-        ? p.Id.toString().includes(this.searchTerm)
+        ? idStr.includes(this.searchTerm)
         : true;
       const matchesEstado = this.estadoFilter
         ? p.estado === this.estadoFilter
@@ -117,7 +128,7 @@ export class OrderListComponent implements OnInit {
   }
 
   trackByPedidoId(index: number, pedido: Pedido) {
-    return pedido.Id;
+    return this.getPedidoId(pedido);
   }
 
   goToStore(): void {
@@ -126,7 +137,7 @@ export class OrderListComponent implements OnInit {
 
   exportCSV(): void {
     const headers = ['Id', 'fecha', 'estado', 'total'];
-    const filas = this.filteredPedidos.map(p => [p.Id, p.fecha, p.estado, p.total]);
+    const filas = this.filteredPedidos.map(p => [this.getPedidoId(p), p.fecha, p.estado, p.total]);
     const contenido = [headers.join(','), ...filas.map(f => f.join(','))].join('\n');
     const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
     const url = window.URL.createObjectURL(blob);

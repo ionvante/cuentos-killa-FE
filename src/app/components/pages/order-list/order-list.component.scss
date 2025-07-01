@@ -2,7 +2,7 @@
 
 
 .order-list-container {
-  padding: 2rem;
+  padding: 1.5rem;
   max-width: 1200px;
   margin: 0 auto;
   background-color: #FEF6E8;
@@ -96,7 +96,7 @@
     }
 
     .detail-column {
-      h3 {
+      h2 {
         color: var(--primary-color);
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
@@ -130,6 +130,25 @@
         border-radius: 4px;
         cursor: pointer;
         margin-right: 0.5rem;
+      }
+
+      .btn-pdf {
+        background: #FFEAD9;
+        color: #A66E38;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
+      }
+
+      .btn-export {
+        border: 1px solid #A66E38;
+        color: #A66E38;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        background: transparent;
+        cursor: pointer;
       }
     }
   }
@@ -184,7 +203,7 @@
     padding: 1rem;
 
     .detail-column {
-      h3 { font-size: 1.3rem; }
+      h2 { font-size: 1.3rem; }
       p { font-size: 0.9rem; }
     }
   }
@@ -197,7 +216,9 @@
   }
 
   .btn-detail,
-  .btn-pay {
+  .btn-pay,
+  .btn-pdf,
+  .btn-export {
     font-size: 14px;
   }
 }
