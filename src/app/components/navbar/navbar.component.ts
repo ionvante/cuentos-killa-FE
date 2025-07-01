@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { LoginComponent } from '../pages/login/login.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
@@ -20,6 +20,7 @@ import { User } from '../../model/user.model';
   styleUrls: ['./navbar.component.scss'],
   imports: [
     CommonModule, // 🔥 necesario para *ngIf, *ngFor
+    RouterModule, // habilita routerLink en la plantilla
     // otros imports que tengas como MatDialogModule, etc.
   ]
 })
