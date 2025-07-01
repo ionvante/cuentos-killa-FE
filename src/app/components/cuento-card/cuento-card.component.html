@@ -1,5 +1,9 @@
 <div class="cuento-card">
-  <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
+  <span class="badge" *ngIf="isNuevo">Nuevo</span>
+  <div class="image-wrapper">
+    <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" loading="lazy" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
+    <div class="image-placeholder" *ngIf="cargandoImagen"></div>
+  </div>
   <h3>{{ cuento.titulo }}</h3>
   <p>{{ cuento.autor }}</p>
   <p>S/ {{ cuento.precio | number:'1.2-2' }}</p>
@@ -12,5 +16,9 @@
       <button (click)="editarCuento()" class="admin-button editar">Editar</button>
       <button (click)="deshabilitarCuento()" class="admin-button deshabilitar">Deshabilitar</button>
     </ng-container>
+  </div>
+  <div class="share-buttons">
+    <button aria-label="Compartir por WhatsApp" (click)="compartir('whatsapp')">📱</button>
+    <button aria-label="Compartir por Instagram" (click)="compartir('instagram')">📸</button>
   </div>
 </div>
