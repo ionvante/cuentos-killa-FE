@@ -1,18 +1,32 @@
 <div class="admin-layout" [class.menu-open]="menuAbierto">
-  <button class="menu-toggle" (click)="toggleMenu()">☰</button>
-  <aside class="sidebar" [class.open]="menuAbierto">
-    <h3>Cuentos de Killa</h3>
-    <nav>
-      <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="toggleMenu(false)">Dashboard</a>
-      <a routerLink="/admin/cuentos" routerLinkActive="active" (click)="toggleMenu(false)">Cuentos</a>
-      <a routerLink="/admin/pedidos" routerLinkActive="active" (click)="toggleMenu(false)">Pedidos</a>
-      <a routerLink="/admin/usuarios" routerLinkActive="active" (click)="toggleMenu(false)">Usuarios</a>
-    </nav>
-  </aside>
+  <header class="header">
+    <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo" />
+    <button class="btn-menu" (click)="toggleMenu()">☰</button>
+  </header>
 
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
-  <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
+  <div class="main-container">
+    <aside class="sidebar" [class.open]="menuAbierto">
+      <nav>
+        <ul class="admin-links">
+          <li><a routerLink="/admin/dashboard" routerLinkActive="active" (click)="toggleMenu(false)">Dashboard</a></li>
+          <li><a routerLink="/admin/cuentos" routerLinkActive="active" (click)="toggleMenu(false)">Cuentos</a></li>
+          <li><a routerLink="/admin/pedidos" routerLinkActive="active" (click)="toggleMenu(false)">Pedidos</a></li>
+          <li><a routerLink="/admin/usuarios" routerLinkActive="active" (click)="toggleMenu(false)">Usuarios</a></li>
+        </ul>
+        <hr />
+        <ul class="client-links">
+          <li><a routerLink="/home" (click)="toggleMenu(false)">Inicio</a></li>
+          <li><a routerLink="/carrito" (click)="toggleMenu(false)">Carrito</a></li>
+          <li><a routerLink="/pedidos" (click)="toggleMenu(false)">Mis Pedidos</a></li>
+          <li><a routerLink="/perfil" (click)="toggleMenu(false)">Perfil</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+    <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
+  </div>
 </div>
   
