@@ -38,8 +38,8 @@
   </ul>
 </nav>
 
-<!-- Sidebar del Carrito -->
-<div class="cart-sidebar" [class.open]="carritoAbierto">
+<!-- Drawer del Carrito -->
+<aside class="cart-drawer" [class.open]="carritoAbierto">
   <div class="cart-header">
     <h3>Mi Carrito</h3>
     <button class="close-btn" (click)="cerrarCarrito()">✖</button>
@@ -60,7 +60,7 @@
     </div>
     <button class="btn-primary" (click)="irACheckout()">Checkout</button>
   </div>
-</div>
-<!-- Overlay -->
-<div class="overlay" [class.show]="carritoAbierto" (click)="cerrarCarrito()"></div>
+</aside>
+<!-- Overlay del carrito -->
+<div class="cart-overlay" [class.open]="carritoAbierto" (click)="cerrarCarrito()"></div>
 <div class="menu-overlay" [class.show]="menuAbierto" (click)="closeMenu()"></div>
