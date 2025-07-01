@@ -17,8 +17,10 @@
         <ul class="client-links">
         </ul>
       </nav>
-  </aside>
-  <main class="content">
-    <router-outlet></router-outlet>
-  </main>
+    </aside>
+    <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>
