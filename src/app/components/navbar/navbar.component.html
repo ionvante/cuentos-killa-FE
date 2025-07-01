@@ -1,9 +1,10 @@
-<nav class="navbar">
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
   <a class="navbar-brand">
     <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo-img" />
     <span class="brand-text">Cuentos de Killa</span>
   </a>
-  <ul class="nav-links">
+  <button class="hamburger" aria-label="Menú" (click)="toggleMenu()">☰</button>
+  <ul class="nav-links" [class.open]="menuAbierto">
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
     <li><a routerLink="/cuentos" routerLinkActive="active">Cuentos</a></li>
     <li>
@@ -22,9 +23,14 @@
     <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
     </li>
-    <li *ngIf="user?.nombre">
-      <span>👋 ¡Hola, {{ user?.nombre }}!</span>
-      <button class="btn-logout" (click)="logout()">Logout</button>
+    <li *ngIf="user?.nombre" class="avatar-wrapper" (click)="togglePerfil()">
+      <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>
+      <ul class="perfil-menu" *ngIf="mostrarPerfil">
+        <li><a routerLink="/perfil">Mi perfil</a></li>
+        <li><a routerLink="/direcciones">Direcciones</a></li>
+        <li><a routerLink="/pagos">Historial de pagos</a></li>
+        <li><button (click)="logout()">Cerrar sesión</button></li>
+      </ul>
     </li>
   </ul>
 </nav>
