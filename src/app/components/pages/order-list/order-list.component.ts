@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { Pedido } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
@@ -13,6 +13,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('fadeSlideIn', [
       transition(':enter', [
@@ -29,6 +30,7 @@ export class OrderListComponent implements OnInit {
   selectedPayment: { [id: number]: string } = {};
   searchTerm: string = '';
   estadoFilter: string = '';
+  estadosUnicos: string[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
 
@@ -45,6 +47,7 @@ export class OrderListComponent implements OnInit {
         this.pedidos = usuario
           ? data.filter(p => p.correoUsuario === usuario.email)
           : [];
+        this.estadosUnicos = Array.from(new Set(this.pedidos.map(p => p.estado)));
         this.isLoading = false;
       },
       error: (error) => {
@@ -104,5 +107,22 @@ export class OrderListComponent implements OnInit {
 
   dejarResena(pedidoId: number): void {
     this.router.navigate(['/reseña', pedidoId]);
+  }
+
+  trackByPedidoId(index: number, pedido: Pedido) {
+    return pedido.Id;
+  }
+
+  exportCSV(): void {
+    const headers = ['Id', 'fecha', 'estado', 'total'];
+    const filas = this.filteredPedidos.map(p => [p.Id, p.fecha, p.estado, p.total]);
+    const contenido = [headers.join(','), ...filas.map(f => f.join(','))].join('\n');
+    const blob = new Blob([contenido], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'pedidos.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
   }
 }
