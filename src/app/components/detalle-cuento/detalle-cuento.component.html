@@ -19,6 +19,7 @@
         <h3>Autor: {{ cuento?.autor }}</h3>
         <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
       </div>
+      <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
 
       <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
 
@@ -31,7 +32,7 @@
       </div>
 
       <div class="acciones">
-        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()">
+        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
           Agregar al carrito
         </button>
         <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>

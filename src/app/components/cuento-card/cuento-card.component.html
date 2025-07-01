@@ -4,17 +4,17 @@
     <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" loading="lazy" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
   </div>
-  <h3>{{ cuento.titulo }}</h3>
-  <p>{{ cuento.autor }}</p>
-  <p>S/ {{ cuento.precio | number:'1.2-2' }}</p>
-  <p>Agregado: {{ cuento.fechaIngreso | date:'shortDate' }}</p>
+  <h3>Titulo: {{ cuento.titulo }}</h3>
+  <p>Autor: {{ cuento.autor }}</p>
+  <p>Precio: S/ {{ cuento.precio | number:'1.2-2' }}</p>
+  <p>Agregado el {{ cuento.fechaIngreso | date:'MM-yyyy' }}</p>
 
   <div class="acciones">
     <button (click)="verDetalle()">Ver detalle</button>
-    <button *ngIf="!isAdmin" (click)="agregarAlCarrito()">Agregar al carrito</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" (click)="agregarAlCarrito()">Agregar al carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento()" class="admin-button editar">Editar</button>
-      <button (click)="deshabilitarCuento()" class="admin-button deshabilitar">Deshabilitar</button>
+      <button (click)="deshabilitarCuento()" class="admin-button deshabilitar">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
     </ng-container>
   </div>
   <div class="share-buttons">

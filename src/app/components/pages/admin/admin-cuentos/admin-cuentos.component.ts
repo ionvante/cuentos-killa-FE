@@ -72,10 +72,11 @@ export class AdminCuentosComponent implements OnInit {
   confirmarDeshabilitar(): void {
     if (!this.cuentoParaDeshabilitar) return;
     const id = this.cuentoParaDeshabilitar.id;
-    this.cuentoService.deshabilitarCuento(id, false).subscribe({
+    const nuevoEstado = !this.cuentoParaDeshabilitar.habilitado;
+    this.cuentoService.deshabilitarCuento(id, nuevoEstado).subscribe({
       next: () => {
         this.cuentos = this.cuentos.map(c =>
-          c.id === id ? { ...c, habilitado: false } : c
+          c.id === id ? { ...c, habilitado: nuevoEstado } : c
         );
         this.cuentoParaDeshabilitar = null;
       },
