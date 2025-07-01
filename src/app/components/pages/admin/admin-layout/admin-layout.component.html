@@ -1,7 +1,7 @@
 <div class="admin-layout" [class.menu-open]="menuAbierto">
   <header class="header">
     <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo" />
-    <button class="btn-menu" (click)="toggleMenu()">☰</button>
+    <button class="btn-menu" aria-label="Menú" (click)="toggleMenu()">☰</button>
   </header>
 
   <div class="main-container">
@@ -16,9 +16,17 @@
         <hr />
         <ul class="client-links">
           <li><a routerLink="/home" (click)="toggleMenu(false)">Inicio</a></li>
-          <li><a routerLink="/carrito" (click)="toggleMenu(false)">Carrito</a></li>
+          <li>
+            <a routerLink="/carrito" (click)="toggleMenu(false)">
+              Carrito
+              <span class="badge" *ngIf="cantidadTotalItems > 0">{{ cantidadTotalItems }}</span>
+            </a>
+          </li>
           <li><a routerLink="/pedidos" (click)="toggleMenu(false)">Mis Pedidos</a></li>
           <li><a routerLink="/perfil" (click)="toggleMenu(false)">Perfil</a></li>
+          <li *ngIf="user?.nombre" class="avatar-wrapper">
+            <div class="avatar" [attr.title]="user?.nombre || ''">{{ user?.nombre?.charAt(0) || '' }}</div>
+          </li>
         </ul>
       </nav>
     </aside>
