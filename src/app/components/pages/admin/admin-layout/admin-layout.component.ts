@@ -9,5 +9,9 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./admin-layout.component.scss']
 })
 export class AdminLayoutComponent {
+  menuAbierto = false;
 
+  toggleMenu(force?: boolean) {
+    this.menuAbierto = force !== undefined ? force : !this.menuAbierto;
+  }
 }

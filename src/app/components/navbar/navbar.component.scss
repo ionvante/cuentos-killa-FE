@@ -78,6 +78,18 @@
   }
 }
 
+.close-menu {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  display: none;
+}
+
 .hamburger {
   display: none;
   background: none;
@@ -149,6 +161,10 @@
 
   .nav-links.open {
     transform: translateX(0);
+  }
+
+  .close-menu {
+    display: block;
   }
 
   .hamburger {
@@ -273,6 +289,24 @@
   pointer-events: none;
   transition: opacity 0.3s ease;
   z-index: 1000;
+
+  &.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 999;
 
   &.show {
     opacity: 1;
