@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';  // 🔥 importa esto
+import { Router, RouterOutlet } from '@angular/router';  // 🔥 importa esto
 import { NavbarComponent } from '../navbar/navbar.component';
 
 
@@ -11,5 +11,9 @@ import { NavbarComponent } from '../navbar/navbar.component';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent {
+  constructor(private router: Router) {}
 
+  get esRutaAdmin(): boolean {
+    return this.router.url.startsWith('/admin');
+  }
 }
