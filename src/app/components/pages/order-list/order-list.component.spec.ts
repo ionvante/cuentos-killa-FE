@@ -21,7 +21,7 @@ describe('OrderListComponent', () => {
   ];
 
   beforeEach(async () => {
-    mockPedidoService = jasmine.createSpyObj('PedidoService', ['getOrders']);
+    mockPedidoService = jasmine.createSpyObj('PedidoService', ['getOrders', 'downloadInvoice']);
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({

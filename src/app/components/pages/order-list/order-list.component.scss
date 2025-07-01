@@ -44,21 +44,41 @@
     }
   }
 
-  .orders-grid {
+  .filters {
     display: flex;
-    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+    input, select {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--grey-light);
+    }
+  }
+
+  .orders-grid {
+    display: grid;
     gap: 1.5rem;
+    grid-template-columns: 1fr;
   }
 
   .order-row {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 1rem;
-    background-color: var(--background-light);
+    background: var(--background-light) url('/assets/libros_killa.png') no-repeat right bottom/80px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
     padding: 1.5rem;
     align-items: center;
+    border: 1px solid transparent;
+    transition: box-shadow .3s, border-color .3s, transform .3s;
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
 
     .detail-column {
       h3 {
@@ -110,6 +130,37 @@
         }
       }
     }
+  }
+}
+
+// Skeleton styles
+.skeleton-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.skeleton-row {
+  height: 120px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 400% 100%;
+  border-radius: var(--border-radius-lg);
+  animation: skeleton-loading 1.4s ease infinite;
+}
+
+@keyframes skeleton-loading {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+@media (min-width: 768px) {
+  .orders-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .orders-grid {
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
