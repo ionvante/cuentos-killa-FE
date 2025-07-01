@@ -1,5 +1,5 @@
 <div class="order-list-container">
-  <h2>Mis Pedidos</h2>
+  <h2>Pedidos</h2>
 
   <div *ngIf="isLoading" class="loading-indicator">
     <p>Cargando pedidos...</p>
@@ -16,17 +16,23 @@
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && pedidos.length > 0" class="orders-grid">
-    <div *ngFor="let pedido of pedidos" class="order-card" (click)="verDetalle(pedido.Id)" role="button" tabindex="0" (keydown.enter)="verDetalle(pedido.Id)">
-      <div class="card-header">
+    <div *ngFor="let pedido of pedidos" class="order-row">
+      <div class="detail-column">
         <h3>Pedido #{{ pedido.Id }}</h3>
-      </div>
-      <div class="card-content">
         <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy' }}</p>
-        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span></p>
+        <p><strong>Estado:</strong>
+          <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span>
+        </p>
         <p><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
+        <button class="btn btn-secondary" (click)="verDetalle(pedido.Id)">Ver Detalle</button>
       </div>
-      <div class="card-footer">
-        <button class="btn btn-secondary">Ver Detalle</button>
+      <div class="payment-column">
+        <label>Tipo de pago:</label>
+        <select [(ngModel)]="selectedPayment[pedido.Id]">
+          <option value="TRANSFERENCIA">Transferencia</option>
+          <option value="MERCADO_PAGO">Mercado Pago</option>
+        </select>
+        <button class="btn btn-primary" (click)="irAPago(pedido.Id)">Pagar</button>
       </div>
     </div>
   </div>
