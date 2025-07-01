@@ -107,9 +107,16 @@ export class PagoComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+      const allowedTypes = [
+        'image/jpeg',
+        'image/png',
+        'image/jpg',
+        'application/pdf'
+      ];
+      const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
+      const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
 
-      if (!allowedTypes.includes(file.type)) {
+      if (!allowedTypes.includes(file.type) || !allowedExtensions.includes(extension)) {
         this.mensaje = 'Formato no permitido';
         this.mensajeTipo = 'error';
         this.selectedFile = null;

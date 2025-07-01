@@ -1,7 +1,9 @@
 <div class="container">
   <h2>¡Gracias por tu pedido!</h2>
+  <p class="voucher-instruction">¡Gracias por tu compra! Sube una foto del voucher de Yape o Plin para que podamos validar tu pago y preparar tu pedido con mucho cariño.</p>
   <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
   <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
+  <p class="progress-text">1. Pedido generado → 2. Pago validado → 3. Pedido enviado</p>
 
   <div *ngIf="mensaje" [ngClass]="{
         'success-mensaje': mensajeTipo === 'success',
@@ -26,13 +28,14 @@
         <input
           type="file"
           id="voucherFile"
-          accept="image/*,application/pdf"
+          accept="application/pdf,image/jpeg,image/png"
           (change)="onFileSelected($event)"
           hidden
         />
         <label for="voucherFile" class="file-label">
-          📎 Seleccionar comprobante
+          📎 Elegir Voucher
         </label>
+        <p class="allowed-formats">📎 Formatos permitidos: PDF, JPG o PNG.</p>
         <br />
         <span class="file-name">{{ nombreArchivo || 'Sin archivos seleccionados' }}</span>
         <div class="preview" *ngIf="previewUrl">
