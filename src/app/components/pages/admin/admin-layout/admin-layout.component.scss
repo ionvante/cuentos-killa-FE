@@ -1,113 +1,41 @@
+
 .admin-layout {
   display: flex;
-  flex-direction: column;
+}
+
+.sidebar {
+  width: 240px;
   height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #a66e38;
+  color: #fff;
+  padding: 2rem 1rem;
 
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #a66e38;
-    padding: 0.5rem 1rem;
-    color: #fff;
-    position: sticky;
-    top: 0;
-    z-index: 1100;
-  }
+  nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 
-  .logo {
-    height: 32px;
-    margin-right: 0.5rem;
-  }
-
-  .btn-menu {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    display: none;
-  }
-
-  .main-container {
-    flex: 1;
-    display: flex;
-  }
-
-  .sidebar {
-    width: 240px;
-    background-color: #a66e38;
-    color: #fff;
-    padding: 2rem 1rem;
-
-    nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-
-      li {
-        margin: 0.5rem 0;
-      }
-    }
-
-    hr {
-      border-color: rgba(255,255,255,0.3);
-      margin: 1rem 0;
+    li {
+      margin: 0.5rem 0;
     }
   }
 
-  .content {
-    flex: 1;
-    padding: 2rem;
-    background-color: #fffaf5;
-    overflow-y: auto;
-  }
-
-  .overlay {
-    display: none;
+  hr {
+    border-color: rgba(255, 255, 255, 0.3);
+    margin: 1rem 0;
   }
 }
 
-@media (max-width: 768px) {
-  .admin-layout {
-    .btn-menu {
-      display: block;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100%;
-      transform: translateX(-100%);
-      transition: transform 0.25s;
-      z-index: 1000;
-    }
-
-    &.menu-open {
-      .sidebar {
-        transform: translateX(0);
-      }
-
-      .overlay {
-        display: block;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 900;
-      }
-    }
-
-    .content {
-      padding: 1rem;
-    }
-  }
+.content {
+  margin-left: 240px;
+  padding: 1rem;
+  background-color: #FEF6E8;
+  flex: 1;
+  min-height: 100vh;
+  overflow-y: auto;
 }
 
 .sidebar .badge {

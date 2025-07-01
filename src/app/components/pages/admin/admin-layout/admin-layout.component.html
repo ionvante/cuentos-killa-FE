@@ -8,33 +8,17 @@
     <aside class="sidebar" [class.open]="menuAbierto">
       <nav>
         <ul class="admin-links">
-          <li><a routerLink="/admin/dashboard" routerLinkActive="active" (click)="toggleMenu(false)">Dashboard</a></li>
-          <li><a routerLink="/admin/cuentos" routerLinkActive="active" (click)="toggleMenu(false)">Cuentos</a></li>
-          <li><a routerLink="/admin/pedidos" routerLinkActive="active" (click)="toggleMenu(false)">Pedidos</a></li>
-          <li><a routerLink="/admin/usuarios" routerLinkActive="active" (click)="toggleMenu(false)">Usuarios</a></li>
+          <li><a routerLink="/admin/dashboard" routerLinkActive="active" >Dashboard</a></li>
+          <li><a routerLink="/admin/cuentos" routerLinkActive="active" >Cuentos</a></li>
+          <li><a routerLink="/admin/pedidos" routerLinkActive="active" >Pedidos</a></li>
+          <li><a routerLink="/admin/usuarios" routerLinkActive="active" >Usuarios</a></li>
         </ul>
         <hr />
         <ul class="client-links">
-          <li><a routerLink="/home" (click)="toggleMenu(false)">Inicio</a></li>
-          <li>
-            <a routerLink="/carrito" (click)="toggleMenu(false)">
-              Carrito
-              <span class="badge" *ngIf="cantidadTotalItems > 0">{{ cantidadTotalItems }}</span>
-            </a>
-          </li>
-          <li><a routerLink="/pedidos" (click)="toggleMenu(false)">Mis Pedidos</a></li>
-          <li><a routerLink="/perfil" (click)="toggleMenu(false)">Perfil</a></li>
-          <li *ngIf="user?.nombre" class="avatar-wrapper">
-            <div class="avatar" [attr.title]="user?.nombre || ''">{{ user?.nombre?.charAt(0) || '' }}</div>
-          </li>
         </ul>
       </nav>
-    </aside>
-
-    <main class="content">
-      <router-outlet></router-outlet>
-    </main>
-    <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
-  </div>
+  </aside>
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
 </div>
-  

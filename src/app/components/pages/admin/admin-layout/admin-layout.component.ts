@@ -32,4 +32,5 @@ export class AdminLayoutComponent implements OnInit {
   toggleMenu(force?: boolean) {
     this.menuAbierto = force !== undefined ? force : !this.menuAbierto;
   }
+
 }
