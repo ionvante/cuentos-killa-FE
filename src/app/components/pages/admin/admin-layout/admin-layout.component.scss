@@ -1,5 +1,9 @@
 
 .admin-layout {
+  display: block;
+}
+
+.layout {
   display: flex;
 }
 
@@ -99,7 +103,7 @@
   font-weight: bold;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .content {
     margin-left: 0;
   }

@@ -4,9 +4,9 @@
     <button class="btn-menu" aria-label="Menú" (click)="toggleMenu()">☰</button>
   </header>
 
-  <div class="main-container">
+  <div class="layout">
     <aside class="sidebar" [class.open]="menuAbierto">
-      <nav>
+      <nav role="navigation">
         <ul class="admin-links">
           <li><a routerLink="/admin/dashboard" routerLinkActive="active" >Dashboard</a></li>
           <li><a routerLink="/admin/cuentos" routerLinkActive="active" >Cuentos</a></li>
@@ -19,7 +19,7 @@
       </nav>
     </aside>
     <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
-    <main class="content">
+    <main class="content" role="main">
       <router-outlet></router-outlet>
     </main>
   </div>
