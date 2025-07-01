@@ -41,6 +41,13 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadOrders();
+  }
+
+  loadOrders(): void {
+    this.isLoading = true;
+    this.errorMensaje = null;
+
     const usuario = this.authService.getUser();
     this.pedidoService.getOrders().subscribe({
       next: (data) => {
@@ -111,6 +118,10 @@ export class OrderListComponent implements OnInit {
 
   trackByPedidoId(index: number, pedido: Pedido) {
     return pedido.Id;
+  }
+
+  goToStore(): void {
+    this.router.navigate(['/cuentos']);
   }
 
   exportCSV(): void {

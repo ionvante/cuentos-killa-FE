@@ -9,11 +9,12 @@
 
   <div *ngIf="errorMensaje && !isLoading" class="error-mensaje">
     <p>{{ errorMensaje }}</p>
+    <button type="button" class="btn" (click)="loadOrders()" aria-label="Reintentar carga">Reintentar</button>
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && pedidos.length === 0" class="no-orders-mensaje">
     <p>Aún no tienes pedidos.</p>
-    <button routerLink="/cuentos" class="btn btn-primary">Explorar Cuentos</button>
+    <button class="btn btn-primary" (click)="goToStore()">Explorar Cuentos</button>
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && pedidos.length > 0" class="filter-bar">
@@ -26,27 +27,22 @@
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && filteredPedidos.length > 0" class="orders-grid" role="region">
-    <div *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-row order-card" role="button" tabindex="0" [attr.aria-label]="'Detalles del pedido número ' + pedido.Id" [@fadeSlideIn]>
+    <article *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-row order-card" role="region" tabindex="0" [attr.aria-labelledby]="'order-' + pedido.Id" [@fadeSlideIn]>
       <div class="detail-column">
-        <h3><span class="material-icons book-icon">menu_book</span>Pedido #{{ pedido.Id }}</h3>
+        <h3 id="order-{{pedido.Id}}"><span class="material-icons book-icon">menu_book</span>Pedido #{{ pedido.Id }}</h3>
         <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy' }}</p>
         <p><strong>Estado:</strong>
           <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span>
         </p>
         <p><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
-        <button class="btn btn-primary ver-detalle" (click)="verDetalle(pedido.Id)" [attr.aria-label]="'Ver detalle del pedido ' + pedido.Id">Ver Detalle</button>
+        <button *ngIf="pedido.estado === 'PAGADO'; else pagoBoton" class="btn-detail" (click)="verDetalle(pedido.Id)" [attr.aria-label]="'Ver detalle del pedido ' + pedido.Id">Ver detalle</button>
+        <ng-template #pagoBoton>
+          <button class="btn-pay" (click)="irAPago(pedido.Id)" [attr.aria-label]="'Pagar pedido ' + pedido.Id">Pagar</button>
+        </ng-template>
         <button class="btn btn-outline" (click)="descargarPDF(pedido.Id)">Descargar PDF</button>
         <button *ngIf="pedido.estado === 'ENTREGADO'" class="btn btn-outline" (click)="dejarResena(pedido.Id)">Valorar</button>
       </div>
-      <div class="payment-column">
-        <label>Tipo de pago:</label>
-        <select [(ngModel)]="selectedPayment[pedido.Id]">
-          <option value="TRANSFERENCIA">Transferencia</option>
-          <option value="MERCADO_PAGO">Mercado Pago</option>
-        </select>
-        <button class="btn btn-primary" (click)="irAPago(pedido.Id)">Pagar</button>
-      </div>
-    </div>
+    </article>
     <div class="pagination" *ngIf="totalPages > 1">
       <button class="btn" (click)="changePage(-1)" [disabled]="currentPage === 1">Anterior</button>
       <span>{{currentPage}} / {{totalPages}}</span>
