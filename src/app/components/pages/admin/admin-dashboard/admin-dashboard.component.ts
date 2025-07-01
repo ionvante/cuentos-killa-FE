@@ -49,4 +49,8 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
   }
+
+  reloadStats(): void {
+    this.cargarEstadisticas();
+  }
 }
