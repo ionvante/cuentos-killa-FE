@@ -1,0 +1,18 @@
+<div class="cuentos-container">
+  <h2>Últimos cuentos</h2>
+  <div class="filters">
+    <input type="text" placeholder="Buscar por título o autor" [(ngModel)]="searchTerm" />
+    <select [(ngModel)]="sortOption">
+      <option value="fecha">Fecha de registro</option>
+      <option value="alfabetico">Alfabético</option>
+      <option value="precio">Precio</option>
+    </select>
+  </div>
+  <div class="grid-cuentos">
+    <app-cuento-card
+      *ngFor="let cuento of filteredCuentos"
+      [cuento]="cuento"
+      (agregar)="agregarAlCarrito($event)"
+    ></app-cuento-card>
+  </div>
+</div>
