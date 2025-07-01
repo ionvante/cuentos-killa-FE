@@ -5,19 +5,32 @@ import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
+import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-order-list',
   standalone: true, // Ensure standalone is true
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './order-list.component.html',
-  styleUrls: ['./order-list.component.scss']
+  styleUrls: ['./order-list.component.scss'],
+  animations: [
+    trigger('fadeSlideIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(20px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class OrderListComponent implements OnInit {
   pedidos: Pedido[] = [];
   isLoading: boolean = true;
   errorMensaje: string | null = null;
   selectedPayment: { [id: number]: string } = {};
+  searchTerm: string = '';
+  estadoFilter: string = '';
+  currentPage: number = 1;
+  itemsPerPage: number = 5;
 
   constructor(
     private pedidoService: PedidoService,
@@ -48,5 +61,48 @@ export class OrderListComponent implements OnInit {
 
   irAPago(pedidoId: number): void {
     this.router.navigate(['/pago', pedidoId]);
+  }
+
+  get filteredPedidos(): Pedido[] {
+    return this.pedidos.filter(p => {
+      const matchesSearch = this.searchTerm
+        ? p.Id.toString().includes(this.searchTerm)
+        : true;
+      const matchesEstado = this.estadoFilter
+        ? p.estado === this.estadoFilter
+        : true;
+      return matchesSearch && matchesEstado;
+    });
+  }
+
+  get paginatedPedidos(): Pedido[] {
+    const start = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredPedidos.slice(start, start + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredPedidos.length / this.itemsPerPage));
+  }
+
+  changePage(delta: number): void {
+    const newPage = this.currentPage + delta;
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.currentPage = newPage;
+    }
+  }
+
+  descargarPDF(pedidoId: number): void {
+    this.pedidoService.downloadInvoice(pedidoId).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pedido-${pedidoId}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
+  dejarResena(pedidoId: number): void {
+    this.router.navigate(['/reseña', pedidoId]);
   }
 }
