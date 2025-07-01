@@ -23,7 +23,7 @@ export class OrderDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const idParam = this.route.snapshot.paramMap.get('cuentoId');
+    const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const pedidoId = +idParam; // Convert string to number
       this.pedidoService.getOrderById(pedidoId).subscribe({
