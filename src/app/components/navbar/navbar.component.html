@@ -24,7 +24,7 @@
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
     </li>
     <li *ngIf="user?.nombre" class="avatar-wrapper" (click)="togglePerfil()">
-      <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre.charAt(0) }}</div>
+      <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>
       <ul class="perfil-menu" *ngIf="mostrarPerfil">
         <li><a routerLink="/perfil">Mi perfil</a></li>
         <li><a routerLink="/direcciones">Direcciones</a></li>

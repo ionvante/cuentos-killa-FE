@@ -108,14 +108,6 @@
   }
 }
 
-:host(:hover) .share-buttons {
-  display: flex;
-}
-
-@keyframes skeleton-loading {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
-}
 .cuento-card-imagen {
   display: flex;
   justify-content: center;
