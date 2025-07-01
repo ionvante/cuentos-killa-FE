@@ -1,6 +1,12 @@
-<div class="admin-layout">
-  <aside class="sidebar">
-    <nav>
+<div class="admin-layout" [class.menu-open]="menuAbierto">
+  <header class="header">
+    <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo" />
+    <button class="btn-menu" aria-label="Menú" (click)="toggleMenu()">☰</button>
+  </header>
+
+  <div class="main-container">
+    <aside class="sidebar" [class.open]="menuAbierto">
+      <nav>
         <ul class="admin-links">
           <li><a routerLink="/admin/dashboard" routerLinkActive="active" >Dashboard</a></li>
           <li><a routerLink="/admin/cuentos" routerLinkActive="active" >Cuentos</a></li>
@@ -9,14 +15,9 @@
         </ul>
         <hr />
         <ul class="client-links">
-          <li><a routerLink="/home" >Inicio</a></li>
-          <li><a routerLink="/carrito" >Carrito</a></li>
-          <li><a routerLink="/pedidos" >Mis Pedidos</a></li>
-          <li><a routerLink="/perfil" >Perfil</a></li>
         </ul>
       </nav>
   </aside>
-
   <main class="content">
     <router-outlet></router-outlet>
   </main>
