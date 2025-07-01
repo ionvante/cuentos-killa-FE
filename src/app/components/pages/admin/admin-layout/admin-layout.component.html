@@ -1,12 +1,6 @@
-<div class="admin-layout" [class.menu-open]="menuAbierto">
-  <header class="header">
-    <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo" />
-    <button class="btn-menu" (click)="toggleMenu()">☰</button>
-  </header>
-
-  <div class="main-container">
-    <aside class="sidebar" [class.open]="menuAbierto">
-      <nav>
+<div class="admin-layout">
+  <aside class="sidebar">
+    <nav>
         <ul class="admin-links">
           <li><a routerLink="/admin/dashboard" routerLinkActive="active" (click)="toggleMenu(false)">Dashboard</a></li>
           <li><a routerLink="/admin/cuentos" routerLinkActive="active" (click)="toggleMenu(false)">Cuentos</a></li>
@@ -21,12 +15,10 @@
           <li><a routerLink="/perfil" (click)="toggleMenu(false)">Perfil</a></li>
         </ul>
       </nav>
-    </aside>
+  </aside>
 
-    <main class="content">
-      <router-outlet></router-outlet>
-    </main>
-    <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
-  </div>
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
 </div>
   
