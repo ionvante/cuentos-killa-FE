@@ -49,6 +49,17 @@
   color: #8d6e63;
 }
 
+.autor-precio {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.autor-precio .precio {
+  font-weight: bold;
+  color: #8d6e63;
+}
+
 .descripcion {
   margin-bottom: 20px;
   font-size: 1rem;
