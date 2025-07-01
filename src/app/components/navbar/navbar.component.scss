@@ -12,7 +12,7 @@
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
-  z-index: 1000;
+  z-index: 1000; /* Ensure navbar stays above admin sidebar */
   padding: 1rem;
 }
 .cart-sidebar.open {
@@ -29,7 +29,7 @@
   color: white;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 1200; /* Ensure navbar stays above admin sidebar */
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
@@ -288,7 +288,7 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  z-index: 1000;
+  z-index: 1200; /* Ensure navbar stays above admin sidebar */
 
   &.show {
     opacity: 1;
