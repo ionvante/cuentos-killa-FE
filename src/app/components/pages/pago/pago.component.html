@@ -43,19 +43,19 @@
           <span *ngIf="isPdf" class="material-icons pdf-icon">picture_as_pdf</span>
         </div>
       </div>
-      <button
-        (click)="uploadVoucher()"
-        class="btn-killa btn-confirmar"
-        [disabled]="!selectedFile || isUploading"
-      >
-        Confirmar Subida
-        <span *ngIf="isUploading" class="spinner"></span>
-      </button>
-
-      <div class="payment-options">
-        <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
-          Pagar con Mercado Pago
+      <br />
+      <div class="custom-file-container">
+        <div>
+        <button           (click)="uploadVoucher()"          class="btn-killa btn-confirmar"          [disabled]="!selectedFile || isUploading">
+          Confirmar Subida
+          <span *ngIf="isUploading" class="spinner"></span>
         </button>
+        </div>
+        <div class="payment-options">
+          <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
+            Pagar con Mercado Pago
+          </button>
+        </div>
       </div>
     </div>
   </div>

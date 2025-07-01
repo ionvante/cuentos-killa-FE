@@ -19,12 +19,7 @@ export const routes: Routes = [
         path: 'home',
         loadChildren: () =>
           import('./components/pages/Home/home.module').then((m) => m.HomeModule),
-      },
-      {
-        path: 'cuentos',
-        loadChildren: () =>
-          import('./components/pages/cuentos/cuentos.module').then(m => m.CuentosModule),
-      },
+      }, 
       {
         path: 'cuento/:id',
         loadChildren: () =>
