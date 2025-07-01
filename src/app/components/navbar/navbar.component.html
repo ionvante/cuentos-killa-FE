@@ -17,7 +17,7 @@
       <a routerLink="/admin/dashboard" routerLinkActive="active">Admin</a>
     </li>
     <li *ngIf="user">
-      <a routerLink="/pedidos" routerLinkActive="active">Mis Pedidos</a>
+      <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
     </li>
     <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>

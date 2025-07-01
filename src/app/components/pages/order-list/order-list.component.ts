@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Pedido } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-order-list',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule], // Add CommonModule here
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss']
 })
@@ -15,13 +17,21 @@ export class OrderListComponent implements OnInit {
   pedidos: Pedido[] = [];
   isLoading: boolean = true;
   errorMensaje: string | null = null;
+  selectedPayment: { [id: number]: string } = {};
 
-  constructor(private pedidoService: PedidoService, private router: Router) {}
+  constructor(
+    private pedidoService: PedidoService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
+    const usuario = this.authService.getUser();
     this.pedidoService.getOrders().subscribe({
       next: (data) => {
-        this.pedidos = data;
+        this.pedidos = usuario
+          ? data.filter(p => p.correoUsuario === usuario.email)
+          : [];
         this.isLoading = false;
       },
       error: (error) => {
@@ -34,5 +44,9 @@ export class OrderListComponent implements OnInit {
 
   verDetalle(pedidoId: number): void {
     this.router.navigate(['/pedidos', pedidoId]);
+  }
+
+  irAPago(pedidoId: number): void {
+    this.router.navigate(['/pago', pedidoId]);
   }
 }

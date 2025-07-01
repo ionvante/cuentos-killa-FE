@@ -6,7 +6,8 @@ import { OrderListComponent } from './order-list.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { Pedido } from '../../../model/pedido.model';
 import { Router } from '@angular/router';
-import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common'; // Import CommonModule
+import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 describe('OrderListComponent', () => {
   let component: OrderListComponent;
@@ -27,7 +28,8 @@ describe('OrderListComponent', () => {
       declarations: [OrderListComponent], // Declare the component
       imports: [
         RouterTestingModule, // Provides basic router stubs
-        CommonModule // Import CommonModule for pipes like DatePipe, CurrencyPipe
+        CommonModule,
+        FormsModule
       ],
       providers: [
         { provide: PedidoService, useValue: mockPedidoService },
@@ -87,10 +89,10 @@ describe('OrderListComponent', () => {
   });
 
   describe('Template Rendering', () => {
-    it('should display "Mis Pedidos" title', () => {
+    it('should display "Pedidos" title', () => {
       fixture.detectChanges(); // Trigger change detection
       const titleElement = fixture.debugElement.query(By.css('h2'));
-      expect(titleElement.nativeElement.textContent).toContain('Mis Pedidos');
+      expect(titleElement.nativeElement.textContent).toContain('Pedidos');
     });
 
     it('should display "Cargando pedidos..." when isLoading is true', () => {
@@ -126,34 +128,34 @@ describe('OrderListComponent', () => {
       tick();
       fixture.detectChanges(); // Update view with fetched data
 
-      const orderCards = fixture.debugElement.queryAll(By.css('.order-card'));
-      expect(orderCards.length).toBe(2);
+      const orderRows = fixture.debugElement.queryAll(By.css('.order-row'));
+      expect(orderRows.length).toBe(2);
 
-      const firstCard = orderCards[0];
-      expect(firstCard.query(By.css('.card-header h3')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
+      const firstRow = orderRows[0];
+      expect(firstRow.query(By.css('.detail-column h3')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
       
       // Use DatePipe for formatting date as in component
       const datePipe = new DatePipe('en-US');
       const expectedDate = datePipe.transform(mockPedidosData[0].fecha, 'dd/MM/yyyy');
-      expect(firstCard.nativeElement.textContent).toContain(`Fecha: ${expectedDate}`);
-      
-      expect(firstCard.nativeElement.textContent).toContain(`Estado: ${mockPedidosData[0].estado}`);
+      expect(firstRow.nativeElement.textContent).toContain(`Fecha: ${expectedDate}`);
+
+      expect(firstRow.nativeElement.textContent).toContain(`Estado: ${mockPedidosData[0].estado}`);
       
       // Use CurrencyPipe for formatting total as in component
       const currencyPipe = new CurrencyPipe('en-US', 'USD'); // Adjust locale and currency code as needed
       const expectedTotal = currencyPipe.transform(mockPedidosData[0].total, 'USD', 'symbol', '1.2-2');
-      expect(firstCard.nativeElement.textContent).toContain(`Total: ${expectedTotal}`);
+      expect(firstRow.nativeElement.textContent).toContain(`Total: ${expectedTotal}`);
     }));
 
-    it('should call verDetalle when an order card is clicked', fakeAsync(() => {
+    it('should call verDetalle when detail button is clicked', fakeAsync(() => {
       spyOn(component, 'verDetalle');
       mockPedidoService.getOrders.and.returnValue(of(mockPedidosData));
       component.ngOnInit();
       tick();
       fixture.detectChanges();
 
-      const firstCard = fixture.debugElement.query(By.css('.order-card'));
-      firstCard.triggerEventHandler('click', null);
+      const detailBtn = fixture.debugElement.query(By.css('.detail-column .btn-secondary'));
+      detailBtn.triggerEventHandler('click', null);
       expect(component.verDetalle).toHaveBeenCalledWith(mockPedidosData[0].id);
     }));
   });
