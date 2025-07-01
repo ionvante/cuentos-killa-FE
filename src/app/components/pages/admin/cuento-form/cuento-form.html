@@ -50,6 +50,8 @@
       <img *ngIf="imagePreview" [src]="imagePreview" class="preview" />
     </div>
 
+    <div class="error-mensaje" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+
     <div class="acciones">
       <button type="submit" class="aceptar">{{ isEditMode ? 'Actualizar' : 'Crear' }}</button>
       <button type="button" class="cancelar" (click)="cancelar()">Cancelar</button>

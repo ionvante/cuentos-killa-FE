@@ -16,6 +16,7 @@ export class CuentoFormComponent implements OnInit {
   imagePreview: string | null = null;
   selectedFile?: File;
   imagenBase64: string | null = null;
+  errorMensaje: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -42,20 +43,26 @@ export class CuentoFormComponent implements OnInit {
     if (idParam) {
       this.isEditMode = true;
       this.cuentoId = +idParam;
-      this.cuentoService.getCuentoById(this.cuentoId).subscribe(c => {
-        this.cuentoForm.patchValue({
-          titulo: c.titulo,
-          autor: c.autor,
-          descripcionCorta: c.descripcionCorta,
-          editorial: c.editorial,
-          tipoEdicion: c.tipoEdicion,
-          nroPaginas: c.nroPaginas,
-          fechaPublicacion: c.fechaPublicacion,
-          edadRecomendada: c.edadRecomendada,
-          stock: c.stock,
-          precio: c.precio
-        });
-        this.imagePreview = c.imagenUrl;
+      this.cuentoService.getCuentoById(this.cuentoId).subscribe({
+        next: c => {
+          this.cuentoForm.patchValue({
+            titulo: c.titulo,
+            autor: c.autor,
+            descripcionCorta: c.descripcionCorta,
+            editorial: c.editorial,
+            tipoEdicion: c.tipoEdicion,
+            nroPaginas: c.nroPaginas,
+            fechaPublicacion: c.fechaPublicacion,
+            edadRecomendada: c.edadRecomendada,
+            stock: c.stock,
+            precio: c.precio
+          });
+          this.imagePreview = c.imagenUrl;
+        },
+        error: err => {
+          console.error('Error al obtener el cuento:', err);
+          this.errorMensaje = 'No se pudo cargar la información del cuento';
+        }
       });
     }
   }
@@ -86,7 +93,13 @@ export class CuentoFormComponent implements OnInit {
       ? this.cuentoService.actualizarCuento(this.cuentoId, cuentoData)
       : this.cuentoService.crearCuento(cuentoData);
 
-    request$.subscribe(() => this.router.navigate(['/admin/cuentos']));
+    request$.subscribe({
+      next: () => this.router.navigate(['/admin/cuentos']),
+      error: err => {
+        console.error('Error al guardar el cuento:', err);
+        this.errorMensaje = 'Ocurrió un error al guardar el cuento';
+      }
+    });
   }
 
   cancelar(): void {

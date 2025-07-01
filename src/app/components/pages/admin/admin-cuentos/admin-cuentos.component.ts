@@ -13,6 +13,8 @@ export class AdminCuentosComponent implements OnInit {
   // @Input() cuento!: Cuento; // This Input seems unused here, more for a detail/card component
   cuentos: Cuento[] = [];
   cuentoParaDeshabilitar: Cuento | null = null;
+  isLoading = true;
+  errorMensaje: string | null = null;
   // cargandoImagen: boolean = true; // This logic is now in CuentoCardComponent
 
   constructor(
@@ -22,8 +24,16 @@ export class AdminCuentosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cuentoService.obtenerCuentos().subscribe(data => {
-      this.cuentos = data;
+    this.cuentoService.obtenerCuentos().subscribe({
+      next: data => {
+        this.cuentos = data;
+        this.isLoading = false;
+      },
+      error: err => {
+        console.error('Error al cargar cuentos:', err);
+        this.errorMensaje = 'No se pudieron cargar los cuentos';
+        this.isLoading = false;
+      }
     });
   }
 
@@ -62,11 +72,18 @@ export class AdminCuentosComponent implements OnInit {
   confirmarDeshabilitar(): void {
     if (!this.cuentoParaDeshabilitar) return;
     const id = this.cuentoParaDeshabilitar.id;
-    this.cuentoService.deshabilitarCuento(id, false).subscribe(() => {
-      this.cuentos = this.cuentos.map(c =>
-        c.id === id ? { ...c, habilitado: false } : c
-      );
-      this.cuentoParaDeshabilitar = null;
+    this.cuentoService.deshabilitarCuento(id, false).subscribe({
+      next: () => {
+        this.cuentos = this.cuentos.map(c =>
+          c.id === id ? { ...c, habilitado: false } : c
+        );
+        this.cuentoParaDeshabilitar = null;
+      },
+      error: err => {
+        console.error('Error al cambiar el estado del cuento:', err);
+        this.errorMensaje = 'No se pudo actualizar el estado del cuento';
+        this.cuentoParaDeshabilitar = null;
+      }
     });
   }
 
