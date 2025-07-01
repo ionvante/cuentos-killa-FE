@@ -118,3 +118,18 @@ input {
     background-color: #8c592e;
   }
 }
+
+@media (max-width: 600px) {
+  .login-container {
+    width: 90%;
+    padding: 1rem;
+  }
+
+  .login-container .formulario {
+    padding: 0;
+  }
+
+  input {
+    width: 100%;
+  }
+}

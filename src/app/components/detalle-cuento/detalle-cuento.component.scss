@@ -128,6 +128,30 @@
   }
 }
 
+@media (max-width: 600px) {
+  .detalle-info {
+    padding: 15px;
+  }
+
+  .detalle-info h1 {
+    font-size: 1.6rem;
+  }
+
+  .detalle-info h3 {
+    font-size: 1rem;
+  }
+
+  .autor-precio {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+}
+
 .detalle-imagen {
   position: relative;
   width: 70%;

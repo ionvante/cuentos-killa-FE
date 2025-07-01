@@ -84,6 +84,10 @@ export class NavbarComponent implements OnInit {
     this.menuAbierto = !this.menuAbierto;
   }
 
+  closeMenu() {
+    this.menuAbierto = false;
+  }
+
   togglePerfil() {
     this.mostrarPerfil = !this.mostrarPerfil;
   }
