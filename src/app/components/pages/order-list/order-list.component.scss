@@ -1,12 +1,15 @@
 @import './../../../../styles.scss'; // Ajusta la ruta si es necesario
 
+
 .order-list-container {
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  background-color: #FEF6E8;
+  color: #4E3B15;
 
   h2 {
-    color: var(--primary-color);
+    color: #38290F;
     text-align: center;
     margin-bottom: 2rem;
     font-size: 2.5rem;
@@ -71,10 +74,11 @@
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 1rem;
-    background: var(--background-light) url('/assets/libros_killa.png') no-repeat right bottom/80px;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-sm);
-    padding: 1.5rem;
+    background: #fff url('/assets/libros_killa.png') no-repeat right bottom/80px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1rem;
     align-items: center;
     border: 1px solid transparent;
     transition: box-shadow .3s, border-color .3s, transform .3s;
@@ -108,39 +112,24 @@
         }
       }
 
-      .ver-detalle {
-        position: absolute;
-        bottom: 1rem;
-        right: 1rem;
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #fff;
-
-        &:hover {
-          background-color: var(--accent-dark);
-          border-color: var(--accent-dark);
-        }
-      }
-    }
-
-    .payment-column {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-
-      select {
-        margin-bottom: 0.5rem;
+      .btn-detail {
+        background: #FFEAD9;
+        color: #A66E38;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
       }
 
-      .btn-primary {
-        background-color: var(--secondary-color);
-        border-color: var(--secondary-color);
+      .btn-pay {
+        background: #A66E38;
         color: #fff;
-
-        &:hover {
-          background-color: var(--secondary-dark);
-          border-color: var(--secondary-dark);
-        }
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 0.5rem;
       }
     }
   }
@@ -198,5 +187,17 @@
       h3 { font-size: 1.3rem; }
       p { font-size: 0.9rem; }
     }
+  }
+}
+
+@media (max-width: 599px) {
+  .order-card {
+    padding: 0.75rem;
+    width: 100%;
+  }
+
+  .btn-detail,
+  .btn-pay {
+    font-size: 14px;
   }
 }
