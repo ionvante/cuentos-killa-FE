@@ -1,19 +1,33 @@
 <div class="dashboard-content">
   <h2>Bienvenido, Admin!</h2>
 
-  <div class="loading-indicator" *ngIf="isLoading">
-    <div class="spinner"></div>
-  </div>
+  <img src="assets/libros_killa.png" alt="Banner" class="dashboard-banner" />
 
-  <div class="error-mensaje" *ngIf="errorMensaje">
+  <div *ngIf="errorMensaje" class="error-mensaje">
     <p>{{ errorMensaje }}</p>
-    <button (click)="cargarEstadisticas()">Reintentar</button>
+    <button (click)="reloadStats()">Reintentar</button>
   </div>
 
-  <div class="cards" *ngIf="!isLoading && !errorMensaje">
-    <div class="card"> <h4>CUENTOS PUBLICADOS</h4><p>{{ cuentosPublicados }}</p> </div>
-    <div class="card"> <h4>PEDIDOS EN PROCESO</h4><p>{{ pedidosEnProceso }}</p> </div>
-    <div class="card"> <h4>USUARIOS REGISTRADOS</h4><p>{{ usuariosRegistrados }}</p> </div>
-    <div class="card"> <h4>VENTAS TOTALES</h4><p>S/ {{ ventasTotales }}</p> </div>
-  </div>
+  <section class="stats-grid" aria-labelledby="stats-heading">
+    <h3 id="stats-heading" class="visually-hidden">Estadísticas</h3>
+
+    <ng-container *ngIf="isLoading">
+      <div class="stat-card skeleton" *ngFor="let s of [1,2,3]"></div>
+    </ng-container>
+
+    <ng-container *ngIf="!isLoading && !errorMensaje">
+      <div class="stat-card">
+        <span class="value">{{ cuentosPublicados }}</span>
+        <span class="label">Cuentos publicados</span>
+      </div>
+      <div class="stat-card">
+        <span class="value">{{ pedidosEnProceso }}</span>
+        <span class="label">Pedidos en proceso</span>
+      </div>
+      <div class="stat-card">
+        <span class="value">{{ usuariosRegistrados }}</span>
+        <span class="label">Usuarios registrados</span>
+      </div>
+    </ng-container>
+  </section>
 </div>
