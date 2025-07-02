@@ -1,0 +1,32 @@
+<button class="floating-cart" (click)="openCart()" aria-label="Ver carrito" [attr.aria-live]="'polite'">
+  🛒
+  <span class="badge" *ngIf="totalQuantity > 0">{{ totalQuantity }}</span>
+</button>
+
+<div class="backdrop" [class.show]="open" (click)="closeCart()"></div>
+<aside class="drawer" [class.open]="open" role="dialog" aria-modal="true">
+  <header class="drawer-header">
+    <h3 tabindex="0">Mi carrito</h3>
+    <button class="close-btn" (click)="closeCart()" aria-label="Cerrar">✖</button>
+  </header>
+  <div class="drawer-body">
+    <div class="item" *ngFor="let item of items">
+      <img [src]="item.cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{item.cuento.titulo}}" class="thumb" />
+      <div class="info">
+        <span class="title">{{ item.cuento.titulo }}</span>
+        <div class="qty">
+          <button (click)="changeQty(item, -1)" aria-label="Disminuir">–</button>
+          <span>{{ item.cantidad }}</span>
+          <button (click)="changeQty(item, 1)" aria-label="Aumentar">+</button>
+        </div>
+      </div>
+      <span class="price">S/ {{ (item.cuento.precio * item.cantidad) | number:'1.2-2' }}</span>
+      <button class="delete" (click)="remove(item.cuento.id)" aria-label="Eliminar {{item.cuento.titulo}}">🗑️</button>
+    </div>
+  </div>
+  <div class="subtotal">
+    <span>Subtotal:</span>
+    <span>S/ {{ subtotal | number:'1.2-2' }}</span>
+  </div>
+  <button class="checkout" (click)="goCheckout()">Finalizar compra</button>
+</aside>
