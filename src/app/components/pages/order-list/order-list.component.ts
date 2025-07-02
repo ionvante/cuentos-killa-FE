@@ -127,9 +127,7 @@ export class OrderListComponent implements OnInit {
     this.router.navigate(['/reseña', pedidoId]);
   }
 
-  trackByPedidoId(index: number, pedido: Pedido) {
-    return this.getPedidoId(pedido);
-  }
+  trackByPedidoId = (index: number, pedido: Pedido) => this.getPedidoId(pedido);
 
   goToStore(): void {
     this.router.navigate(['/cuentos']);
