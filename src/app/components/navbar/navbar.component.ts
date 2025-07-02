@@ -47,8 +47,8 @@ export class NavbarComponent implements OnInit {
 
   openLoginDialog() {
     this.dialog.open(LoginComponent, {
-      maxWidth: '50vw',
-      width: '80%',
+     // maxWidth: '50vw',
+     // width: '80%',
       panelClass: 'login-modal'
     });
   }
