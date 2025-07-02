@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CartService } from '../../../services/carrito.service';
 import { PedidoService } from '../../../services/pedido.service';
-import { AuthService} from '../../../services/auth.service';
+import { AuthService } from '../../../services/auth.service';
+import { ToastService } from '../../../services/toast.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { ToastService } from '../../../services/toast.service';
@@ -76,7 +77,12 @@ export class CheckoutComponent implements OnInit {
 
   registrarPedido(): void {
     if (this.checkoutForm.invalid) return;
-  
+
+    if (this.itemsCarrito.length === 0) {
+      this.toast.show('Tu carrito est\u00e1 vac\u00edo');
+      return;
+    }
+
     const formData = this.checkoutForm.value;
   
     const pedido: Pedido = {
