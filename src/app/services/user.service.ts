@@ -6,11 +6,11 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private apiUrl = `${environment.apiBaseUrl}/users`;
+  private apiUrl = `${environment.apiBaseUrl}/user`;
 
   constructor(private http: HttpClient) {}
 
   obtenerUsuarios(): Observable<User[]> {
-    return this.http.get<User[]>(this.apiUrl);
+    return this.http.get<User[]>(`${this.apiUrl}/usuarios`);
   }
 }
