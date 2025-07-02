@@ -35,7 +35,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AdminLayoutComponent,
     AdminDashboardComponent,
     AdminCuentosComponent,
     AdminPedidosComponent,
@@ -50,7 +49,8 @@ const routes: Routes = [
     // HttpClientModule,
     RouterModule,
     RouterModule.forChild(routes),
-    SharedModule
-]
+    SharedModule,
+    AdminLayoutComponent
+  ]
 })
 export class AdminModule {}
