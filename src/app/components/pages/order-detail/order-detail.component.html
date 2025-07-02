@@ -37,7 +37,7 @@
       <div *ngIf="pedido?.items && pedido.items.length > 0; else noItems">
         <div *ngFor="let item of pedido?.items" class="item-card">
           <div class="item-imagen">
-            <img [src]="item?.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item?.nombreCuento" class="img-fluid">
+            <img [appLazyLoad]="item?.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item?.nombreCuento" class="img-fluid">
           </div>
           <div class="item-detalles">
             <h4>{{ item.nombreCuento }}</h4>

@@ -1,7 +1,7 @@
 <div class="cuento-card">
   <span class="badge" *ngIf="isNuevo">Nuevo</span>
   <div class="image-wrapper">
-    <img [src]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" loading="lazy" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
+    <img [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
   </div>
   <h3>Titulo: {{ cuento.titulo }}</h3>
@@ -19,10 +19,10 @@
   </div>
   <div class="share-buttons">
     <button aria-label="Compartir por WhatsApp" (click)="compartir('whatsapp')">
-      <img src="assets/whatsapp.svg" alt="WhatsApp">
+      <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
     </button>
     <button aria-label="Compartir por Instagram" (click)="compartir('instagram')">
-      <img src="assets/instagram.svg" alt="Instagram">
+      <img appLazyLoad="assets/instagram.svg" alt="Instagram">
     </button>
   </div>
 </div>
