@@ -1,26 +1,19 @@
-<div class="admin-layout" [class.menu-open]="menuAbierto">
-  <header class="header">
-    <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo" />
-    <button class="btn-menu" aria-label="Menú" (click)="toggleMenu()">☰</button>
-  </header>
-
-  <div class="layout">
-    <aside class="sidebar" [class.open]="menuAbierto">
-      <nav role="navigation">
-        <ul class="admin-links">
-          <li><a routerLink="/admin/dashboard" routerLinkActive="active" >Dashboard</a></li>
-          <li><a routerLink="/admin/cuentos" routerLinkActive="active" >Cuentos</a></li>
-          <li><a routerLink="/admin/pedidos" routerLinkActive="active" >Pedidos</a></li>
-          <li><a routerLink="/admin/usuarios" routerLinkActive="active" >Usuarios</a></li>
-        </ul>
-        <hr />
-        <ul class="client-links">
-        </ul>
-      </nav>
-    </aside>
-    <div class="overlay" [class.show]="menuAbierto" (click)="toggleMenu(false)"></div>
-    <main class="content" role="main">
-      <router-outlet></router-outlet>
-    </main>
-  </div>
-</div>
+<nav class="navbar admin-navbar" role="navigation" aria-label="Menú de administración">
+  <a class="navbar-brand">
+    <img src="assets/killa.bmp" alt="Cuentos de Killa" class="logo-img" />
+    <span class="brand-text">Cuentos de Killa</span>
+  </a>
+  <button class="hamburger" aria-label="Menú" (click)="toggleMenu()">☰</button>
+  <ul class="nav-links" [class.open]="menuAbierto">
+    <li class="close-wrapper" *ngIf="menuAbierto">
+      <button class="close-menu" aria-label="Cerrar" (click)="toggleMenu(false)">✖</button>
+    </li>
+    <li><a routerLink="/admin/dashboard" routerLinkActive="active" (click)="toggleMenu(false)">Dashboard</a></li>
+    <li><a routerLink="/admin/cuentos" routerLinkActive="active" (click)="toggleMenu(false)">Cuentos</a></li>
+    <li><a routerLink="/admin/pedidos" routerLinkActive="active" (click)="toggleMenu(false)">Pedidos</a></li>
+    <li><a routerLink="/admin/usuarios" routerLinkActive="active" (click)="toggleMenu(false)">Usuarios</a></li>
+  </ul>
+</nav>
+<main class="admin-content" role="main">
+  <router-outlet></router-outlet>
+</main>
