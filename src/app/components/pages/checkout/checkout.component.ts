@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
+import { ToastService } from '../../../services/toast.service';
 import { Router } from '@angular/router';
 
 
@@ -51,7 +52,7 @@ export class CheckoutComponent implements OnInit {
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
       direccion: ['', Validators.required],
-      telefono: ['', Validators.required]
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]]
     });
 
       // 2. Obtiene usuario logueado
@@ -115,7 +116,7 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al registrar pedido:', err);
-        alert('Ocurrió un error al registrar el pedido');
+        this.toast.show('Ocurrió un error al registrar el pedido');
       }
     });
   }

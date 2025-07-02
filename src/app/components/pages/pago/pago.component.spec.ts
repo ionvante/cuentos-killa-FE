@@ -3,6 +3,7 @@ import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { CommonModule } from '@angular/common'; // PagoComponent is standalone, but good for TestBed consistency if it weren't
 import { RouterTestingModule } from '@angular/router/testing';
+import { environment } from '../../../../../environments/environment';
 
 import { PagoComponent } from './pago.component';
 import { PagoService } from '../../../../services/pago.service';
@@ -179,7 +180,7 @@ describe('pagarConMercadoPagoConfirmado', () => {
 
       component.pagarConMercadoPagoConfirmado();
       // @ts-ignore
-      expect(window.location.href).toBe('http://localhost:8080/api/mercado-pago/pagar/5');
+      expect(window.location.href).toBe(`${environment.apiBaseUrl}/mercado-pago/pagar/5`);
     });
   });
   
