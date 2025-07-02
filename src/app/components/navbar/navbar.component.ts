@@ -3,6 +3,7 @@ import { LoginComponent } from '../pages/login/login.component';
 import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
 import { Router, RouterModule } from '@angular/router';
+import { DrawerService } from '../../services/drawer.service';
 
 import { CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
@@ -30,13 +31,13 @@ export class NavbarComponent implements OnInit {
   carritoAbierto = false; // 🔥
   cantidadItems: number = 0;
   user: User | null = null;
-  menuAbierto = false;
   mostrarPerfil = false;
   constructor(
     private dialog: MatDialog,
     public CartService: CartService,
     public authService: AuthService,
-    private router: Router
+    private router: Router,
+    public drawer: DrawerService
   ) {
 
     this.actualizarCantidad();
@@ -81,14 +82,6 @@ export class NavbarComponent implements OnInit {
   }
   cerrarCarrito() {
     this.carritoAbierto = false;
-  }
-
-  toggleMenu() {
-    this.menuAbierto = !this.menuAbierto;
-  }
-
-  closeMenu() {
-    this.menuAbierto = false;
   }
 
   togglePerfil() {
