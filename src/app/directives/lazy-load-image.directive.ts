@@ -14,7 +14,7 @@ export class LazyLoadImageDirective implements AfterViewInit, OnDestroy {
     const img = this.el.nativeElement;
     img.setAttribute('loading', 'lazy');
 
-    if ('IntersectionObserver' in window) {
+    if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
       this.observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
