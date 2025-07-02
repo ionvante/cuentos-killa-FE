@@ -6,6 +6,7 @@ import { PedidoService } from '../../../services/pedido.service';
 import { AuthService} from '../../../services/auth.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
+import { ToastService } from '../../../services/toast.service';
 import { Router } from '@angular/router';
 
 
@@ -30,6 +31,7 @@ export class CheckoutComponent implements OnInit {
     private pedidoService: PedidoService,
     private authService: AuthService,
     private router: Router,
+    private toast: ToastService,
 
   ) {
     this.user = this.authService.getUser();
@@ -108,7 +110,7 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al registrar pedido:', err);
-        alert('Ocurrió un error al registrar el pedido');
+        this.toast.show('Ocurrió un error al registrar el pedido');
       }
     });
   }

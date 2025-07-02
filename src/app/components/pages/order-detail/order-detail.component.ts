@@ -4,6 +4,7 @@ import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-order-detail',
@@ -20,7 +21,8 @@ export class OrderDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private pedidoService: PedidoService
+    private pedidoService: PedidoService,
+    private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +60,7 @@ export class OrderDetailComponent implements OnInit {
     if (this.pedido) {
       // Ejemplo: Redirigir a una ruta de pago simulada o real
       // this.router.navigate(['/pago', this.pedido.id]);
-      alert('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
+      this.toast.show('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
     }
   }
 
