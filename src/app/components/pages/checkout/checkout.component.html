@@ -19,6 +19,9 @@
         Teléfono:
         <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
       </label>
+      <div class="error-mensaje" *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.errors?.['pattern']">
+        El teléfono debe tener 9 dígitos
+      </div>
   
       <div class="resumen-carrito">
         <h3>Resumen del carrito</h3>
