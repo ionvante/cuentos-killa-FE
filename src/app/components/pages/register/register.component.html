@@ -1,0 +1,35 @@
+<div class="login-container">
+  <div class="formulario">
+    <h2>Crear cuenta</h2>
+    <form [formGroup]="registerForm" (ngSubmit)="registrar()">
+      <label for="nombre">Nombre</label>
+      <input id="nombre" formControlName="nombre" type="text" required />
+
+      <label for="apellido">Apellido</label>
+      <input id="apellido" formControlName="apellido" type="text" required />
+
+      <label for="email">Correo electr\u00f3nico</label>
+      <input id="email" formControlName="email" type="email" required />
+
+      <label for="telefono">Tel\u00e9fono</label>
+      <input id="telefono" formControlName="telefono" type="text" required />
+
+      <label for="password">Contrase\u00f1a</label>
+      <input id="password" formControlName="password" type="password" required />
+
+      <label for="confirmarPassword">Confirmar contrase\u00f1a</label>
+      <input id="confirmarPassword" formControlName="confirmarPassword" type="password" required />
+
+      <div class="error" *ngIf="error">{{ error }}</div>
+
+      <button type="submit" class="btn-primary">Registrarse</button>
+    </form>
+    <p class="register-link">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Inicia sesión</a>
+    </p>
+  </div>
+  <div class="ilustracion">
+    <img src="/assets/libros_killa.png" alt="Ilustración lectura" />
+  </div>
+</div>
