@@ -10,24 +10,23 @@
 }
 
 .login-container {
-  flex-wrap: wrap;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  max-width: 900px; // antes 900px
-  width: 70vw;
-  margin: 3rem auto;
-  padding: 2rem 3rem;
-  border-radius: 24px;
+  max-width: 400px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 16px;
   background-color: #fffaf5;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   animation: fadeSlideIn 0.5s ease-out;
 
   .formulario {
     flex: 1;
-    min-width: 320px;
+    width: 100%;
     max-width: 500px;
-    padding: 1rem 2rem;
+    padding: 1rem 0;
     overflow-x: hidden;
 
     h2 {
@@ -50,9 +49,6 @@
     //   border-radius: 8px;
     //   border: 1px solid #ccc;
     // }
-    .ilustracion {
-      display: none; // por defecto oculto
-    }
     .btn-primary {
       margin-top: 1.5rem;
       width: 100%;
@@ -71,10 +67,20 @@
     }
   }
 
+  .ilustracion {
+    display: none;
+    margin-top: 1rem;
+  }
+
   
 
   // Mostrar la imagen solo en pantallas grandes
   @media (min-width: 700px) {
+    flex-direction: row;
+    max-width: 900px;
+    width: 70vw;
+    padding: 2rem 3rem;
+
     .ilustracion {
       display: flex;
       align-items: center;
@@ -92,8 +98,7 @@
   }
 }
 input {
-  width: 30ch; // visible para aprox. 30 caracteres
-  // max-width: 100%;
+  width: 100%;
   padding: 14px;
   font-size: 16px;
   border-radius: 10px;
@@ -121,12 +126,10 @@ input {
 
 @media (max-width: 600px) {
   .login-container {
-    width: 90%;
+    margin: 1rem auto;
     padding: 1rem;
-  }
-
-  .login-container .formulario {
-    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   input {
