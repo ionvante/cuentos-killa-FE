@@ -7,6 +7,7 @@ import { OrderDetailComponent } from './order-detail.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { CommonModule } from '@angular/common'; // For pipes
+import { ToastService } from '../../../services/toast.service';
 
 describe('OrderDetailComponent', () => {
   let component: OrderDetailComponent;
@@ -14,6 +15,7 @@ describe('OrderDetailComponent', () => {
   let mockPedidoService: jasmine.SpyObj<PedidoService>;
   let mockRouter: jasmine.SpyObj<Router>;
   let mockActivatedRoute: any; // Using 'any' for simplicity in setting snapshot
+  let toastSpy: jasmine.SpyObj<ToastService>;
 
   const mockPedidoId = 1;
   const mockPedidoData: Pedido = {
@@ -41,6 +43,7 @@ describe('OrderDetailComponent', () => {
         paramMap: convertToParamMap({ id: mockPedidoId.toString() })
       }
     };
+    toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
       declarations: [OrderDetailComponent],
@@ -51,7 +54,8 @@ describe('OrderDetailComponent', () => {
       providers: [
         { provide: PedidoService, useValue: mockPedidoService },
         { provide: Router, useValue: mockRouter },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: ToastService, useValue: toastSpy }
       ]
     }).compileComponents();
 
@@ -109,13 +113,12 @@ describe('OrderDetailComponent', () => {
   });
 
   describe('pagarAhora', () => {
-    it('should log a message and show an alert', () => {
+    it('should log a message and show a toast', () => {
       spyOn(console, 'log');
-      spyOn(window, 'alert');
       component.pedido = mockPedidoData; // Ensure pedido is set
       component.pagarAhora();
       expect(console.log).toHaveBeenCalledWith('Intento de pago para el pedido:', mockPedidoData.id);
-      expect(window.alert).toHaveBeenCalledWith('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
+      expect(toastSpy.show).toHaveBeenCalledWith('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
     });
   });
   
