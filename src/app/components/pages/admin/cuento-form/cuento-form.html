@@ -47,7 +47,7 @@
         Imagen
         <input type="file" (change)="onFileChange($event)" />
       </label>
-      <img *ngIf="imagePreview" [src]="imagePreview" class="preview" />
+      <img *ngIf="imagePreview" [src]="imagePreview" class="preview" alt="Vista previa de la imagen" />
     </div>
 
     <div class="error-mensaje" *ngIf="errorMensaje">{{ errorMensaje }}</div>

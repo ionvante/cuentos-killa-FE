@@ -42,12 +42,12 @@
 <aside class="cart-drawer" [class.open]="carritoAbierto">
   <div class="cart-header">
     <h3>Mi Carrito</h3>
-    <button class="close-btn" (click)="cerrarCarrito()">✖</button>
+    <button class="close-btn" (click)="cerrarCarrito()" aria-label="Cerrar carrito">✖</button>
   </div>
   <div class="cart-body">
     <div class="carrito-item" *ngFor="let item of itemsCarrito">
       <i class="fa fa-book"></i>
-      <button class="delete-btn" (click)="CartService.removeItem(item.cuento.id)">❌</button>
+      <button class="delete-btn" (click)="CartService.removeItem(item.cuento.id)" aria-label="Eliminar del carrito">❌</button>
       <span class="titulo-cuento">{{ item.cuento.titulo }}</span>
       <span *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>
       <span class="precio-item">
