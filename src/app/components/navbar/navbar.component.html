@@ -8,9 +8,9 @@
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
     <li><a routerLink="/cuentos" routerLinkActive="active">Cuentos</a></li>
     <li>
-      <a class="carrito-enlace" (click)="abrirCarrito()" style="cursor: pointer;" >
+      <a id="cart-icon" class="carrito-enlace" (click)="abrirCarrito()" style="cursor: pointer;" >
         🛒
-        <span class="cart-badge" *ngIf="cantidadTotalItems > 0">{{ cantidadTotalItems }}</span>
+        <span class="cart-badge" *ngIf="cantidadTotalItems > 0" [attr.aria-label]="'Carrito, ' + cantidadTotalItems + ' productos'">{{ cantidadTotalItems }}</span>
         <span class="cart-label">Carrito</span>
       </a>
     </li>
@@ -33,6 +33,7 @@
       </ul>
     </li>
   </ul>
+  <div id="cart-announce" class="visually-hidden" aria-live="polite"></div>
 </nav>
 
 <!-- Drawer del Carrito -->
