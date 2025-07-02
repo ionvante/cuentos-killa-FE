@@ -49,7 +49,7 @@ export class CheckoutComponent implements OnInit {
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
       direccion: ['', Validators.required],
-      telefono: ['', Validators.required]
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]]
     });
 
       // 2. Obtiene usuario logueado
