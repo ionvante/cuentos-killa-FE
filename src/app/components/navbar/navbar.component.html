@@ -3,13 +3,10 @@
     <img appLazyLoad="assets/killa.bmp" alt="Cuentos de Killa" class="logo-img" />
     <span class="brand-text">Cuentos de Killa</span>
   </a>
-  <button class="hamburger" aria-label="Menú" (click)="toggleMenu()">☰</button>
-  <ul class="nav-links" [class.open]="menuAbierto">
-    <li class="close-wrapper" *ngIf="menuAbierto">
-      <button class="close-menu" aria-label="Cerrar" (click)="closeMenu()">✖</button>
-    </li>
-    <li><a routerLink="/home" routerLinkActive="active" (click)="closeMenu()">Inicio</a></li>
-    <li><a routerLink="/cuentos" routerLinkActive="active" (click)="closeMenu()">Cuentos</a></li>
+  <button class="hamburger" aria-label="Menú" (click)="drawer.toggle()">☰</button>
+  <ul class="nav-links">
+    <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
+    <li><a routerLink="/cuentos" routerLinkActive="active">Cuentos</a></li>
     <li>
       <a class="carrito-enlace" (click)="abrirCarrito()" style="cursor: pointer;" >
         🛒
@@ -18,10 +15,10 @@
       </a>
     </li>
     <li *ngIf="user?.role === 'ADMIN'">
-      <a routerLink="/admin/dashboard" routerLinkActive="active" (click)="closeMenu()">Admin</a>
+      <a routerLink="/admin/dashboard" routerLinkActive="active">Admin</a>
     </li>
     <li *ngIf="user">
-      <a routerLink="/pedidos" routerLinkActive="active" (click)="closeMenu()">Pedidos</a>
+      <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
     </li>
     <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Login</button>
@@ -29,9 +26,9 @@
     <li *ngIf="user?.nombre" class="avatar-wrapper" (click)="togglePerfil()">
       <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>
       <ul class="perfil-menu" *ngIf="mostrarPerfil">
-        <li><a routerLink="/perfil" (click)="closeMenu()">Mi perfil</a></li>
-        <li><a routerLink="/direcciones" (click)="closeMenu()">Direcciones</a></li>
-        <li><a routerLink="/pagos" (click)="closeMenu()">Historial de pagos</a></li>
+        <li><a routerLink="/perfil">Mi perfil</a></li>
+        <li><a routerLink="/direcciones">Direcciones</a></li>
+        <li><a routerLink="/pagos">Historial de pagos</a></li>
         <li><button (click)="logout()">Cerrar sesión</button></li>
       </ul>
     </li>
@@ -63,4 +60,3 @@
 </aside>
 <!-- Overlay del carrito -->
 <div class="cart-overlay" [class.open]="carritoAbierto" (click)="cerrarCarrito()"></div>
-<div class="menu-overlay" [class.show]="menuAbierto" (click)="closeMenu()"></div>
