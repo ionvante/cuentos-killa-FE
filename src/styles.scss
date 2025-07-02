@@ -34,3 +34,7 @@ body {
 .login-modal .mat-dialog-container {
   z-index: 1002;
 }
+
+.blur {
+  filter: blur(8px);
+}
