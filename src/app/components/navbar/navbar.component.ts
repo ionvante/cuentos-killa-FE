@@ -9,6 +9,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Cuento } from '../../model/cuento.model';
 import { User } from '../../model/user.model';
+import { LazyLoadImageDirective } from '../directives/lazy-load-image.directive';
 
 
 
@@ -21,6 +22,7 @@ import { User } from '../../model/user.model';
   imports: [
     CommonModule, // 🔥 necesario para *ngIf, *ngFor
     RouterModule, // habilita routerLink en la plantilla
+    LazyLoadImageDirective,
     // otros imports que tengas como MatDialogModule, etc.
   ]
 })

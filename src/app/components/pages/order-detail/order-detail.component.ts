@@ -3,11 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
+import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule], // Add CommonModule here
+  imports: [CommonModule, LazyLoadImageDirective], // Add CommonModule here
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })
