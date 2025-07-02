@@ -1,4 +1,4 @@
-<button class="floating-cart" (click)="openCart()" aria-label="Ver carrito" [attr.aria-live]="'polite'">
+<button class="floating-cart" *ngIf="!(drawer.isOpen$ | async)" (click)="openCart()" aria-label="Ver carrito" [attr.aria-live]="'polite'">
   🛒
   <span class="badge" *ngIf="totalQuantity > 0">{{ totalQuantity }}</span>
 </button>

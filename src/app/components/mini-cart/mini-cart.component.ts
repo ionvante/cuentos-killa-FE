@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/carrito.service';
 import { Cuento } from '../../model/cuento.model';
+import { DrawerService } from '../../services/drawer.service';
 
 @Component({
   selector: 'app-mini-cart',
@@ -15,7 +16,11 @@ export class MiniCartComponent implements OnInit {
   open = false;
   items: { cuento: Cuento; cantidad: number }[] = [];
 
-  constructor(private cart: CartService, private router: Router) {}
+  constructor(
+    private cart: CartService,
+    private router: Router,
+    public drawer: DrawerService
+  ) {}
 
   ngOnInit(): void {
     this.cart.items$.subscribe(items => (this.items = items));

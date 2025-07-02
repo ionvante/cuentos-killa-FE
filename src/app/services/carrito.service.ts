@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Cuento } from '../model/cuento.model';
+import { ToastService } from './toast.service';
 
 
 @Injectable({
@@ -13,7 +14,7 @@ export class CartService {
   items$ = this.itemsSubject.asObservable();
 
 
-  constructor() {
+  constructor(private toast: ToastService) {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       const carritoGuardado = localStorage.getItem('carrito');
       if (carritoGuardado) {
@@ -35,6 +36,7 @@ export class CartService {
       this.items.push({ cuento, cantidad: 1 });
     }
     this.actualizarCarrito();
+    this.toast.show(`"${cuento.titulo}" agregado al carrito`);
   }
 
   actualizarCarrito(): void {
