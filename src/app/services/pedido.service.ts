@@ -18,7 +18,9 @@ export class PedidoService {
 
   uploadVoucher(pedidoId: number, voucherFile: File): Observable<any> {
     const formData = new FormData();
-    formData.append('voucherFile', voucherFile);
+    // Backend expects these specific field names
+    formData.append('file', voucherFile);
+    formData.append('idpedido', pedidoId.toString());
     return this.http.post(`${this.apiUrl}/${pedidoId}/voucher`, formData);
   }
 
