@@ -30,4 +30,16 @@
       </div>
     </ng-container>
   </section>
+
+  <section class="users-section" *ngIf="!isLoading && !errorMensaje">
+    <h3>Usuarios registrados</h3>
+    <div class="users-grid">
+      <div class="user-card" *ngFor="let user of usuarios">
+        <p class="user-name">{{ user.nombre }} {{ user.apellido }}</p>
+        <p class="user-email">{{ user.email }}</p>
+        <p class="user-phone">{{ user.telefono }}</p>
+        <p class="user-role">{{ user.role }}</p>
+      </div>
+    </div>
+  </section>
 </div>
