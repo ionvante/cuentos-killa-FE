@@ -49,6 +49,7 @@
   flex-direction: column;
   padding: 1rem;
   flex: 1;
+  overflow-y: auto;
 
   a {
     display: flex;
@@ -62,6 +63,16 @@
     svg {
       flex-shrink: 0;
     }
+  }
+
+  .logout-btn {
+    margin-top: auto;
+    background: none;
+    border: 1px solid #fff;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
   }
 }
 

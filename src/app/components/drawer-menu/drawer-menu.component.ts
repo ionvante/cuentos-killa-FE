@@ -32,4 +32,9 @@ export class DrawerMenuComponent {
   get itemCount(): number {
     return this.cart.obtenerItems().reduce((total: number, item: { cuento: any; cantidad: number }) => total + item.cantidad, 0);
   }
+
+  logout() {
+    this.auth.cerrarSesion();
+    this.close();
+  }
 }
