@@ -3,6 +3,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../services/pedido.service';
 import { PagoService } from '../../../services/pago.service'; // Added PagoService import
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-pago',
@@ -92,7 +93,7 @@ export class PagoComponent implements OnInit {
 
 
   pagarConMercadoPagoConfirmado(): void {
-    window.location.href = `http://localhost:8080/api/mercado-pago/pagar/${this.pedidoId}`;
+    window.location.href = `${environment.apiBaseUrl}/mercado-pago/pagar/${this.pedidoId}`;
   }
 
   openMercadoPagoModal(): void {
