@@ -21,6 +21,10 @@ export class AuthService {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
   }
 
+  register(data: any) {
+    return this.http.post<any>(`${this.apiUrl}/register`, data);
+  }
+
   guardarToken(token: string) {
     localStorage.setItem(this.tokenKey, token);
 
