@@ -7,7 +7,6 @@ import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
-import { ToastService } from '../../../services/toast.service';
 import { Router } from '@angular/router';
 
 
