@@ -48,6 +48,7 @@ describe('AdminDashboardComponent', () => {
     expect(component.cuentosPublicados).toBe(2);
     expect(component.pedidosEnProceso).toBe(1);
     expect(component.usuariosRegistrados).toBe(3);
+    expect(component.usuarios.length).toBe(3);
     expect(component.isLoading).toBeFalse();
     expect(component.errorMensaje).toBeNull();
   });
@@ -59,7 +60,7 @@ describe('AdminDashboardComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component.errorMensaje).toBe('No se pudieron cargar las estadísticas');
+    expect(component.errorMensaje).toBe('Error al cargar estadísticas. Reintentar');
     expect(component.isLoading).toBeFalse();
   });
 });
