@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DrawerService } from '../../services/drawer.service';
 import { CartService } from '../../services/carrito.service';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../model/user.model';
 
 @Component({
   selector: 'app-drawer-menu',
@@ -12,7 +14,16 @@ import { CartService } from '../../services/carrito.service';
   styleUrls: ['./drawer-menu.component.scss']
 })
 export class DrawerMenuComponent {
-  constructor(public drawer: DrawerService, public cart: CartService) {}
+  user: User | null = null;
+
+  constructor(
+    public drawer: DrawerService,
+    public cart: CartService,
+    private auth: AuthService
+  ) {
+    this.user = this.auth.getUser();
+    this.auth.usuarioLogueado$.subscribe(u => (this.user = u));
+  }
 
   close() {
     this.drawer.close();

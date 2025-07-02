@@ -26,8 +26,15 @@
         <path d="M3 5H21V9H3V5Z" stroke="#FFEEAD" stroke-width="2"/>
       </svg>
       Pedidos
+    </a> 
+    <a routerLink="/login" (click)="close()" *ngIf="!user">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 17L15 12L10 7" stroke="#FFEEAD" stroke-width="2"/>
+        <path d="M4 12H15" stroke="#FFEEAD" stroke-width="2"/>
+      </svg>
+      Login
     </a>
-    <a routerLink="/admin/dashboard" (click)="close()">
+    <a routerLink="/admin/dashboard" (click)="close()" *ngIf="user?.role === 'ADMIN'">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M4 4H10V10H4V4Z" stroke="#FFEEAD" stroke-width="2"/>
         <path d="M14 4H20V10H14V4Z" stroke="#FFEEAD" stroke-width="2"/>
