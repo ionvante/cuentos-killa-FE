@@ -254,8 +254,8 @@
 }
 
 .cart-badge {
-  background-color: #ffeb3b; /* Amarillo suave */
-  color: #5d4037; /* Café oscuro */
+  background-color: #FFAD60;
+  color: #333;
   font-size: 12px;
   font-weight: bold;
   padding: 2px 6px;
@@ -374,4 +374,14 @@
   font-weight: 600;
   color: #fff;
   margin-right: 1rem;
+}
+
+@keyframes cart-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-6px); }
+  60% { transform: translateY(-3px); }
+}
+
+.carrito-enlace.bounce {
+  animation: cart-bounce 0.6s;
 }

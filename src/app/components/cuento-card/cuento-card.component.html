@@ -1,7 +1,7 @@
 <div class="cuento-card">
   <span class="badge" *ngIf="isNuevo">Nuevo</span>
   <div class="image-wrapper">
-    <img [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
+    <img #cardImg [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
   </div>
   <h3>Titulo: {{ cuento.titulo }}</h3>
@@ -11,7 +11,7 @@
 
   <div class="acciones">
     <button (click)="verDetalle()">Ver detalle</button>
-    <button *ngIf="!isAdmin && cuento.habilitado" (click)="agregarAlCarrito()">Agregar al carrito</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Agregar al carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento()" class="admin-button editar">Editar</button>
       <button (click)="deshabilitarCuento()" class="admin-button deshabilitar">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
