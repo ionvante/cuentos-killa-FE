@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LayoutComponent } from './components/layout/layout.component'; // importa tu layout
 import { CheckoutComponent } from './components/pages/checkout/checkout.component';
 import { LoginComponent } from './components/pages/login/login.component';
+import { RegisterComponent } from './components/pages/register/register.component';
 import { authGuard } from './guards/auth.guard';
 import { PagoComponent } from './components/pages/pago/pago.component';
 import { VoucherComponent } from './components/pages/voucher/voucher.component';
@@ -33,6 +34,7 @@ export const routes: Routes = [
       { path: 'pago/:id', component: PagoComponent },
       { path: 'voucher/:id', component: VoucherComponent }, // si vas a subir comprobante
       { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
       { path: 'pedidos', component: OrderListComponent, canActivate: [authGuard] },
       { path: 'pedidos/:id', component: OrderDetailComponent, canActivate: [authGuard] },
       {
