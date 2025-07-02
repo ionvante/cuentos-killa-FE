@@ -5,10 +5,11 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService} from '../../../services/auth.service';
 import { MatDialogRef } from '@angular/material/dialog';
+import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective],
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
