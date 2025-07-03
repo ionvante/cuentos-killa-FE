@@ -5,5 +5,5 @@
 </main>
 
 <app-drawer-menu></app-drawer-menu>
-<app-mini-cart></app-mini-cart>
+<app-mini-cart *ngIf="!['/checkout','/pedidos','/perfil'].includes(router.url)"></app-mini-cart>
 

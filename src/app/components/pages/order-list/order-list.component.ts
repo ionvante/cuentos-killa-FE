@@ -33,6 +33,15 @@ export class OrderListComponent implements OnInit {
   estadosUnicos: string[] = [];
   currentPage: number = 1;
   itemsPerPage: number = 5;
+  itemsExpanded: { [id: number]: boolean } = {};
+
+  estadoMap: Record<string, { texto: string; emoji: string }> = {
+    'PAGO_PENDIENTE': { texto: 'Pago pendiente', emoji: '🔶' },
+    'PAGO_ENVIADO': { texto: 'Pago enviado', emoji: '📤' },
+    'PAGO_VERIFICADO': { texto: 'Pago verificado', emoji: '✅' },
+    'ENVIADO': { texto: 'Enviado', emoji: '📦' },
+    'ENTREGADO': { texto: 'Entregado', emoji: '📬' },
+  };
 
   constructor(
     private pedidoService: PedidoService,
@@ -77,6 +86,19 @@ export class OrderListComponent implements OnInit {
 
   irAPago(pedidoId: number): void {
     this.router.navigate(['/pago', pedidoId]);
+  }
+
+  getEstadoVisible(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? `${info.emoji} ${info.texto}` : estado;
+  }
+
+  getEstadoClass(estado: string): string {
+    return 'status-' + estado.toLowerCase().replace('_', '-');
+  }
+
+  toggleItems(id: number): void {
+    this.itemsExpanded[id] = !this.itemsExpanded[id];
   }
 
   getPedidoId(p: Pedido): number {
