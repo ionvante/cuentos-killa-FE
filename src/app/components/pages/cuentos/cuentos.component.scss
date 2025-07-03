@@ -4,7 +4,7 @@
   margin: 0 auto;
 }
 
-.filter-bar {
+  .filter-bar {
   background: #ffeead;
   padding: 1rem;
   border-radius: 8px;
@@ -30,34 +30,56 @@
     pointer-events: none;
   }
 
-  input,
-  select {
-    padding: 0.75rem 0.75rem 0.75rem 2rem;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: box-shadow 0.3s ease, transform 0.3s ease;
-  }
+    input,
+    select {
+      padding: 0.75rem 0.75rem 0.75rem 2rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: box-shadow 0.3s ease, width 0.3s ease;
+    }
 
-  input:focus {
-    transform: scaleX(1.05);
-    box-shadow: 0 0 0 2px rgba(150, 206, 180, 0.4);
-  }
+    input {
+      width: 200px;
+    }
+
+    input:focus {
+      width: 300px;
+      box-shadow: 0 0 0 3px rgba(150, 206, 180, 0.4);
+    }
 
   select option:checked {
     background: #ffad60;
   }
 
-  .btn-filter,
-  .btn-clear {
-    background: transparent;
-    border: 1px solid #96ceb4;
-    color: #96ceb4;
-    border-radius: 6px;
-    padding: 0.75rem 1.25rem;
-    cursor: pointer;
-    transition: background 0.2s ease;
-  }
+    .btn-filter,
+    .btn-clear {
+      background: transparent;
+      border-radius: 6px;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn-filter {
+      border: 1px solid #96ceb4;
+      color: #96ceb4;
+    }
+
+    .btn-filter:hover {
+      background: #96ceb4;
+      color: #fff;
+    }
+
+    .btn-clear {
+      border: 1px solid rgba(166, 110, 56, 0.4);
+      color: rgba(166, 110, 56, 0.6);
+    }
+
+    .btn-clear:hover {
+      border-color: #a66e38;
+      color: #a66e38;
+    }
 
   .btn-filter:hover {
     background: #96ceb4;
@@ -82,12 +104,21 @@
 
 .no-results {
   margin-top: 1rem;
-  text-align: center;
-  font-style: italic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ffad60;
+  color: #a66e38;
+  border-radius: 6px;
+  padding: 0.75rem;
 }
 
 @media (max-width: 600px) {
   .grid-cuentos {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+  .filter-bar input {
+    width: 100%;
   }
 }

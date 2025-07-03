@@ -1,17 +1,23 @@
 <div class="cuento-card">
-  <span class="badge" *ngIf="badgeLabel">{{ badgeLabel }}</span>
+  <span class="badge" *ngIf="badgeLabel" [ngClass]="{'nuevo': badgeLabel==='Nuevo', 'top': badgeLabel.toLowerCase().includes('top')}">{{ badgeLabel }}</span>
   <div class="image-wrapper">
     <img #cardImg class="hover-scale" [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
+    <span class="cat-badge" *ngIf="cuento.categoria">{{ cuento.categoria }}</span>
   </div>
-  <h3>Titulo: {{ cuento.titulo }}</h3>
-  <p>Autor: {{ cuento.autor }}</p>
-  <p>Precio: S/ {{ cuento.precio | number:'1.2-2' }}</p>
-  <p>Agregado el {{ cuento.fechaIngreso | date:'MM-yyyy' }}</p>
+  <div class="cuento-content">
+    <h3 class="cuento-title">{{ cuento.titulo }}</h3>
+    <div class="rating" *ngIf="cuento.rating">
+      <span>{{ getRatingStars(cuento.rating) }}</span>
+    </div>
+    <p class="autor">Autor: {{ cuento.autor }}</p>
+    <p class="excerpt">{{ cuento.descripcionCorta | slice:0:50 }}...</p>
+    <div class="precio"><span class="cuento-price">S/ {{ cuento.precio | number:'1.2-2' }}</span></div>
+  </div>
 
   <div class="acciones">
-    <button class="hover-scale" (click)="verDetalle()">Ver detalle</button>
-    <button *ngIf="!isAdmin && cuento.habilitado" class="hover-scale" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Agregar al carrito</button>
+    <button class="ghost-btn" (click)="verDetalle()">Ver detalle</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" class="solid-btn" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Añadir carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento()" class="admin-button editar hover-scale">Editar</button>
       <button (click)="deshabilitarCuento()" class="admin-button deshabilitar hover-scale">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
