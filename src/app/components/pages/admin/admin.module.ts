@@ -11,6 +11,10 @@ import { AdminPedidosComponent } from './admin-pedidos/admin-pedidos.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
 import { CuentoFormComponent } from './cuento-form/cuento-form.component';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { ConfigCategoriesComponent } from './admin-config/config-categories.component';
+import { ConfigCategoryFormComponent } from './admin-config/config-category-form.component';
+import { ConfigItemsComponent } from './admin-config/config-items.component';
+import { ConfigItemFormComponent } from './admin-config/config-item-form.component';
 import { SharedModule } from "../../shared.module";
 
 // import { SharedModule } from '../../shared.module'; 
@@ -28,6 +32,12 @@ const routes: Routes = [
       { path: 'cuentos/editar/:id', component: CuentoFormComponent },
       { path: 'pedidos', component: AdminPedidosComponent },
       { path: 'usuarios', component: AdminUsuariosComponent },
+      { path: 'config', component: ConfigCategoriesComponent },
+      { path: 'config/nueva', component: ConfigCategoryFormComponent },
+      { path: 'config/editar/:id', component: ConfigCategoryFormComponent },
+      { path: 'config/:id/items', component: ConfigItemsComponent },
+      { path: 'config/:id/items/nuevo', component: ConfigItemFormComponent },
+      { path: 'config/:id/items/editar/:itemId', component: ConfigItemFormComponent },
     ]
   }
 ];
@@ -38,7 +48,11 @@ const routes: Routes = [
     AdminPedidosComponent,
     AdminUsuariosComponent,
     CuentoFormComponent,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    ConfigCategoriesComponent,
+    ConfigCategoryFormComponent,
+    ConfigItemsComponent,
+    ConfigItemFormComponent
   ],
   imports: [
     CommonModule,

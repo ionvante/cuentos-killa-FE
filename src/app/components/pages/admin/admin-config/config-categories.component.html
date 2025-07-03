@@ -1,0 +1,30 @@
+<div class="config-container">
+  <h2>Categorías</h2>
+  <button class="btn btn-primary" (click)="nueva()">Nueva</button>
+
+  <div *ngIf="isLoading" class="loading">Cargando...</div>
+  <div *ngIf="errorMensaje" class="error">{{ errorMensaje }}</div>
+
+  <table *ngIf="!isLoading && !errorMensaje">
+    <thead>
+      <tr>
+        <th>Código</th>
+        <th>Nombre</th>
+        <th>Creado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let c of categories">
+        <td>{{ c.code }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.createdAt | date:'short' }}</td>
+        <td class="acciones">
+          <button (click)="editar(c.id1!)">Editar</button>
+          <button (click)="eliminar(c.id1!)">Eliminar</button>
+          <button (click)="verItems(c.id1!)">Ver ítems</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
