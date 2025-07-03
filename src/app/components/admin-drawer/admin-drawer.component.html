@@ -1,7 +1,7 @@
 <aside class="admin-drawer" [class.open]="isOpen">
   <nav>
     <a *ngFor="let item of menuItems" (click)="navigate(item)">
-      <svg [innerHTML]="item.icon"></svg>
+      <span class="icon" [innerHTML]="sanitize(item.icon)"></span>
       <span>{{ item.label }}</span>
     </a>
   </nav>
