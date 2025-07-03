@@ -1,0 +1,35 @@
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.stat-card {
+  @include card-style;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-unit / 2;
+
+  .stat-info {
+    display: flex;
+    align-items: center;
+    gap: $spacing-unit / 2;
+    .icon {
+      width: 24px;
+      height: 24px;
+    }
+    .value {
+      font-size: 1.25rem;
+      font-weight: bold;
+      color: $brand-primary;
+    }
+    .title {
+      display: block;
+      font-size: 0.875rem;
+      color: $text-dark;
+    }
+  }
+
+  .sparkline {
+    width: 100%;
+    height: 30px;
+    color: $brand-secondary;
+  }
+}
