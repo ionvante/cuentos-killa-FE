@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '../../../styles/variables';
 @import '../../../styles/mixins';
 
@@ -5,12 +6,12 @@
   @include card-style;
   display: flex;
   flex-direction: column;
-  gap: $spacing-unit / 2;
+  gap: math.div($spacing-unit, 2);
 
   .stat-info {
     display: flex;
     align-items: center;
-    gap: $spacing-unit / 2;
+    gap: math.div($spacing-unit, 2);
     .icon {
       width: 24px;
       height: 24px;

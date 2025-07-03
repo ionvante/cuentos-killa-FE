@@ -1,3 +1,4 @@
+@use 'sass:math';
 @import '../../../../../styles/variables';
 @import '../../../../../styles/mixins';
 
@@ -7,7 +8,7 @@
   display: flex;
   align-items: center;
   gap: $spacing-unit;
-  padding: $spacing-unit/2 $spacing-unit;
+  padding: math.div($spacing-unit, 2) $spacing-unit;
   position: sticky;
   top: 0;
   z-index: 1200;
