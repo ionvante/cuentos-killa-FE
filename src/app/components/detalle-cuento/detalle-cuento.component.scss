@@ -109,6 +109,11 @@
   margin: 2px 0;
 }
 
+.stock.low-stock {
+  color: #dc6a6a;
+  font-weight: 600;
+}
+
 .acciones {
   margin-top: 30px;
   display: flex;
@@ -124,7 +129,7 @@
   font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.15s ease;
   width: 100%;
   text-align: center;
 }
@@ -142,7 +147,7 @@
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.15s ease;
   width: 100%;
   text-align: center;
 }
