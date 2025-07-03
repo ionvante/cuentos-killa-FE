@@ -1,16 +1,16 @@
 <div class="detalle-pagina">
   <div class="detalle-grid">
-    <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+    <div class="portada-container">
+      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
 
-    <!-- Imagen del cuento -->
-    <img 
-      [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
-      alt="Imagen del cuento"
-      (error)="cargarImagenPlaceholder($event)"
-      (load)="imagenCargada()"
-       style="cursor: pointer;"
-      [class.loaded]="!cargandoImagen"
-    />
+      <!-- Imagen del cuento -->
+      <img
+        [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
+        alt="Imagen del cuento"
+        (error)="cargarImagenPlaceholder($event)"
+        (load)="imagenCargada()"
+        [class.loaded]="!cargandoImagen"
+      />
     </div>
 
     <div class="detalle-info">
@@ -38,4 +38,5 @@
         <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
       </div>
     </div>
+  </div>
 </div>
