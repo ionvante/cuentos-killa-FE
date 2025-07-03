@@ -3,8 +3,9 @@
     <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
 
     <!-- Imagen del cuento -->
-    <img 
-      [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
+    <img
+      class="hover-scale"
+      [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
       alt="Imagen del cuento"
       (error)="cargarImagenPlaceholder($event)"
       (load)="imagenCargada()"
@@ -19,9 +20,21 @@
         <h3>Autor: {{ cuento?.autor }}</h3>
         <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
       </div>
-      <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
+      <p class="stock" [ngClass]="{ 'low-stock': cuento?.stock <= 3 && cuento?.habilitado }">
+        <ng-container *ngIf="cuento?.habilitado; else sinStock">
+          Quedan {{ cuento?.stock }} unidades
+        </ng-container>
+        <ng-template #sinStock>Sin stock</ng-template>
+      </p>
 
       <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+
+      <div class="acciones">
+        <button class="boton-dorado hover-scale" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
+          Agregar al carrito
+        </button>
+        <button class="boton-volver hover-scale" (click)="volver(); $event.stopPropagation()">Volver</button>
+      </div>
 
       <div class="extra-info">
         <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
@@ -29,13 +42,6 @@
         <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
         <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
         <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
-      </div>
-
-      <div class="acciones">
-        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
-          Agregar al carrito
-        </button>
-        <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
       </div>
     </div>
 </div>
