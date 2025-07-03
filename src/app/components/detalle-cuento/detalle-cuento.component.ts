@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 export class DetalleCuentoComponent implements OnInit {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
+  mostrarSinopsisCompleta = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -45,6 +46,10 @@ export class DetalleCuentoComponent implements OnInit {
   }
   imagenCargada(): void {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+
+  mostrarMasSinopsis(): void {
+    this.mostrarSinopsisCompleta = true;
   }
 
   volver() {

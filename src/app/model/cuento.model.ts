@@ -12,5 +12,6 @@ export interface Cuento {
   stock: number;
   precio: number;
   imagenUrl: string;
+  isbn?: string;
   habilitado?: boolean; // Nuevo campo para estado de habilitación
 }
