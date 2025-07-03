@@ -32,22 +32,22 @@ export class ConfigService {
   }
 
   getItems(categoryId: number): Observable<ConfigItem[]> {
-    return this.http.get<ConfigItem[]>(`${this.apiUrl}/${categoryId}/items`);
+    return this.http.get<ConfigItem[]>(`${this.apiUrl}/${categoryId}/item`);
   }
 
   getItem(categoryId: number, id: number): Observable<ConfigItem> {
-    return this.http.get<ConfigItem>(`${this.apiUrl}/${categoryId}/items/${id}`);
+    return this.http.get<ConfigItem>(`${this.apiUrl}/${categoryId}/item/${id}`);
   }
 
   createItem(categoryId: number, data: Partial<ConfigItem>): Observable<ConfigItem> {
-    return this.http.post<ConfigItem>(`${this.apiUrl}/${categoryId}/items`, data);
+    return this.http.post<ConfigItem>(`${this.apiUrl}/${categoryId}/item`, data);
   }
 
   updateItem(categoryId: number, id: number, data: Partial<ConfigItem>): Observable<ConfigItem> {
-    return this.http.put<ConfigItem>(`${this.apiUrl}/${categoryId}/items/${id}`, data);
+    return this.http.put<ConfigItem>(`${this.apiUrl}/${categoryId}/item/${id}`, data);
   }
 
   deleteItem(categoryId: number, id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${categoryId}/items/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${categoryId}/item/${id}`);
   }
 }
