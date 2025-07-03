@@ -1,8 +1,16 @@
 <nav class="navbar" role="navigation" aria-label="Navegación principal">
-  <a class="navbar-brand">
+  <a class="navbar-brand" routerLink="/home">
     <img appLazyLoad="assets/killa.bmp" alt="Cuentos de Killa" class="logo-img" />
     <span class="brand-text">Cuentos de Killa</span>
   </a>
+  <form class="search-form" (submit)="onSearch($event)" aria-label="Buscar">
+    <input
+      type="search"
+      placeholder="Buscar por título o autor"
+      [(ngModel)]="searchQuery"
+      name="q"
+      aria-label="Buscar por título o autor" />
+  </form>
   <button class="hamburger" aria-label="Menú" (click)="drawer.toggle()">☰</button>
   <ul class="nav-links">
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
@@ -21,7 +29,7 @@
       <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
     </li>
     <li *ngIf="!user">
-      <button class="btn-login" (click)="openLoginDialog()">Login</button>
+      <button class="btn-login" (click)="openLoginDialog()">Mi cuenta</button>
     </li>
     <li *ngIf="user?.nombre" class="avatar-wrapper" (click)="togglePerfil()">
       <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>

@@ -10,6 +10,7 @@ import { AuthService } from '../../services/auth.service';
 import { CommonModule } from '@angular/common';
 import { Cuento } from '../../model/cuento.model';
 import { User } from '../../model/user.model';
+import { FormsModule } from '@angular/forms';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
 
 
@@ -23,6 +24,7 @@ import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directi
   imports: [
     CommonModule, // 🔥 necesario para *ngIf, *ngFor
     RouterModule, // habilita routerLink en la plantilla
+    FormsModule,
     LazyLoadImageDirective,
     // otros imports que tengas como MatDialogModule, etc.
   ]
@@ -32,6 +34,7 @@ export class NavbarComponent implements OnInit {
   cantidadItems: number = 0;
   user: User | null = null;
   mostrarPerfil = false;
+  searchQuery = '';
   constructor(
     private dialog: MatDialog,
     public CartService: CartService,
@@ -97,6 +100,16 @@ export class NavbarComponent implements OnInit {
       });
     } else {
       this.router.navigate(['/checkout']);
+    }
+  }
+
+  onSearch(event: Event) {
+    event.preventDefault();
+    const query = this.searchQuery.trim();
+    if (query) {
+      this.router.navigate(['/cuentos'], { queryParams: { q: query } });
+    } else {
+      this.router.navigate(['/cuentos']);
     }
   }
 
