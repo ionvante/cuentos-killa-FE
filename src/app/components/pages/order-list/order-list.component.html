@@ -18,7 +18,9 @@
   </div>
 
   <div *ngIf="!isLoading && !errorMensaje && pedidos.length > 0" class="filter-bar">
-    <input type="text" placeholder="Buscar n.º pedido" [(ngModel)]="searchTerm" />
+    <div class="search-input">
+      <input type="text" placeholder="Buscar n.º pedido" [(ngModel)]="searchTerm" />
+    </div>
     <select [(ngModel)]="estadoFilter">
       <option value="">Todos</option>
       <option *ngFor="let est of estadosUnicos" [value]="est">{{ est }}</option>
@@ -26,23 +28,40 @@
     <button type="button" class="btn-export" (click)="exportCSV()">Exportar CSV</button>
   </div>
 
-  <div *ngIf="!isLoading && !errorMensaje && filteredPedidos.length > 0" class="orders-grid" role="region">
-    <article *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-row order-card" role="region" tabindex="0" [attr.aria-labelledby]="'order-' + getPedidoId(pedido)" [@fadeSlideIn]>
-      <div class="detail-column">
-        <h2 id="order-{{getPedidoId(pedido)}}"><span class="material-icons book-icon">menu_book</span>Pedido #{{ getPedidoId(pedido) }}</h2>
-        <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy' }}</p>
-        <p><strong>Estado:</strong>
-          <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span>
-        </p>
-        <p><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
-        <button *ngIf="pedido.estado === 'PAGADO'; else pagoBoton" class="btn-detail" (click)="verDetalle(getPedidoId(pedido))" [attr.aria-label]="'Ver detalle del pedido ' + getPedidoId(pedido)">Ver detalle</button>
-        <ng-template #pagoBoton>
-          <button class="btn-pay" (click)="irAPago(getPedidoId(pedido))" [attr.aria-label]="'Pagar pedido ' + getPedidoId(pedido)">Pagar</button>
-        </ng-template>
-        <button class="btn-pdf" (click)="descargarPDF(getPedidoId(pedido))">Descargar PDF</button>
-        <button *ngIf="pedido.estado === 'ENTREGADO'" class="btn btn-outline" (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
-      </div>
-    </article>
+  <p class="result-count" *ngIf="filteredPedidos.length > 0">
+    Mostrando {{ filteredPedidos.length }} pedidos
+    <ng-container *ngIf="estadoFilter">con estado '{{ getEstadoVisible(estadoFilter) }}'</ng-container>
+  </p>
+
+    <div *ngIf="!isLoading && !errorMensaje && filteredPedidos.length > 0" class="orders-grid" role="region">
+      <article *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-row order-card" role="region" tabindex="0" [attr.aria-labelledby]="'order-' + getPedidoId(pedido)" [@fadeSlideIn]>
+        <div class="detail-column">
+          <div class="card-header">
+            <h3 id="order-{{getPedidoId(pedido)}}">📚 Pedido #{{ getPedidoId(pedido) }}</h3>
+            <span class="date">🗓️ {{ pedido.fecha | date:'dd/MM/yyyy' }}</span>
+          </div>
+          <p class="estado" [ngClass]="getEstadoClass(pedido.estado)">{{ getEstadoVisible(pedido.estado) }}</p>
+          <p class="total"><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
+          <div class="productos">
+            <ul>
+              <li *ngFor="let item of pedido.items.slice(0, itemsExpanded[getPedidoId(pedido)] ? pedido.items.length : 2)">
+                {{ item.nombreCuento }} x{{ item.cantidad }}
+              </li>
+            </ul>
+            <button *ngIf="pedido.items.length > 2 && !itemsExpanded[getPedidoId(pedido)]" class="ver-mas" (click)="toggleItems(getPedidoId(pedido))">Ver más</button>
+          </div>
+          <div class="acciones">
+            <ng-container *ngIf="pedido.estado === 'PAGADO'; else pagarAhora">
+              <button class="btn-primary" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+            </ng-container>
+            <ng-template #pagarAhora>
+              <button class="btn-primary" (click)="irAPago(getPedidoId(pedido))">Pagar ahora</button>
+            </ng-template>
+            <button class="btn-secondary" (click)="descargarPDF(getPedidoId(pedido))">Descargar PDF</button>
+            <button *ngIf="pedido.estado === 'ENTREGADO'" class="btn-secondary" (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
+          </div>
+        </div>
+      </article>
     <div class="pagination" *ngIf="totalPages > 1">
       <button class="btn" (click)="changePage(-1)" [disabled]="currentPage === 1">Anterior</button>
       <span>{{currentPage}} / {{totalPages}}</span>

@@ -132,31 +132,31 @@ describe('OrderListComponent', () => {
       expect(orderRows.length).toBe(2);
 
       const firstRow = orderRows[0];
-      expect(firstRow.query(By.css('.detail-column h2')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
-      
-      // Use DatePipe for formatting date as in component
+      expect(firstRow.query(By.css('.card-header h3')).nativeElement.textContent).toContain(`Pedido #${mockPedidosData[0].id}`);
+
       const datePipe = new DatePipe('en-US');
       const expectedDate = datePipe.transform(mockPedidosData[0].fecha, 'dd/MM/yyyy');
-      expect(firstRow.nativeElement.textContent).toContain(`Fecha: ${expectedDate}`);
+      expect(firstRow.query(By.css('.date')).nativeElement.textContent).toContain(expectedDate);
 
-      expect(firstRow.nativeElement.textContent).toContain(`Estado: ${mockPedidosData[0].estado}`);
-      
+      const expectedEstado = component.getEstadoVisible(mockPedidosData[0].estado);
+      expect(firstRow.query(By.css('.estado')).nativeElement.textContent).toContain(expectedEstado);
+
       // Use CurrencyPipe for formatting total as in component
       const currencyPipe = new CurrencyPipe('en-US', 'USD'); // Adjust locale and currency code as needed
       const expectedTotal = currencyPipe.transform(mockPedidosData[0].total, 'USD', 'symbol', '1.2-2');
       expect(firstRow.nativeElement.textContent).toContain(`Total: ${expectedTotal}`);
     }));
 
-    it('should call verDetalle when detail button is clicked', fakeAsync(() => {
-      spyOn(component, 'verDetalle');
+    it('should call irAPago when primary action button is clicked', fakeAsync(() => {
+      spyOn(component, 'irAPago');
       mockPedidoService.getOrders.and.returnValue(of(mockPedidosData));
       component.ngOnInit();
       tick();
       fixture.detectChanges();
 
-      const detailBtn = fixture.debugElement.query(By.css('.detail-column .btn-detail'));
-      detailBtn.triggerEventHandler('click', null);
-      expect(component.verDetalle).toHaveBeenCalledWith(mockPedidosData[0].id);
+      const payBtn = fixture.debugElement.query(By.css('.acciones .btn-primary'));
+      payBtn.triggerEventHandler('click', null);
+      expect(component.irAPago).toHaveBeenCalledWith(mockPedidosData[0].id);
     }));
   });
 });

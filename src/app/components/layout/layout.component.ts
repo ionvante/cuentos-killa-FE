@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { DrawerMenuComponent } from '../drawer-menu/drawer-menu.component';
@@ -14,5 +14,5 @@ import { MiniCartComponent } from '../mini-cart/mini-cart.component';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent {
-  constructor(public drawer: DrawerService) {}
+  constructor(public drawer: DrawerService, public router: Router) {}
 }
