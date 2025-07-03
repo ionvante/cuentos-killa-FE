@@ -18,7 +18,6 @@ export class DetalleCuentoComponent implements OnInit {
   relatedCuentos: Cuento[] = [];
   openTech = false;
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
-
   constructor(
     private route: ActivatedRoute,
     private cuentoService: CuentoService,

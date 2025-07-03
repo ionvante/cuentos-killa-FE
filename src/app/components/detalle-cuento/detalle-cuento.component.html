@@ -10,7 +10,6 @@
       style="cursor: pointer;"
       [class.loaded]="!cargandoImagen"
     />
-  </div>
 
   <div class="detalle-info">
     <h1>{{ cuento?.titulo }}</h1>
@@ -25,7 +24,6 @@
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
     <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
-
     <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
 
     <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
@@ -69,4 +67,9 @@
       <button class="next" aria-label="Siguiente" (click)="scrollCarousel(1)">›</button>
     </div>
   </section>
-</div>
+  <div class="sticky-cta" *ngIf="cuento">
+    <span class="price">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
+    <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Añadir al carrito</button>
+  </div>  
+</div>  
+
