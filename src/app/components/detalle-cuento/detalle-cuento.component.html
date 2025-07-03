@@ -1,7 +1,7 @@
 <div class="detalle-pagina">
   <div class="detalle-grid">
-    <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-
+    <div class="portada-container">
+      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
     <!-- Imagen del cuento -->
     <img
       class="hover-scale"
@@ -26,16 +26,13 @@
         </ng-container>
         <ng-template #sinStock>Sin stock</ng-template>
       </p>
-
       <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
       <div class="acciones">
         <button class="boton-dorado hover-scale" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
           Agregar al carrito
         </button>
         <button class="boton-volver hover-scale" (click)="volver(); $event.stopPropagation()">Volver</button>
       </div>
-
       <div class="extra-info">
         <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
         <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
@@ -44,4 +41,9 @@
         <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
       </div>
     </div>
+  </div>
+  <div class="sticky-cta" *ngIf="cuento">
+    <span class="price">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
+    <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Añadir al carrito</button>
+  </div>
 </div>
