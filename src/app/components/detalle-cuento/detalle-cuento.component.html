@@ -20,13 +20,14 @@
         <h3>Autor: {{ cuento?.autor }}</h3>
         <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
       </div>
-      <p class="stock" [ngClass]="{ 'low-stock': cuento?.stock <= 3 && cuento?.habilitado }">
-        <ng-container *ngIf="cuento?.habilitado; else sinStock">
-          Quedan {{ cuento?.stock }} unidades
+      <p class="stock" *ngIf="cuento" [ngClass]="{ 'low-stock': cuento.stock <= 3 && cuento.habilitado }">
+        <ng-container *ngIf="cuento.habilitado; else sinStock">
+          Quedan {{ cuento.stock }} unidades
         </ng-container>
         <ng-template #sinStock>Sin stock</ng-template>
       </p>
       <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+
       <div class="acciones">
         <button class="boton-dorado hover-scale" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
           Agregar al carrito
