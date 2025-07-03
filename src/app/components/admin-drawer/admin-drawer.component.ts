@@ -25,7 +25,6 @@ export class AdminDrawerComponent {
     { label: 'Pedidos', route: '/admin/pedidos', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9V20H18V9" stroke="#FFAD60" stroke-width="2"/><path d="M3 5H21V9H3V5Z" stroke="#FFAD60" stroke-width="2"/></svg>' },
     { label: 'Usuarios', route: '/admin/usuarios', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="#FFAD60" stroke-width="2"/><path d="M4 22C4 17.5817 7.58172 14 12 14C16.4183 14 20 17.5817 20 22" stroke="#FFAD60" stroke-width="2"/></svg>' }
   ];
-
   constructor(private router: Router) {}
 
   navigate(item: MenuItem) {

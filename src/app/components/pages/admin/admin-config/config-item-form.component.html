@@ -1,0 +1,26 @@
+<div class="form-container">
+  <h2>{{ isEdit ? 'Editar Ítem' : 'Nuevo Ítem' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="item-form">
+    <label>
+      ID
+      <input type="number" formControlName="id2" required />
+    </label>
+    <label>
+      Label
+      <input type="text" formControlName="label" required />
+    </label>
+    <label>
+      Datos JSON
+      <textarea formControlName="data" required></textarea>
+    </label>
+    <label>
+      <input type="checkbox" formControlName="sensitive" />
+      Sensible
+    </label>
+    <div class="acciones">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="button" class="btn" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+  <div class="error" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+</div>

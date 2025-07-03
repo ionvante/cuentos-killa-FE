@@ -24,9 +24,11 @@
       <button class="delete" (click)="remove(item.cuento.id)" [attr.aria-label]="'Eliminar ' + item.cuento.titulo">🗑️</button>
     </div>
   </div>
-  <div class="subtotal">
-    <span>Subtotal:</span>
-    <span>S/ {{ subtotal | number:'1.2-2' }}</span>
+  <div class="checkout-bar">
+    <div class="subtotal">
+      <span>Subtotal:</span>
+      <span>S/ {{ subtotal | number:'1.2-2' }}</span>
+    </div>
+    <button class="btn btn-primary" (click)="goCheckout()">Finalizar compra</button>
   </div>
-  <button class="checkout" (click)="goCheckout()">Finalizar compra</button>
 </aside>

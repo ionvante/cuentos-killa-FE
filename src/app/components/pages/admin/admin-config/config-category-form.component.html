@@ -1,0 +1,18 @@
+<div class="form-container">
+  <h2>{{ isEdit ? 'Editar Categoría' : 'Nueva Categoría' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="categoria-form">
+    <label>
+      Código
+      <input type="text" formControlName="code" required />
+    </label>
+    <label>
+      Nombre
+      <input type="text" formControlName="name" required />
+    </label>
+    <div class="acciones">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      <button type="button" class="btn" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+  <div class="error" *ngIf="errorMensaje">{{ errorMensaje }}</div>
+</div>

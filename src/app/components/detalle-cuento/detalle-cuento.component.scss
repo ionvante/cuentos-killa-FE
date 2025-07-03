@@ -19,6 +19,19 @@
   overflow: hidden;
 }
 
+.hero {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
 
 .detalle-info {
   flex: 1;
@@ -51,6 +64,17 @@
   font-weight: bold;
   color: #A66E38;
   font-size: 2rem;
+}
+
+.envio-badge {
+  background: #ffe8c2;
+  color: #a66e38;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .sinopsis {
@@ -223,41 +247,6 @@
   }
 }
 
-.boton-dorado {
-  background-color: #a66e38;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.15s ease;
-  width: 100%;
-  text-align: center;
-}
-
-.boton-dorado:hover {
-  background-color: #8b5e30;
-}
-
-.boton-volver {
-  background-color: #d7b58b; /* Color diferente para "Volver" */
-  color: #5d4037; /* Texto marrón oscuro */
-  border: none;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.15s ease;
-  width: 100%;
-  text-align: center;
-}
-
-.boton-volver:hover {
-  background-color: #c9a97b; /* Un poco más oscuro en hover */
-}
 
 .sticky-cta {
   position: fixed;
@@ -278,7 +267,7 @@
   color: #5d4037;
 }
 
-.sticky-cta .boton-dorado {
+.sticky-cta .btn {
   width: auto;
 }
 

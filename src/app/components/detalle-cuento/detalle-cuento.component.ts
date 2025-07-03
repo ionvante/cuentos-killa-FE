@@ -76,4 +76,22 @@ export class DetalleCuentoComponent implements OnInit {
   volver() {
   this.location.back();
   }
+
+  /** Mensaje de stock con advertencia cuando quedan pocas unidades */
+  get stockMessage(): string {
+    if (!this.cuento) {
+      return '';
+    }
+    if (!this.cuento.habilitado) {
+      return 'Sin stock';
+    }
+    return this.cuento.stock <= 5
+      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
+      : `Stock: ${this.cuento.stock}`;
+  }
+
+  /** Indica si el cuento tiene pocas unidades disponibles */
+  get lowStock(): boolean {
+    return !!this.cuento && this.cuento.stock <= 5;
+  }
 }

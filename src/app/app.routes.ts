@@ -43,6 +43,10 @@ export const routes: Routes = [
         canActivate: [AdminGuard]
       },
       {
+        path: 'cuentos',
+        loadChildren: () => import('./components/pages/cuentos/cuentos.module').then(m => m.CuentosModule)
+      },
+      {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full',
