@@ -19,16 +19,6 @@
   overflow: hidden;
 }
 
-// .detalle-imagen {
-//   flex: 1;
-//   background-color: #f0f0f0;
-// }
-
-// .detalle-imagen img {
-//   width: 100%;
-//   height: 100%;
-//   object-fit: cover;
-// }
 
 .detalle-info {
   flex: 1;
@@ -42,11 +32,13 @@
   margin-bottom: 10px;
   font-size: 2.4rem;
   color: #6d4c41;
+  font-weight: 600;
 }
 
 .detalle-info h3 {
   margin-bottom: 20px;
   color: #8d6e63;
+  font-weight: 500;
 }
 
 .autor-precio {
@@ -57,7 +49,8 @@
 
 .autor-precio .precio {
   font-weight: bold;
-  color: #8d6e63;
+  color: #A66E38;
+  font-size: 2rem;
 }
 
 .descripcion {
@@ -119,7 +112,7 @@
     flex-direction: column;
   }
 
-  .detalle-imagen {
+  .portada-container {
     height: 300px;
   }
 
@@ -152,11 +145,15 @@
   }
 }
 
-.detalle-imagen {
+
+.portada-container {
   position: relative;
-  width: 70%;
-  height: 70%;
-  background-color: #f0f0f0;
+  padding: 1rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 350px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,8 +161,9 @@
 
   img {
     width: 100%;
-    height: 100%;
-    object-fit: contain;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
     opacity: 0;
     transition: opacity 0.5s ease-in;
     position: absolute;
