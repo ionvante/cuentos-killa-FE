@@ -75,6 +75,104 @@
   margin-top: 30px;
   display: flex;
   gap: 15px;
+  align-items: center;
+}
+
+.share {
+  display: flex;
+  gap: 10px;
+
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    img {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.rating span {
+  color: #FFAD60;
+  font-size: 1.2rem;
+}
+
+.testimonial {
+  margin-top: 0.5rem;
+  font-style: italic;
+  color: #666;
+}
+
+.tech-toggle {
+  margin-top: 1rem;
+  background: none;
+  border: none;
+  color: #a66e38;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.relacionados {
+  margin-top: 2rem;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+
+  .carousel-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  .carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .slide {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+    width: 150px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.5rem;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    img {
+      width: 100%;
+      border-radius: 6px;
+      height: 120px;
+      object-fit: cover;
+    }
+
+    .titulo {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #333;
+      font-weight: 600;
+    }
+
+    .precio {
+      color: #A66E38;
+      font-size: 0.9rem;
+    }
+  }
+
+  .prev,
+  .next {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
 }
 
 .boton-dorado {

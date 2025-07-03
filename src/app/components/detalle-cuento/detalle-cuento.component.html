@@ -1,41 +1,72 @@
 <div class="detalle-pagina">
   <div class="detalle-grid">
     <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-
     <!-- Imagen del cuento -->
-    <img 
-      [src]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'" 
+    <img
+      [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
       alt="Imagen del cuento"
       (error)="cargarImagenPlaceholder($event)"
       (load)="imagenCargada()"
-       style="cursor: pointer;"
+      style="cursor: pointer;"
       [class.loaded]="!cargandoImagen"
     />
+  </div>
+
+  <div class="detalle-info">
+    <h1>{{ cuento?.titulo }}</h1>
+    <div class="autor-precio">
+      <h3>Autor: {{ cuento?.autor }}</h3>
+      <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
+    </div>
+    <div class="rating" aria-label="5 de 5">
+      <span>★★★★★</span>
+    </div>
+    <blockquote class="testimonial">
+      “Un viaje mágico para toda la familia” – Carla R.
+    </blockquote>
+    <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
+
+    <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+
+    <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
+    <div class="extra-info" id="tech-panel" [hidden]="!openTech">
+      <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
+      <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
+      <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
+      <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
+      <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
     </div>
 
-    <div class="detalle-info">
-      <h1>{{ cuento?.titulo }}</h1>
-      <div class="autor-precio">
-        <h3>Autor: {{ cuento?.autor }}</h3>
-        <span class="precio">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
-      </div>
-      <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
-
-      <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
-      <div class="extra-info">
-        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
-        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
-        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
-        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
-        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
-      </div>
-
-      <div class="acciones">
-        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
-          Agregar al carrito
+    <div class="acciones">
+      <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
+        Agregar al carrito
+      </button>
+      <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
+      <div class="share">
+        <button aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
+          <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
         </button>
-        <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
+        <button aria-label="Compartir en TikTok" (click)="compartir('tiktok')">
+          <img appLazyLoad="assets/tiktok.svg" alt="TikTok">
+        </button>
       </div>
     </div>
+  </div>
+
+  <section class="relacionados" *ngIf="relatedCuentos.length">
+    <h2>Te puede interesar</h2>
+    <div class="carousel-wrapper">
+      <button class="prev" aria-label="Anterior" (click)="scrollCarousel(-1)">‹</button>
+      <div class="carousel" #carousel>
+        <div class="slide" *ngFor="let book of relatedCuentos">
+          <div class="card">
+            <img appLazyLoad="{{ book.imagenUrl || 'assets/placeholder-cuento.jpg' }}" alt="{{ book.titulo }}" class="w-full rounded-lg" />
+            <p class="titulo">{{ book.titulo }}</p>
+            <p class="precio">S/ {{ book.precio | number:'1.2-2' }}</p>
+          </div>
+        </div>
+      </div>
+      <button class="next" aria-label="Siguiente" (click)="scrollCarousel(1)">›</button>
+    </div>
+  </section>
 </div>
