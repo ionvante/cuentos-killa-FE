@@ -1,3 +1,4 @@
+<!--
 <nav class="admin-navbar" aria-label="Menú de administración">
   <button class="hamburger" aria-label="Menú" (click)="toggleMenu()" [hidden]="isDesktop">☰</button>
   <a class="navbar-brand">
@@ -5,6 +6,7 @@
     <span class="brand-text">Cuentos de Killa</span>
   </a>
 </nav>
+-->
 <app-admin-drawer [isOpen]="menuAbierto || isDesktop" (closed)="toggleMenu(false)"></app-admin-drawer>
 <main class="admin-content" role="main">
   <router-outlet></router-outlet>
