@@ -16,18 +16,9 @@
     </ng-container>
 
     <ng-container *ngIf="!isLoading && !errorMensaje">
-      <div class="stat-card">
-        <span class="value">{{ cuentosPublicados }}</span>
-        <span class="label">Cuentos publicados</span>
-      </div>
-      <div class="stat-card">
-        <span class="value">{{ pedidosEnProceso }}</span>
-        <span class="label">Pedidos en proceso</span>
-      </div>
-      <div class="stat-card">
-        <span class="value">{{ usuariosRegistrados }}</span>
-        <span class="label">Usuarios registrados</span>
-      </div>
+      <app-stat-card [title]="'Cuentos publicados'" [value]="cuentosPublicados" [data]="cuentosTrend"></app-stat-card>
+      <app-stat-card [title]="'Pedidos en proceso'" [value]="pedidosEnProceso" [data]="pedidosTrend"></app-stat-card>
+      <app-stat-card [title]="'Usuarios registrados'" [value]="usuariosRegistrados" [data]="usuariosTrend"></app-stat-card>
     </ng-container>
   </section>
 

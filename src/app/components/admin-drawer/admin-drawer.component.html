@@ -1,0 +1,9 @@
+<aside class="admin-drawer" [class.open]="isOpen">
+  <nav>
+    <a *ngFor="let item of menuItems" (click)="navigate(item)">
+      <svg [innerHTML]="item.icon"></svg>
+      <span>{{ item.label }}</span>
+    </a>
+  </nav>
+</aside>
+<div class="backdrop" *ngIf="isOpen" (click)="closed.emit()"></div>

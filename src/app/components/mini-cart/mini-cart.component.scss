@@ -29,6 +29,11 @@
   }
 }
 
+.mini-cart {
+  z-index: 1000;
+  margin-bottom: 72px;
+}
+
 @media (max-width: 768px) {
   .floating-cart {
     width: 48px;

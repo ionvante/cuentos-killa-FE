@@ -6,7 +6,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { HttpClientModule } from '@angular/common/http';
 
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
-import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminCuentosComponent } from './admin-cuentos/admin-cuentos.component';
 import { AdminPedidosComponent } from './admin-pedidos/admin-pedidos.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
@@ -23,7 +22,7 @@ const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'dashboard', loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
       { path: 'cuentos', component: AdminCuentosComponent },
       { path: 'cuentos/nuevo', component: CuentoFormComponent },
       { path: 'cuentos/editar/:id', component: CuentoFormComponent },
@@ -35,7 +34,6 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AdminDashboardComponent,
     AdminCuentosComponent,
     AdminPedidosComponent,
     AdminUsuariosComponent,

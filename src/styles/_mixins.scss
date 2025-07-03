@@ -1,6 +1,18 @@
+@import 'variables';
+
 @mixin card-style {
   border-radius: $border-radius;
   box-shadow: $shadow-sm;
   background-color: #fff;
   padding: 1rem;
+}
+
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius;
+  padding: calc($spacing-unit / 1.5) $spacing-unit;
+  font-weight: 600;
+  cursor: pointer;
 }

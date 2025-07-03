@@ -5,6 +5,8 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import { DrawerMenuComponent } from '../drawer-menu/drawer-menu.component';
 import { DrawerService } from '../../services/drawer.service';
 import { MiniCartComponent } from '../mini-cart/mini-cart.component';
+import { AuthService } from '../../services/auth.service';
+import { User } from '../../model/user.model';
 
 @Component({
   selector: 'app-layout',
@@ -14,5 +16,9 @@ import { MiniCartComponent } from '../mini-cart/mini-cart.component';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent {
-  constructor(public drawer: DrawerService, public router: Router) {}
+  user: User | null = null;
+  constructor(public drawer: DrawerService, public router: Router, private auth: AuthService) {
+    this.user = this.auth.getUser();
+    this.auth.usuarioLogueado$.subscribe(u => this.user = u);
+  }
 }

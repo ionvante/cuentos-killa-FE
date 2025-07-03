@@ -45,7 +45,7 @@
     </a>
     <button class="logout-btn" *ngIf="user" (click)="logout()">Cerrar sesión</button>
   </nav>
-  <button class="cart-button" routerLink="/checkout" (click)="close()">
+  <button class="cart-button" routerLink="/checkout" (click)="close()" *ngIf="user?.role === 'USER'">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M6 6H21L20 12H7" stroke="#A66E38" stroke-width="2"/>
       <circle cx="9" cy="20" r="1" stroke="#A66E38" stroke-width="2"/>
