@@ -1,0 +1,29 @@
+<div class="items-container">
+  <h2>Ítems</h2>
+  <button class="btn btn-primary" (click)="nuevo()">Nuevo</button>
+
+  <div *ngIf="isLoading" class="loading">Cargando...</div>
+  <div *ngIf="errorMensaje" class="error">{{ errorMensaje }}</div>
+
+  <table *ngIf="!isLoading && !errorMensaje">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Label</th>
+        <th>Sensible</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of items">
+        <td>{{ i.id2 }}</td>
+        <td>{{ i.label }}</td>
+        <td>{{ i.sensitive ? 'Sí' : 'No' }}</td>
+        <td class="acciones">
+          <button (click)="editar(i.id2)">Editar</button>
+          <button (click)="eliminar(i.id2)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
