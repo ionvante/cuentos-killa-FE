@@ -338,8 +338,8 @@
   }
 }
 .btn-primary {
-  background-color: #a66e38;
-  color: #fff;
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
   padding: 10px 16px;
   border: none;
   border-radius: 6px;
@@ -352,7 +352,10 @@
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: #85562d;
+    filter: brightness(1.1);
+  }
+  &:active {
+    transform: scale(0.98);
   }
 }
 
