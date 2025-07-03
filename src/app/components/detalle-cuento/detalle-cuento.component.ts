@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CuentoService } from './../../services/cuento.service';
 import { Cuento } from './../../model/cuento.model';
@@ -15,8 +15,9 @@ import { Router } from '@angular/router';
 export class DetalleCuentoComponent implements OnInit {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
-  mostrarSinopsisCompleta = false;
-
+  relatedCuentos: Cuento[] = [];
+  openTech = false;
+  @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
   constructor(
     private route: ActivatedRoute,
     private cuentoService: CuentoService,
@@ -30,6 +31,9 @@ export class DetalleCuentoComponent implements OnInit {
     if (id) {
       this.cuentoService.getCuentoById(+id).subscribe(data => {
         this.cuento = data;
+      });
+      this.cuentoService.obtenerCuentos().subscribe(cuentos => {
+        this.relatedCuentos = cuentos.filter(c => c.id !== +id).slice(0, 8);
       });
     }
   }
@@ -48,8 +52,25 @@ export class DetalleCuentoComponent implements OnInit {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
   }
 
-  mostrarMasSinopsis(): void {
-    this.mostrarSinopsisCompleta = true;
+  toggleTech(): void {
+    this.openTech = !this.openTech;
+  }
+
+  scrollCarousel(direction: number) {
+    const container = this.carousel?.nativeElement;
+    if (container) {
+      const width = container.offsetWidth;
+      container.scrollBy({ left: width * 0.8 * direction, behavior: 'smooth' });
+    }
+  }
+
+  compartir(red: 'whatsapp' | 'tiktok') {
+    const url = encodeURIComponent(window.location.href);
+    if (red === 'whatsapp') {
+      window.open(`https://wa.me/?text=${url}`, '_blank');
+    } else {
+      window.open('https://www.tiktok.com/upload?url=' + url, '_blank');
+    }
   }
 
   volver() {
