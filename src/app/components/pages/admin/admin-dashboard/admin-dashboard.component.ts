@@ -26,6 +26,12 @@ export class AdminDashboardComponent implements OnInit {
   errorMensaje: string | null = null;
   usuarios: User[] = [];
 
+  private ensureMinLength(data: number[], min = 5): number[] {
+    if (!data || data.length >= min) return data;
+    const last = data.length ? data[data.length - 1] : 0;
+    return data.concat(Array(min - data.length).fill(last));
+  }
+
   constructor(
     private cuentoService: CuentoService,
     private pedidoService: PedidoService,
@@ -49,9 +55,15 @@ export class AdminDashboardComponent implements OnInit {
         this.pedidosEnProceso = pedidos.length;
         this.usuariosRegistrados = usuarios.length;
         this.usuarios = usuarios;
-        this.cuentosTrend = cuentos.map(c => c.id ?? 0).slice(0, 10);
-        this.pedidosTrend = pedidos.map(p => p.total).slice(0, 10);
-        this.usuariosTrend = usuarios.map((u, i) => i + 1).slice(0, 10);
+        this.cuentosTrend = this.ensureMinLength(
+          cuentos.map(c => c.id ?? 0).slice(0, 10)
+        );
+        this.pedidosTrend = this.ensureMinLength(
+          pedidos.map(p => p.total).slice(0, 10)
+        );
+        this.usuariosTrend = this.ensureMinLength(
+          usuarios.map((u, i) => i + 1).slice(0, 10)
+        );
         this.isLoading = false;
       },
       error: () => {

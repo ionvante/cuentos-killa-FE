@@ -49,6 +49,9 @@ describe('AdminDashboardComponent', () => {
     expect(component.pedidosEnProceso).toBe(1);
     expect(component.usuariosRegistrados).toBe(3);
     expect(component.usuarios.length).toBe(3);
+    expect(component.cuentosTrend.length).toBeGreaterThanOrEqual(5);
+    expect(component.pedidosTrend.length).toBeGreaterThanOrEqual(5);
+    expect(component.usuariosTrend.length).toBeGreaterThanOrEqual(5);
     expect(component.isLoading).toBeFalse();
     expect(component.errorMensaje).toBeNull();
   });
