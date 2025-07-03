@@ -1,13 +1,64 @@
 <div class="cuentos-container">
   <h2>Últimos cuentos</h2>
-  <div class="filters">
-    <input type="text" placeholder="Buscar por título o autor" [(ngModel)]="searchTerm" />
-    <select [(ngModel)]="sortOption">
-      <option value="fecha">Fecha de registro</option>
-      <option value="alfabetico">Alfabético</option>
-      <option value="precio">Precio</option>
-    </select>
+  <div class="filter-bar">
+    <div class="input-wrapper search">
+      <svg viewBox="0 0 24 24" class="icon">
+        <circle cx="11" cy="11" r="7" stroke="#555" stroke-width="2" fill="none" />
+        <line x1="16" y1="16" x2="22" y2="22" stroke="#555" stroke-width="2" />
+      </svg>
+      <input type="text" placeholder="¿Qué cuento te apetece hoy?" [(ngModel)]="searchTerm" />
+    </div>
+    <div class="select-wrapper">
+      <svg viewBox="0 0 24 24" class="icon">
+        <rect x="3" y="4" width="18" height="18" stroke="#555" stroke-width="2" fill="none" />
+        <line x1="3" y1="10" x2="21" y2="10" stroke="#555" stroke-width="2" />
+      </svg>
+      <select [(ngModel)]="fechaFilter">
+        <option value="">Fecha</option>
+        <option value="semana">Última semana</option>
+        <option value="mes">Último mes</option>
+        <option value="ano">Último año</option>
+      </select>
+    </div>
+    <div class="select-wrapper">
+      <svg viewBox="0 0 24 24" class="icon">
+        <circle cx="12" cy="12" r="10" stroke="#555" stroke-width="2" fill="none" />
+        <line x1="12" y1="6" x2="12" y2="18" stroke="#555" stroke-width="2" />
+        <path d="M8 9h8" stroke="#555" stroke-width="2" />
+        <path d="M8 15h8" stroke="#555" stroke-width="2" />
+      </svg>
+      <select [(ngModel)]="precioFilter">
+        <option value="">Precio</option>
+        <option value="lt10">Menos de S/10</option>
+        <option value="10-20">S/10 - S/20</option>
+        <option value="gt20">Más de S/20</option>
+      </select>
+    </div>
+    <div class="select-wrapper">
+      <svg viewBox="0 0 24 24" class="icon">
+        <path d="M3 12l9 9 9-9V3H12L3 12z" stroke="#555" stroke-width="2" fill="none" />
+      </svg>
+      <select [(ngModel)]="categoriaFilter">
+        <option value="">Categoría</option>
+        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+      </select>
+    </div>
+    <div class="select-wrapper">
+      <svg viewBox="0 0 24 24" class="icon">
+        <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" stroke="#555" stroke-width="2" fill="none" />
+      </svg>
+      <select [(ngModel)]="ratingFilter">
+        <option value="">Valoración</option>
+        <option value="1">1⭐ o más</option>
+        <option value="2">2⭐ o más</option>
+        <option value="3">3⭐ o más</option>
+        <option value="4">4⭐ o más</option>
+      </select>
+    </div>
+    <button class="btn-filter" type="button">Filtrar</button>
+    <button class="btn-clear" type="button" (click)="limpiarFiltros()">Limpiar</button>
   </div>
+  <a class="cta-link" href="#">¿No sabes dónde empezar? ➞ Ver los 5 cuentos más leídos</a>
   <div class="grid-cuentos">
     <app-cuento-card
       *ngFor="let cuento of filteredCuentos"
@@ -15,4 +66,7 @@
       (agregar)="agregarAlCarrito($event)"
     ></app-cuento-card>
   </div>
+  <p class="no-results" *ngIf="filteredCuentos.length === 0">
+    ¡Uy! No encontramos ese cuento. Prueba con otra palabra clave o explora nuestras categorías destacadas.
+  </p>
 </div>
