@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { CuentoService } from '../../../../services/cuento.service';
 import { PedidoService } from '../../../../services/pedido.service';
@@ -9,7 +10,7 @@ import { StatCardComponent } from '../../../stat-card/stat-card.component';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [StatCardComponent],
+  imports: [CommonModule, StatCardComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
