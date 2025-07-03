@@ -7,7 +7,7 @@ import { ConfigItem } from '../model/config-item.model';
 
 @Injectable({ providedIn: 'root' })
 export class ConfigService {
-  private apiUrl = `${environment.apiBaseUrl}/config-category`;
+  private apiUrl = `${environment.apiBaseUrl}/config/category`;
 
   constructor(private http: HttpClient) {}
 
