@@ -1,7 +1,11 @@
-<header class="hero" aria-labelledby="hero-title">
-  <div class="hero-content">
+<section class="hero-container text-center text-white" aria-labelledby="hero-title">
+  <div class="overlay"></div>
+  <div class="content">
     <h1 id="hero-title">Descubre un mundo mágico de cuentos</h1>
     <p class="subtitle">{{ subtitle }}</p>
-    <a routerLink="/cuentos" class="btn hover-scale">Ver Cuentos</a>
+    <form (submit)="suscribirse(email.value)" class="newsletter-form" aria-label="Suscripción" id="newsletter-form">
+      <input #email type="email" placeholder="Tu correo electrónico" aria-label="Tu correo electrónico">
+      <button type="submit">Suscribirme</button>
+    </form>
   </div>
-</header>
+</section>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Cuento } from '../../../model/cuento.model';
 import { CuentoService } from '../../../services/cuento.service';
 import { CartService } from '../../../services/carrito.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-cuentos-page',
@@ -17,10 +17,15 @@ export class CuentosComponent implements OnInit {
   constructor(
     private cuentoService: CuentoService,
     private cartService: CartService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      this.searchTerm = params.get('q') || '';
+    });
+
     this.cuentoService.obtenerCuentos().subscribe(data => {
       this.cuentos = data
         .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())

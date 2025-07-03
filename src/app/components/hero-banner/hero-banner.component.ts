@@ -7,5 +7,9 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeroBannerComponent {
-  subtitle = 'Suscríbete a nuestra newsletter';
+  subtitle = 'Suscríbete y obtén 10 % de descuento en tu primera compra';
+
+  suscribirse(email: string) {
+    console.log('Suscribir', email);
+  }
 }

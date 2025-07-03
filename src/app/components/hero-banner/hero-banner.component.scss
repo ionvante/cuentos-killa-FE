@@ -1,63 +1,62 @@
 @import '../../../styles/variables';
 
-.hero {
+.hero-container {
   position: relative;
   background: url('/assets/libros_killa.png') center/cover no-repeat;
-  padding: 4rem 2rem;
+  padding: 5rem 1rem 8rem;
   text-align: center;
   color: #fff;
-  filter: blur(0px);
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(3px);
-  }
-
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-  }
-
-  .subtitle {
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    opacity: 0.9;
-  }
-
-  .btn {
-    padding: 0.8rem 1.5rem;
-    background-color: #a66e38;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    text-decoration: none;
-    transition: transform 0.15s ease;
-  }
-
-  .hero-content {
-    position: relative;
-    animation: fadeIn 1s ease;
-  }
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  margin: auto;
+}
+
+.subtitle {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  opacity: 0.9;
+}
+
+.newsletter-form {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+
+  input {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px 0 0 9999px;
+    border: none;
+    color: #333;
+  }
+
+  button {
+    padding: 0.5rem 1.5rem;
+    background-color: $secondary;
+    border: none;
+    border-radius: 0 9999px 9999px 0;
+    font-weight: 600;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: darken($primary, 10%);
+    }
+  }
 }
 
 @media (max-width: 600px) {
-  .hero {
-    padding: 2rem 1rem;
-
-    h1 {
-      font-size: 1.8rem;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-    }
+  .hero-container {
+    padding: 4rem 1rem 6rem;
   }
 }
