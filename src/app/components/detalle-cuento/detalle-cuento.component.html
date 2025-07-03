@@ -21,22 +21,25 @@
       </div>
       <p class="stock">Stock: {{ cuento?.habilitado ? cuento?.stock : 'Sin stock' }}</p>
 
-      <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
-      <div class="extra-info">
-        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
-        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
-        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
-        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
-        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
-      </div>
+      <p class="sinopsis" [class.expand]="mostrarSinopsisCompleta">{{ cuento?.descripcionCorta }}</p>
+      <button *ngIf="!mostrarSinopsisCompleta" class="leer-mas" (click)="mostrarMasSinopsis()">Leer más</button>
+      <details class="accordion">
+        <summary>Ficha técnica</summary>
+        <ul class="content">
+          <li><strong>ISBN:</strong> {{ cuento?.isbn }}</li>
+          <li><strong>Editorial:</strong> {{ cuento?.editorial }}</li>
+          <li><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</li>
+          <li><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</li>
+          <li><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</li>
+        </ul>
+      </details>
 
       <div class="acciones">
-        <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
-          Agregar al carrito
-        </button>
         <button class="boton-volver" (click)="volver(); $event.stopPropagation()">Volver</button>
       </div>
-    </div>
+  </div>
+  <div class="sticky-cta" *ngIf="cuento">
+    <span class="price">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
+    <button class="boton-dorado" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Añadir al carrito</button>
   </div>
 </div>

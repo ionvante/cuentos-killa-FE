@@ -1,5 +1,5 @@
 .detalle-pagina {
-  padding: 20px;
+  padding: 20px 20px 80px;
   background: #fff8f0;
   min-height: 100vh;
   display: flex;
@@ -53,15 +53,60 @@
   font-size: 2rem;
 }
 
-.descripcion {
-  margin-bottom: 20px;
+.sinopsis {
+  margin-bottom: 10px;
   font-size: 1rem;
   color: #5d4037;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.extra-info p {
-  margin: 5px 0;
-  font-size: 0.95rem;
+.sinopsis.expand {
+  -webkit-line-clamp: unset;
+}
+
+.leer-mas {
+  margin-bottom: 20px;
+  font-size: 0.875rem;
+  color: #96ceb4;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  align-self: flex-start;
+}
+
+
+.accordion {
+  margin-bottom: 20px;
+}
+
+.accordion summary {
+  padding: 0.5rem 1rem;
+  background: #ffad60;
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.accordion[open] summary {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.accordion .content {
+  padding: 1rem;
+  background: #ffffff;
+  color: #5d4037;
+  border: 1px solid #ffad60;
+  border-top: none;
+  list-style: none;
+}
+.accordion .content li {
+  margin: 2px 0;
 }
 
 .acciones {
@@ -104,6 +149,29 @@
 
 .boton-volver:hover {
   background-color: #c9a97b; /* Un poco más oscuro en hover */
+}
+
+.sticky-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  padding: 1rem;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sticky-cta .price {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #5d4037;
+}
+
+.sticky-cta .boton-dorado {
+  width: auto;
 }
 
 /* Responsive */
