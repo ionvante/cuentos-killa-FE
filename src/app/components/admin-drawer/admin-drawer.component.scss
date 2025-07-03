@@ -22,6 +22,11 @@ $drawer-width: 260px;
       padding: .75rem 1rem;
       color: $text-dark;
       text-decoration: none;
+      .icon {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+      }
       &:hover {
         background: rgba($text-dark, .05);
       }
