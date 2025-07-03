@@ -1,5 +1,5 @@
 <div class="cuento-card">
-  <span class="badge" *ngIf="isNuevo">Nuevo</span>
+  <span class="badge" *ngIf="badgeLabel">{{ badgeLabel }}</span>
   <div class="image-wrapper">
     <img #cardImg class="hover-scale" [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>

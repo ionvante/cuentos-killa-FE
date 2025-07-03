@@ -18,6 +18,7 @@ export class CuentoCardComponent implements OnInit {
   @Output() deshabilitar = new EventEmitter<Cuento>(); // Nuevo evento para deshabilitar
   cargandoImagen: boolean = true;
   isNuevo = false;
+  badgeLabel = '';
 
   constructor(private cartService: CartService, private router: Router) {}
 
@@ -27,6 +28,7 @@ export class CuentoCardComponent implements OnInit {
       const diff = (Date.now() - ingreso.getTime()) / (1000 * 3600 * 24);
       this.isNuevo = diff <= 30;
     }
+    this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
   }
 
   verDetalle(): void {
