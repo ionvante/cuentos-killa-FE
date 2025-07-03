@@ -66,4 +66,8 @@ export class CuentoCardComponent implements OnInit {
       window.open('https://www.instagram.com/', '_blank');
     }
   }
+
+  getRatingStars(rating: number): string {
+    return '★★★★★'.slice(0, rating) + '☆☆☆☆☆'.slice(rating);
+  }
 }
