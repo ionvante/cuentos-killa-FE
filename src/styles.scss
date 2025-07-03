@@ -3,6 +3,19 @@
 @import 'styles/mixins';
 @import 'styles/buttons';
 
+:root {
+  --btn-primary-bg: #a66e38;
+  --btn-primary-text: #ffffff;
+  --btn-secondary-bg: #ffad60;
+  --btn-secondary-text: #ffffff;
+  --btn-ghost-border: #a66e38;
+  --btn-ghost-text: #a66e38;
+  --btn-tertiary-bg: #96ceb4;
+  --btn-tertiary-text: #ffffff;
+  --btn-disabled-bg: #eeeeee;
+  --btn-disabled-text: #aaaaaa;
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 // styles.scss

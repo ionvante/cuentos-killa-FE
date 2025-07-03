@@ -52,39 +52,6 @@
     background: #ffad60;
   }
 
-    .btn-filter,
-    .btn-clear {
-      background: transparent;
-      border-radius: 6px;
-      padding: 0.75rem 1.25rem;
-      cursor: pointer;
-      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-    }
-
-    .btn-filter {
-      border: 1px solid #96ceb4;
-      color: #96ceb4;
-    }
-
-    .btn-filter:hover {
-      background: #96ceb4;
-      color: #fff;
-    }
-
-    .btn-clear {
-      border: 1px solid rgba(166, 110, 56, 0.4);
-      color: rgba(166, 110, 56, 0.6);
-    }
-
-    .btn-clear:hover {
-      border-color: #a66e38;
-      color: #a66e38;
-    }
-
-  .btn-filter:hover {
-    background: #96ceb4;
-    color: #fff;
-  }
 }
 
 .grid-cuentos {

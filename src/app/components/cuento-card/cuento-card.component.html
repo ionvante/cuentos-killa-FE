@@ -16,8 +16,8 @@
   </div>
 
   <div class="acciones">
-    <button class="ghost-btn" (click)="verDetalle()">Ver detalle</button>
-    <button *ngIf="!isAdmin && cuento.habilitado" class="solid-btn" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Añadir carrito</button>
+    <button class="btn btn-ghost" (click)="verDetalle()">Ver detalle</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" class="btn btn-primary" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Añadir carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento()" class="admin-button editar hover-scale">Editar</button>
       <button (click)="deshabilitarCuento()" class="admin-button deshabilitar hover-scale">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>

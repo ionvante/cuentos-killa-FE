@@ -59,8 +59,8 @@
   }
 
   .btn-primary {
-    background-color: #A66E38;
-    color: white;
+    background-color: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
     padding: 14px;
     font-weight: bold;
     border: none;
@@ -72,7 +72,10 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 
     &:hover {
-      background-color: #8a582e;
+      filter: brightness(1.1);
+    }
+    &:active {
+      transform: scale(0.98);
     }
   }
 }
