@@ -1,5 +1,5 @@
-import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, APP_INITIALIZER } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom, APP_INITIALIZER, ErrorHandler } from '@angular/core';
+import { provideRouter, Router } from '@angular/router';
 
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { authInterceptor } from './services/auth.interceptor';
 import { ThemeService } from './services/theme.service';
+import * as Sentry from '@sentry/angular-ivy';
 
 
 
@@ -23,6 +24,17 @@ export const appConfig: ApplicationConfig = {
       provide: APP_INITIALIZER,
       useFactory: (ts: ThemeService) => () => ts.loadTheme(),
       deps: [ThemeService],
+      multi: true,
+    },
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler(),
+    },
+    Sentry.TraceService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
       multi: true,
     },
   ]
