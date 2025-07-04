@@ -2,6 +2,8 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { firstValueFrom } from 'rxjs';
+import { ConfigService } from './config.service';
+import { ConfigItem } from '../model/config-item.model';
 
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
@@ -46,6 +48,7 @@ export class ThemeService {
 
   constructor(
     private http: HttpClient,
+    private configservice: ConfigService,
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
@@ -56,10 +59,12 @@ export class ThemeService {
     }
 
     return firstValueFrom(
-      this.http.get<{ opcion: string }>("/api/config/theme")
-    )
-      .then((cfg) => this.apply(cfg.opcion))
-      .catch(() => this.apply("1"));
+      this.configservice.getItem(1, 1)
+    ).then((item: ConfigItem) => {
+      const data = item && item.data ? JSON.parse(item.data) : { opcion: '1' };
+      this.apply(data.opcion);
+    });
+
   }
 
   private apply(option: string) {

@@ -3,11 +3,11 @@ import { ActivatedRoute, convertToParamMap, ParamMap } from '@angular/router';
 import { of, Subject, throwError } from 'rxjs';
 import { CommonModule } from '@angular/common'; // PagoComponent is standalone, but good for TestBed consistency if it weren't
 import { RouterTestingModule } from '@angular/router/testing';
-import { environment } from '../../../../../environments/environment';
+import { environment } from './../../../../environments/environment';
 
 import { PagoComponent } from './pago.component';
-import { PagoService } from '../../../../services/pago.service';
-import { PedidoService } from '../../../../services/pedido/pedido.service';
+import { PagoService } from './../../../services/pago.service';
+import { PedidoService } from './../../../services/pedido.service';
 
 // Mocks
 class MockActivatedRoute {
