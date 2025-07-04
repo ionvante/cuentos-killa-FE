@@ -47,8 +47,10 @@ $drawer-width: 260px;
 
 @media (min-width: 1024px) {
   .admin-drawer {
-    transform: translateX(0);
-    position: sticky;
+    // transform: translateX(0);
+    // position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
   }
   .backdrop { display:none; }
 }
