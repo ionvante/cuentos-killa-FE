@@ -49,8 +49,8 @@ $drawer-width: 260px;
   .admin-drawer {
     position: sticky;
     transform: none;
-    top: 64px;
-    height: calc(100vh - 64px);
+    top: 70px;
+    height: calc(100vh - 70px);
   }
   .backdrop { display:none; }
 }
