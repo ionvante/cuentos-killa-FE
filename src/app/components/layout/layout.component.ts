@@ -4,14 +4,13 @@ import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { DrawerMenuComponent } from '../drawer-menu/drawer-menu.component';
 import { DrawerService } from '../../services/drawer.service';
-import { MiniCartComponent } from '../mini-cart/mini-cart.component';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../model/user.model';
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, DrawerMenuComponent, MiniCartComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, DrawerMenuComponent],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
