@@ -1,6 +1,6 @@
 .floating-cart {
   position: fixed;
-  bottom: calc(1rem + 72px);
+  bottom: 1rem;
   right: 1rem;
   width: 56px;
   height: 56px;
@@ -13,7 +13,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 1200;
+  z-index: 9999;
 
   .badge {
     position: absolute;
@@ -38,7 +38,7 @@
   .floating-cart {
     width: 48px;
     height: 48px;
-    bottom: calc(1rem + 72px);
+    bottom: 1rem;
   }
 }
 

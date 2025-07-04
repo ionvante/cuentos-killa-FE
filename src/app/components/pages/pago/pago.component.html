@@ -5,13 +5,9 @@
   <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
   <p class="progress-text">1. Pedido generado → 2. Pago validado → 3. Pedido enviado</p>
 
-  <div *ngIf="mensaje" [ngClass]="{
-        'success-mensaje': mensajeTipo === 'success',
-        'error-mensaje': mensajeTipo === 'error',
-        'info-mensaje': mensajeTipo === 'info'
-      }" class="mensaje">
-    <p>{{ mensaje }}</p>
-  </div>
+  <app-alert-banner *ngIf="mensaje" [type]="mensajeTipo">
+    {{ mensaje }}
+  </app-alert-banner>
 
   <div *ngIf="orderStatus === 'Pago Verificado'" class="payment-success-message">
     <p>Tu pago ha sido verificado exitosamente.</p>

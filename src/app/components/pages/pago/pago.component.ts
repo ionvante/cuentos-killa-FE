@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { AlertBannerComponent } from '../../alert-banner/alert-banner.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { PagoService } from '../../../services/pago.service'; // Added PagoService import
 import { environment } from '../../../../environments/environment';
@@ -8,7 +9,7 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-pago',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, AlertBannerComponent],
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.scss']
 })
