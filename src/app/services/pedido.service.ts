@@ -21,7 +21,7 @@ export class PedidoService {
     // Backend expects these specific field names
     formData.append('file', voucherFile);
     formData.append('idpedido', pedidoId.toString());
-    return this.http.post(`${this.apiUrl}/${pedidoId}/voucher`, formData);
+    return this.http.post(`${this.apiUrl}/${pedidoId}/voucher`, formData,{ withCredentials: true });
   }
 
   getOrderStatus(pedidoId: number): Observable<{ estado: string }> {

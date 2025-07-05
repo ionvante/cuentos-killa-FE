@@ -80,18 +80,23 @@ export class PagoComponent implements OnInit {
       }
     });
   }
-
-  fetchOrderStatus(): void {
-    this.pedidoService.getOrderStatus(this.pedidoId).subscribe(
-      response => {
-        this.orderStatus = response.estado;
+  private statusLabels: Record<string,string> = {
+  GENERADO:        'Pedido generado',
+  PAGO_PENDIENTE:  'PENDIENTE DE PAGO',
+  PAGO_VERIFICADO: 'Pago verificado',
+  ENVIADO:         'Pedido enviado',
+  ENTREGADO:       'Pedido entregado'
+};
+fetchOrderStatus(): void {
+  this.pedidoService.getOrderStatus(this.pedidoId)
+    .subscribe({
+      next: ({ estado }) => {
+        // Si tienes una etiqueta para ese estado, úsala; si no, muestra el valor crudo
+        this.orderStatus = this.statusLabels[estado] ?? estado;
       },
-      error => {
-        console.error('Error fetching order status:', error);
-      }
-    );
-  }
-
+      error: err => console.error('Error fetching order status:', err)
+    });
+}
 
   pagarConMercadoPagoConfirmado(): void {
     window.location.href = `${environment.apiBaseUrl}/mercado-pago/pagar/${this.pedidoId}`;

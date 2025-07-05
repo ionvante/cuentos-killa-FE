@@ -43,3 +43,5 @@ Thumbs.db
 src/environments/environment.ts
 package-lock.json
 src/app/app.routes.ts
+package-lock.json
+package.json
