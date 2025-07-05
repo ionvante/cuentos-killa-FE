@@ -17,4 +17,10 @@ export interface Cuento {
   categoria?: string;  // Etiqueta emocional (Aventura, Didáctico, Clásico)
   rating?: number;     // Valoración de 1 a 5
   badge?: string;      // Promoción: Nuevo, Top Ventas, Recomendado
+  /** Cantidad de reseñas que respaldan el rating */
+  ratingCount?: number;
+  /** Porcentaje de descuento (0-100) */
+  descuento?: number;
+  /** Indica si el cuento califica para envío gratis */
+  envioGratis?: boolean;
 }
