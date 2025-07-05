@@ -43,29 +43,3 @@
   </ul>
   <div id="cart-announce" class="visually-hidden" aria-live="polite"></div>
 </nav>
-
-<!-- Drawer del Carrito -->
-<aside class="cart-drawer" [class.open]="carritoAbierto">
-  <div class="cart-header">
-    <h3>Mi Carrito</h3>
-    <button class="close-btn" (click)="cerrarCarrito()" aria-label="Cerrar carrito">✖</button>
-  </div>
-  <div class="cart-body">
-    <div class="carrito-item" *ngFor="let item of itemsCarrito">
-      <i class="fa fa-book"></i>
-      <button class="delete-btn" (click)="CartService.removeItem(item.cuento.id)" aria-label="Eliminar del carrito">❌</button>
-      <span class="titulo-cuento">{{ item.cuento.titulo }}</span>
-      <span *ngIf="item.cantidad" class="cantidad">(x{{ item.cantidad }})</span>
-      <span class="precio-item">
-        S/ {{ (item.cuento.precio * item.cantidad) | number:'1.2-2' }}
-      </span>
-    </div>
-    <div class="subtotal-container">
-      <span class="subtotal-label">Subtotal:</span>
-      <span class="subtotal-valor">{{ calcularSubtotal() | currency:'PEN' }}</span>
-    </div>
-    <button class="btn-primary" (click)="irACheckout()">Checkout</button>
-  </div>
-</aside>
-<!-- Overlay del carrito -->
-<div class="cart-overlay" [class.open]="carritoAbierto" (click)="cerrarCarrito()"></div>

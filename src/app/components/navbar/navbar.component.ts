@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
 import { Router, RouterModule } from '@angular/router';
 import { DrawerService } from '../../services/drawer.service';
+import { MiniCartService } from '../../services/mini-cart.service';
 
 import { CartModalComponent } from '../cart-modal/cart-modal.component';
 import { AuthService } from '../../services/auth.service';
@@ -30,7 +31,6 @@ import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directi
   ]
 })
 export class NavbarComponent implements OnInit {
-  carritoAbierto = false; // 🔥
   cantidadItems: number = 0;
   user: User | null = null;
   mostrarPerfil = false;
@@ -40,7 +40,8 @@ export class NavbarComponent implements OnInit {
     public CartService: CartService,
     public authService: AuthService,
     private router: Router,
-    public drawer: DrawerService
+    public drawer: DrawerService,
+    private miniCart: MiniCartService
   ) {
 
     this.actualizarCantidad();
@@ -81,10 +82,10 @@ export class NavbarComponent implements OnInit {
     return this.itemsCarrito.reduce((total, item) => total + (item.cuento.precio * item.cantidad), 0);
   }
   abrirCarrito() {
-    this.carritoAbierto = true;
+    this.miniCart.open();
   }
   cerrarCarrito() {
-    this.carritoAbierto = false;
+    this.miniCart.close();
   }
 
   togglePerfil() {

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CartService } from '../../services/carrito.service';
 import { Cuento } from '../../model/cuento.model';
 import { DrawerService } from '../../services/drawer.service';
+import { MiniCartService } from '../../services/mini-cart.service';
 
 @Component({
   selector: 'app-mini-cart',
@@ -19,11 +20,13 @@ export class MiniCartComponent implements OnInit {
   constructor(
     private cart: CartService,
     private router: Router,
-    public drawer: DrawerService
+    public drawer: DrawerService,
+    private miniCart: MiniCartService
   ) {}
 
   ngOnInit(): void {
     this.cart.items$.subscribe(items => (this.items = items));
+    this.miniCart.isOpen$.subscribe(open => (this.open = open));
   }
 
   get totalQuantity(): number {
@@ -35,13 +38,11 @@ export class MiniCartComponent implements OnInit {
   }
 
   openCart() {
-    this.open = true;
-    document.body.style.overflow = 'hidden';
+    this.miniCart.open();
   }
 
   closeCart() {
-    this.open = false;
-    document.body.style.overflow = '';
+    this.miniCart.close();
   }
 
   remove(id: number) {
