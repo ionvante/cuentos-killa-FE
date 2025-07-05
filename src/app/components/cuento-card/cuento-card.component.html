@@ -12,7 +12,7 @@
   <div class="cuento-content">
     <h3 class="cuento-title">{{ cuento.titulo }}</h3>
     <div class="rating" *ngIf="cuento.rating != null">
-      <span class="stars">{{ getRatingStars(cuento.rating ?? 0) }}</span>
+      <span class="stars">{{ getRatingStars(cuento.rating) }}</span>
       <span class="count" *ngIf="cuento.ratingCount as rc">({{ rc }})</span>
     </div>
     <p class="autor">Autor: {{ cuento.autor }}</p>
