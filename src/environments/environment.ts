@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
   apiBaseUrl: 'http://localhost:8080/api',
-  sentryDsn: 'https://206c3de140ffe2f6be2200ed522250b1@o4509612268912640.ingest.us.sentry.io/4509612333727744',
-  /** Monto mínimo para obtener envío gratuito */
+  sentryDsn: 'https://bd1fbbf709cf13f839ce491feec0a1e9@o4509612268912640.ingest.us.sentry.io/4509616124002304'
+ /** Monto mínimo para obtener envío gratuito */
   minFreeShipping: 50
 };
