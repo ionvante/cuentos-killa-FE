@@ -60,10 +60,54 @@
   align-items: center;
 }
 
+.badges {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  gap: 0.25rem;
+}
+
+.badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #fff;
+
+  &.category {
+    background: #ffad60;
+    color: #a66e38;
+  }
+
+  &.nuevo {
+    background: #96ceb4;
+  }
+
+  &.top {
+    background: #a66e38;
+  }
+
+  &.oferta {
+    background: #dc6a6a;
+  }
+}
+
 .autor-precio .precio {
-  font-weight: bold;
-  color: #A66E38;
-  font-size: 2rem;
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+
+  .original {
+    text-decoration: line-through;
+    color: #a66e38;
+    font-size: 1.5rem;
+  }
+
+  .final {
+    font-weight: bold;
+    color: #A66E38;
+    font-size: 2rem;
+  }
 }
 
 .envio-badge {
@@ -75,6 +119,18 @@
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+.meta {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+
+  .edad,
+  .envio {
+    font-size: 0.875rem;
+    color: #5d4037;
+  }
 }
 
 .sinopsis {
@@ -165,9 +221,17 @@
   }
 }
 
-.rating span {
-  color: #FFAD60;
-  font-size: 1.2rem;
+.rating {
+  .stars {
+    color: #FFAD60;
+    font-size: 1.2rem;
+  }
+
+  .count {
+    margin-left: 0.25rem;
+    font-size: 1rem;
+    color: #5d4037;
+  }
 }
 
 .testimonial {

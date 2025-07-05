@@ -1,18 +1,30 @@
 <div class="cuento-card">
-  <span class="badge" *ngIf="badgeLabel" [ngClass]="{'nuevo': badgeLabel==='Nuevo', 'top': badgeLabel.toLowerCase().includes('top')}">{{ badgeLabel }}</span>
+  <div class="badges">
+    <span class="badge category" *ngIf="cuento.categoria">{{ cuento.categoria }}</span>
+    <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
+    <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
+    <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento.descuento }}% OFF</span>
+  </div>
   <div class="image-wrapper">
     <img #cardImg class="hover-scale" [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
-    <span class="cat-badge" *ngIf="cuento.categoria">{{ cuento.categoria }}</span>
   </div>
   <div class="cuento-content">
     <h3 class="cuento-title">{{ cuento.titulo }}</h3>
-    <div class="rating" *ngIf="cuento.rating">
-      <span>{{ getRatingStars(cuento.rating) }}</span>
+    <div class="rating" *ngIf="cuento.rating != null">
+      <span class="stars">{{ getRatingStars(cuento.rating) }}</span>
+      <span class="count" *ngIf="cuento.ratingCount as rc">({{ rc }})</span>
     </div>
     <p class="autor">Autor: {{ cuento.autor }}</p>
     <p class="excerpt">{{ cuento.descripcionCorta | slice:0:50 }}...</p>
-    <div class="precio"><span class="cuento-price">S/ {{ cuento.precio | number:'1.2-2' }}</span></div>
+    <div class="meta">
+      <span class="edad" *ngIf="cuento.edadRecomendada">Edad: {{ cuento.edadRecomendada }}+</span>
+      <span class="envio" *ngIf="cuento.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
+    </div>
+    <div class="precio">
+      <span class="original" *ngIf="hasDiscount">S/ {{ cuento.precio | number:'1.2-2' }}</span>
+      <span class="final">S/ {{ precioFinal | number:'1.2-2' }}</span>
+    </div>
   </div>
 
   <div class="acciones">
