@@ -31,7 +31,7 @@
     "chart.js": "^4.4.0",
     "ng2-charts": "^4.0.0",
     "date-fns": "^2.30.0",
-    "@sentry/angular-ivy": "^7.120.3",
+    "@sentry/angular": "^7.120.3",
     "@sentry/tracing": "^7.120.3"
   },
   "devDependencies": {
