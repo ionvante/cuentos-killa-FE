@@ -5,8 +5,15 @@
 
   <div *ngIf="errorMensaje" class="error-mensaje">
     <p>{{ errorMensaje }}</p>
-    <button (click)="reloadStats()">Reintentar</button>
+    <button (click)="onRangeChange()">Reintentar</button>
   </div>
+
+  <select [(ngModel)]="selectedDays" (change)="onRangeChange()">
+    <option [value]="7">Últimos 7 días</option>
+    <option [value]="30">Últimos 30 días</option>
+    <option [value]="90">Últimos 90 días</option>
+    <option [value]="'12m'">Últimos 12 meses</option>
+  </select>
 
   <section class="stats-grid" aria-labelledby="stats-heading">
     <h3 id="stats-heading" class="visually-hidden">Estadísticas</h3>
@@ -16,9 +23,9 @@
     </ng-container>
 
     <ng-container *ngIf="!isLoading && !errorMensaje">
-      <app-stat-card [title]="'Cuentos publicados'" [value]="cuentosPublicados" [data]="cuentosTrend"></app-stat-card>
-      <app-stat-card [title]="'Pedidos en proceso'" [value]="pedidosEnProceso" [data]="pedidosTrend"></app-stat-card>
-      <app-stat-card [title]="'Usuarios registrados'" [value]="usuariosRegistrados" [data]="usuariosTrend"></app-stat-card>
+      <app-stat-card [title]="'Cuentos publicados'" [value]="cuentosPublicados" [data]="cuentosData" [options]="sparklineOptions"></app-stat-card>
+      <app-stat-card [title]="'Pedidos en proceso'" [value]="pedidosEnProceso" [data]="pedidosData" [options]="sparklineOptions"></app-stat-card>
+      <app-stat-card [title]="'Usuarios registrados'" [value]="usuariosRegistrados" [data]="usuariosData" [options]="sparklineOptions"></app-stat-card>
     </ng-container>
   </section>
 

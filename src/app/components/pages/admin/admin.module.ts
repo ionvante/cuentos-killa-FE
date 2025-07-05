@@ -26,7 +26,7 @@ const routes: Routes = [
     component: AdminLayoutComponent,
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', loadComponent: () => import('./admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent) },
+      { path: 'dashboard', loadChildren: () => import('./admin-dashboard/admin-dashboard.module').then(m => m.AdminDashboardModule) },
       { path: 'cuentos', component: AdminCuentosComponent },
       { path: 'cuentos/nuevo', component: CuentoFormComponent },
       { path: 'cuentos/editar/:id', component: CuentoFormComponent },
