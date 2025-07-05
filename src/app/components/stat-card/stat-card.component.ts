@@ -1,10 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgChartsModule } from 'ng2-charts';
+import { ChartOptions } from 'chart.js';
 
 @Component({
   selector: 'app-stat-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, NgChartsModule],
   templateUrl: './stat-card.component.html',
   styleUrls: ['./stat-card.component.scss']
 })
@@ -13,14 +15,5 @@ export class StatCardComponent {
   @Input() value: number | string = 0;
   @Input() data: number[] = [];
   @Input() icon = '';
-
-  get points(): string {
-    if (!this.data || this.data.length === 0) return '';
-    const max = Math.max(...this.data);
-    const min = Math.min(...this.data);
-    const range = max - min || 1;
-    return this.data
-      .map((d, i) => `${(i / (this.data.length - 1)) * 100},${100 - ((d - min) / range) * 100}`)
-      .join(' ');
-  }
+  @Input() options: ChartOptions | undefined = undefined;
 }

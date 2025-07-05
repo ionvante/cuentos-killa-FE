@@ -6,7 +6,12 @@
       <span class="title">{{ title }}</span>
     </div>
   </div>
-  <svg class="sparkline" viewBox="0 0 100 30" *ngIf="data?.length">
-    <polyline [attr.points]="points" fill="none" stroke="currentColor" stroke-width="2"/>
-  </svg>
+  <canvas
+    class="sparkline"
+    *ngIf="data?.length"
+    baseChart
+    [datasets]="[{ data: data, borderWidth: 2, fill: false }]"
+    [options]="options"
+    chartType="line">
+  </canvas>
 </div>

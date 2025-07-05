@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
 import { AdminDashboardComponent } from './admin-dashboard.component';
+import { AdminDashboardModule } from './admin-dashboard.module';
 import { CuentoService } from '../../../../services/cuento.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { UserService } from '../../../../services/user.service';
@@ -22,7 +23,7 @@ describe('AdminDashboardComponent', () => {
     userServiceSpy = jasmine.createSpyObj('UserService', ['obtenerUsuarios']);
 
     await TestBed.configureTestingModule({
-      declarations: [AdminDashboardComponent],
+      imports: [AdminDashboardModule],
       providers: [
         { provide: CuentoService, useValue: cuentoServiceSpy },
         { provide: PedidoService, useValue: pedidoServiceSpy },
@@ -49,9 +50,9 @@ describe('AdminDashboardComponent', () => {
     expect(component.pedidosEnProceso).toBe(1);
     expect(component.usuariosRegistrados).toBe(3);
     expect(component.usuarios.length).toBe(3);
-    expect(component.cuentosTrend.length).toBeGreaterThanOrEqual(5);
-    expect(component.pedidosTrend.length).toBeGreaterThanOrEqual(5);
-    expect(component.usuariosTrend.length).toBeGreaterThanOrEqual(5);
+    expect(component.cuentosData.length).toBeGreaterThanOrEqual(5);
+    expect(component.pedidosData.length).toBeGreaterThanOrEqual(5);
+    expect(component.usuariosData.length).toBeGreaterThanOrEqual(5);
     expect(component.isLoading).toBeFalse();
     expect(component.errorMensaje).toBeNull();
   });
