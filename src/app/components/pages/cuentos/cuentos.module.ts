@@ -12,5 +12,6 @@ const routes: Routes = [
 @NgModule({
   declarations: [CuentosComponent],
   imports: [CommonModule, FormsModule, RouterModule.forChild(routes), SharedModule],
+  exports: [CuentosComponent]
 })
 export class CuentosModule {}
