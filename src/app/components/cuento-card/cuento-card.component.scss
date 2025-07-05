@@ -23,15 +23,36 @@
     animation: skeleton-loading 1.2s ease infinite;
   }
 
-  .cat-badge {
+  .badges {
     position: absolute;
-    bottom: 0.25rem;
-    left: 0.25rem;
-    background: #ffad60;
-    color: #a66e38;
-    padding: 0.1rem 0.4rem;
-    border-top-right-radius: 4px;
+    top: 0.5rem;
+    left: 0.5rem;
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
     font-size: 0.75rem;
+    color: #fff;
+
+    &.category {
+      background: #ffad60;
+      color: #a66e38;
+    }
+
+    &.nuevo {
+      background: #96ceb4;
+    }
+
+    &.top {
+      background: #a66e38;
+    }
+
+    &.oferta {
+      background: #dc6a6a;
+    }
   }
 
   .cuento-content {
@@ -82,17 +103,45 @@
     margin: 0.25rem 0 0.5rem;
   }
 
-  .rating span {
-    color: #ffad60;
-    font-size: 0.9rem;
+  .rating {
+    .stars {
+      color: #ffad60;
+      font-size: 0.9rem;
+    }
+    .count {
+      margin-left: 0.25rem;
+      color: #4b3a2f;
+      font-size: 0.8rem;
+    }
   }
 
-  .cuento-price {
-    background: #ffad60;
-    color: #fff;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
+  .meta {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+
+    .edad,
+    .envio {
+      font-size: 0.8rem;
+      color: #4b3a2f;
+    }
+  }
+
+  .precio {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+
+    .original {
+      text-decoration: line-through;
+      color: #a66e38;
+    }
+
+    .final {
+      font-weight: bold;
+      color: #a66e38;
+    }
   }
 
 
@@ -116,22 +165,6 @@
     }
   }
 
-  .badge {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    color: #fff;
-    &.nuevo {
-      background: #96ceb4;
-    }
-    &.top {
-      background: #a66e38;
-    }
-    animation: none;
-  }
 }
 
 .cuento-card-imagen {
