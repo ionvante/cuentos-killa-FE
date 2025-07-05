@@ -12,7 +12,7 @@ Sentry.init({
   integrations: [Sentry.browserTracingIntegration()],
   // Capture all traces in development. Adjust in production as needed.
   tracesSampleRate: 1.0,
-  tracePropagationTargets: ['localhost', /^https:\/\/yourserver\.io\/api/],
+  tracePropagationTargets: ['localhost', 'cuentos-killa-fe.vercel.app'],
 });
 
 bootstrapApplication(AppComponent, appConfig)
