@@ -5,6 +5,7 @@ import { Cuento } from './../../model/cuento.model';
 import { CartService } from '../../services/carrito.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 
 @Component({
@@ -18,6 +19,9 @@ export class DetalleCuentoComponent implements OnInit {
   relatedCuentos: Cuento[] = [];
   openTech = false;
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
+  minFreeShipping = environment.minFreeShipping;
+  isNuevo = false;
+  badgeLabel = '';
   constructor(
     private route: ActivatedRoute,
     private cuentoService: CuentoService,
@@ -31,6 +35,11 @@ export class DetalleCuentoComponent implements OnInit {
     if (id) {
       this.cuentoService.getCuentoById(+id).subscribe(data => {
         this.cuento = data;
+        if (this.cuento?.fechaIngreso) {
+          const diff = (Date.now() - new Date(this.cuento.fechaIngreso).getTime()) / (1000 * 3600 * 24);
+          this.isNuevo = diff <= 30;
+        }
+        this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
       });
       this.cuentoService.obtenerCuentos().subscribe(cuentos => {
         this.relatedCuentos = cuentos.filter(c => c.id !== +id).slice(0, 8);
@@ -75,6 +84,22 @@ export class DetalleCuentoComponent implements OnInit {
 
   volver() {
   this.location.back();
+  }
+
+  /** Devuelve el string de estrellas según la valoración */
+  getRatingStars(rating: number): string {
+    return '★★★★★'.slice(0, rating) + '☆☆☆☆☆'.slice(rating);
+  }
+
+  /** Calcula el precio final con descuento */
+  get precioFinal(): number {
+    if (!this.cuento) {
+      return 0;
+    }
+    if (this.cuento.descuento && this.cuento.descuento > 0) {
+      return this.cuento.precio * (1 - this.cuento.descuento / 100);
+    }
+    return this.cuento.precio;
   }
 
   /** Mensaje de stock con advertencia cuando quedan pocas unidades */

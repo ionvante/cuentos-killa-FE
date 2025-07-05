@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, ChangeDetectionStrategy, OnInit
 import { Cuento } from '../../model/cuento.model'; // ajusta el path según tu estructura
 import { CartService } from '../../services/carrito.service';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-cuento-card',
@@ -19,6 +20,7 @@ export class CuentoCardComponent implements OnInit {
   cargandoImagen: boolean = true;
   isNuevo = false;
   badgeLabel = '';
+  minFreeShipping = environment.minFreeShipping;
 
   constructor(private cartService: CartService, private router: Router) {}
 
@@ -69,5 +71,13 @@ export class CuentoCardComponent implements OnInit {
 
   getRatingStars(rating: number): string {
     return '★★★★★'.slice(0, rating) + '☆☆☆☆☆'.slice(rating);
+  }
+
+  /** Precio final luego de aplicar el descuento */
+  get precioFinal(): number {
+    if (this.cuento.descuento && this.cuento.descuento > 0) {
+      return this.cuento.precio * (1 - this.cuento.descuento / 100);
+    }
+    return this.cuento.precio;
   }
 }
