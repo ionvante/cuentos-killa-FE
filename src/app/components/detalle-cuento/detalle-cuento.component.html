@@ -30,8 +30,8 @@
       <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
       <span class="envio" *ngIf="cuento?.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
     </div>
-    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
-      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
+    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="cuento!.rating + ' de 5'">
+      <span class="stars">{{ getRatingStars(cuento!.rating) }}</span>
       <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
     </div>
     <blockquote class="testimonial">
