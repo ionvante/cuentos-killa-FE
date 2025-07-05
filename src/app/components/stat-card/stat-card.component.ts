@@ -15,5 +15,5 @@ export class StatCardComponent {
   @Input() value: number | string = 0;
   @Input() data: number[] = [];
   @Input() icon = '';
-  @Input() options: ChartOptions | null = null;
+  @Input() options: ChartOptions | undefined = undefined;
 }
