@@ -16,10 +16,11 @@
         <th>Estado Pago</th>
         <th>Tipo Pago</th>
         <th>Total</th>
+        <th>Acción</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pedido of pedidos">
+      <tr *ngFor="let pedido of pedidos" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ pedido.nombre }}</td>
@@ -29,7 +30,22 @@
         <td>{{ pedido.estado }}</td>
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>
+          <button
+            *ngIf="pedido.estado === 'PAGO_PENDIENTE'"
+            class="btn btn-primary"
+            (click)="abrirModal(pedido)">
+            Ver Voucher
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
+<app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido?.Id || selectedPedido?.id)" (close)="cerrarModal()">
+  <img *ngIf="voucherImg" [src]="voucherImg" alt="Voucher" />
+  <div modal-footer>
+    <button class="btn btn-success" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
+    <button class="btn btn-danger" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
+  </div>
+</app-modal>
