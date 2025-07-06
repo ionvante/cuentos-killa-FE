@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
@@ -15,10 +15,17 @@ export class AdminPedidosComponent implements OnInit {
   selectedPedido: Pedido | null = null;
   voucherImg: string | null = null;
   processing = false;
+  isMobile = false;
 
   constructor(private pedidoService: PedidoService) {}
 
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
   ngOnInit(): void {
+    this.onResize();
     this.pedidoService.getOrders().subscribe({
       next: data => {
          this.pedidos = data
