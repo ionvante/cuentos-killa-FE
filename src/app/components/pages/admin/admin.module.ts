@@ -16,6 +16,7 @@ import { ConfigCategoryFormComponent } from './admin-config/config-category-form
 import { ConfigItemsComponent } from './admin-config/config-items.component';
 import { ConfigItemFormComponent } from './admin-config/config-item-form.component';
 import { SharedModule } from "../../shared.module";
+import { ModalComponent } from '../../app-modal/modal.component';
 
 // import { SharedModule } from '../../shared.module'; 
 
@@ -62,7 +63,8 @@ const routes: Routes = [
     RouterModule,
     RouterModule.forChild(routes),
     SharedModule,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    ModalComponent
   ]
 })
 export class AdminModule {}

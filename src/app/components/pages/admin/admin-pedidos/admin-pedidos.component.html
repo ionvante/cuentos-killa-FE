@@ -16,6 +16,7 @@
         <th>Estado Pago</th>
         <th>Tipo Pago</th>
         <th>Total</th>
+        <th>Acción</th>
       </tr>
     </thead>
     <tbody>
@@ -29,7 +30,22 @@
         <td>{{ pedido.estado }}</td>
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
+        <td>
+          <button
+            *ngIf="pedido.estado === 'PAGO_PENDIENTE' && (pedido.tipoPago === 'YAPE' || pedido.tipoPago === 'PLIN')"
+            class="btn btn-primary"
+            (click)="abrirModal(pedido)">
+            Ver Voucher
+          </button>
+        </td>
       </tr>
     </tbody>
   </table>
 </div>
+<app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido?.Id || selectedPedido?.id)" (close)="cerrarModal()">
+  <img *ngIf="voucherImg" [src]="voucherImg" alt="Voucher" />
+  <div modal-footer>
+    <button class="btn btn-success" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
+    <button class="btn btn-danger" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
+  </div>
+</app-modal>

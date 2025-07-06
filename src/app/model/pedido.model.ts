@@ -23,4 +23,5 @@ export interface Pedido {
   tipoPago?: string;
   userId: number;
   correoUsuario: string;
+  voucherUrl?: string;
 }

@@ -39,4 +39,16 @@ export class PedidoService {
   downloadInvoice(id: number): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/${id}/pdf`, { responseType: 'blob' });
   }
+
+  getVoucher(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/voucher`, { responseType: 'blob' });
+  }
+
+  validateVoucher(id: number): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/validate-voucher`, {}, { withCredentials: true });
+  }
+
+  rejectVoucher(id: number, motivo: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/${id}/reject-voucher`, { motivo }, { withCredentials: true });
+  }
 }
