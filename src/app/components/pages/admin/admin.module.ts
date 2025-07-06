@@ -11,6 +11,7 @@ import { AdminPedidosComponent } from './admin-pedidos/admin-pedidos.component';
 import { AdminUsuariosComponent } from './admin-usuarios/admin-usuarios.component';
 import { CuentoFormComponent } from './cuento-form/cuento-form.component';
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component';
+import { InputDialogComponent } from '../../input-dialog/input-dialog.component';
 import { ConfigCategoriesComponent } from './admin-config/config-categories.component';
 import { ConfigCategoryFormComponent } from './admin-config/config-category-form.component';
 import { ConfigItemsComponent } from './admin-config/config-items.component';
@@ -64,7 +65,8 @@ const routes: Routes = [
     RouterModule.forChild(routes),
     SharedModule,
     AdminLayoutComponent,
-    ModalComponent
+    ModalComponent,
+    InputDialogComponent
   ]
 })
 export class AdminModule {}

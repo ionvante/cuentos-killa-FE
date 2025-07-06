@@ -1,0 +1,10 @@
+<div class="overlay">
+  <div class="dialog">
+    <p>{{ message }}</p>
+    <textarea [(ngModel)]="reason" placeholder="Motivo" rows="3"></textarea>
+    <div class="buttons">
+      <button class="confirm" (click)="onConfirm()">Aceptar</button>
+      <button class="cancel" (click)="onCancel()">Cancelar</button>
+    </div>
+  </div>
+</div>
