@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pedido of pedidos" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
+      <tr *ngFor="let pedido of pedidos; trackBy: trackByPedidoId" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ pedido.nombre }}</td>
@@ -31,10 +31,11 @@
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
-          <button 
+          <button
             *ngIf="pedido.estado === 'PAGO_ENVIADO'"
             class="btn btn-primary"
-            (click)="abrirModal(pedido)">
+            (click)="abrirModal(pedido)"
+          >
             Ver Voucher
           </button>
         </td>
@@ -46,7 +47,7 @@
     <div class="pedido-cards">
       <div
         class="pedido-card"
-        *ngFor="let pedido of pedidos"
+        *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
         [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'"
       >
         <div><strong>ID:</strong> {{ pedido.Id || pedido.id }}</div>

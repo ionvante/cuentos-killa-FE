@@ -33,7 +33,7 @@ export class AdminPedidosComponent implements OnInit {
          this.pedidos = data
         //   .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
         //   .slice(0, 5);
-       this.isLoading = false; 
+       this.isLoading = false;
       },
       error: err => {
         console.error('Error fetching orders:', err);
@@ -103,5 +103,8 @@ export class AdminPedidosComponent implements OnInit {
 
   cancelarRechazo(): void {
     this.showReasonDialog = false;
+  }
+  trackByPedidoId(index: number, pedido: Pedido): number | undefined {
+    return pedido.Id || pedido.id;
   }
 }
