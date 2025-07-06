@@ -4,7 +4,7 @@
   <div *ngIf="isLoading">Cargando pedidos...</div>
   <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
 
-  <table *ngIf="!isLoading && !errorMensaje">
+  <table *ngIf="!isLoading && !errorMensaje && !isMobile">
     <thead>
       <tr>
         <th>ID</th>
@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pedido of pedidos" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
+      <tr *ngFor="let pedido of pedidos; trackBy: trackByPedidoId" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ pedido.nombre }}</td>
@@ -31,16 +31,46 @@
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
-          <button 
+          <button
             *ngIf="pedido.estado === 'PAGO_ENVIADO'"
             class="btn btn-primary"
-            (click)="abrirModal(pedido)">
+            (click)="abrirModal(pedido)"
+          >
             Ver Voucher
           </button>
         </td>
       </tr>
     </tbody>
   </table>
+
+  <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
+    <div class="pedido-cards">
+      <div
+        class="pedido-card"
+        *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
+        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'"
+      >
+        <div><strong>ID:</strong> {{ pedido.Id || pedido.id }}</div>
+        <div><strong>Fecha/Hora:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
+        <div><strong>Nombre:</strong> {{ pedido.nombre }}</div>
+        <div><strong>Correo:</strong> {{ pedido.correo }}</div>
+        <div><strong>Dirección:</strong> {{ pedido.direccion }}</div>
+        <div><strong>Teléfono:</strong> {{ pedido.telefono }}</div>
+        <div><strong>Estado Pago:</strong> {{ pedido.estado }}</div>
+        <div><strong>Tipo Pago:</strong> {{ pedido.tipoPago || 'N/A' }}</div>
+        <div><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</div>
+        <div class="acciones">
+          <button
+            *ngIf="pedido.estado === 'PAGO_ENVIADO'"
+            class="btn btn-primary"
+            (click)="abrirModal(pedido)"
+          >
+            Ver Voucher
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>
 <app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido!.Id || selectedPedido!.id)" (close)="cerrarModal()">
   <img *ngIf="voucherImg" [src]="voucherImg" alt="Voucher" />
@@ -49,3 +79,9 @@
     <button class="btn btn-danger" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
   </div>
 </app-modal>
+<app-input-dialog
+  *ngIf="showReasonDialog"
+  [message]="'Motivo de rechazo (opcional)'"
+  (confirm)="confirmarRechazo($event)"
+  (cancel)="cancelarRechazo()">
+</app-input-dialog>
