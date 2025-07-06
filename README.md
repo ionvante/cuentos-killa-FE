@@ -25,3 +25,34 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Environment configuration
+
+The project relies on environment files located in `src/environments/`. Each
+file exports an `environment` object with the following keys:
+
+- `apiBaseUrl` – base URL for the backend API.
+- `sentryDsn` – [Sentry](https://sentry.io/) DSN used to report errors.
+- `minFreeShipping` – minimum order total required to obtain free shipping.
+
+The repository contains predefined files for development (`environment.ts`),
+production (`environment.prod.ts`) and local development
+(`environment-local.ts`). You can create additional files such as
+`environment.staging.ts` and reference them via Angular's configuration system.
+
+To override values during deployment, either provide your own environment file
+and add a corresponding configuration in `angular.json`, or replace specific
+entries using the `fileReplacements` section.
+
+### Switching environments
+
+When building or serving the application you can specify the desired
+configuration:
+
+```bash
+ng serve --configuration=development   # default for local development
+ng build --configuration=production    # production build
+```
+
+Replace `production` or `development` with the name of any custom configuration
+you create (for example `staging`).

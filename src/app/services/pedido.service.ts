@@ -41,7 +41,10 @@ export class PedidoService {
   }
 
   getVoucher(id: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}/voucher`, { responseType: 'blob' });
+    return this.http.get(`${this.apiUrl}/${id}/voucher`, {
+      responseType: 'blob',
+      withCredentials: true
+    });
   }
 
   validateVoucher(id: number): Observable<any> {

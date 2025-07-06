@@ -104,7 +104,6 @@ export class AdminPedidosComponent implements OnInit {
   cancelarRechazo(): void {
     this.showReasonDialog = false;
   }
-
   trackByPedidoId(index: number, pedido: Pedido): number | undefined {
     return pedido.Id || pedido.id;
   }
