@@ -32,7 +32,7 @@
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
           <button 
-            *ngIf="pedido.estado === 'PAGO_PENDIENTE'"
+            *ngIf="pedido.estado === 'PAGO_ENVIADO'"
             class="btn btn-primary"
             (click)="abrirModal(pedido)">
             Ver Voucher
