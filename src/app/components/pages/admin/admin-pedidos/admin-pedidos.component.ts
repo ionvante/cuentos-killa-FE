@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
@@ -16,9 +16,18 @@ export class AdminPedidosComponent implements OnInit {
   voucherImg: string | null = null;
   processing = false;
 
+  isMobile = false;
+  showReasonDialog = false;
+
   constructor(private pedidoService: PedidoService) {}
 
+  @HostListener('window:resize')
+  onResize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
   ngOnInit(): void {
+    this.onResize();
     this.pedidoService.getOrders().subscribe({
       next: data => {
          this.pedidos = data
@@ -72,7 +81,12 @@ export class AdminPedidosComponent implements OnInit {
 
   rechazarPago(): void {
     if (!this.selectedPedido) return;
-    const motivo = prompt('Motivo de rechazo (opcional)') || '';
+    this.showReasonDialog = true;
+  }
+
+  confirmarRechazo(motivo: string): void {
+    if (!this.selectedPedido) return;
+    this.showReasonDialog = false;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
     this.pedidoService.rejectVoucher(id, motivo).subscribe({
@@ -86,8 +100,9 @@ export class AdminPedidosComponent implements OnInit {
       }
     });
   }
-
   trackByPedidoId(index: number, pedido: Pedido): number | undefined {
     return pedido.Id || pedido.id;
+  cancelarRechazo(): void {
+    this.showReasonDialog = false;0
   }
 }
