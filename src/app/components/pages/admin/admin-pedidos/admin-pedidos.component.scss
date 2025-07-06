@@ -38,6 +38,18 @@
       background: #fff2d9;
     }
   }
+
+  .pedido-cards {
+    display: none;
+  }
+
+  .pedido-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
 }
 
 .pendiente {
@@ -46,8 +58,10 @@
 
 @media (max-width: 600px) {
   table {
+    display: none;
+  }
+
+  .pedido-cards {
     display: block;
-    overflow-x: auto;
-    white-space: nowrap;
   }
 }
