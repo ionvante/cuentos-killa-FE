@@ -78,3 +78,9 @@
     <button class="btn btn-danger" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
   </div>
 </app-modal>
+<app-input-dialog
+  *ngIf="showReasonDialog"
+  [message]="'Motivo de rechazo (opcional)'"
+  (confirm)="confirmarRechazo($event)"
+  (cancel)="cancelarRechazo()">
+</app-input-dialog>
