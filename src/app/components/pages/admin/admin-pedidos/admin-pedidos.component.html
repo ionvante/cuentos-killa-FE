@@ -42,7 +42,7 @@
     </tbody>
   </table>
 </div>
-<app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido?.Id || selectedPedido?.id)" (close)="cerrarModal()">
+<app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido!.Id || selectedPedido!.id)" (close)="cerrarModal()">
   <img *ngIf="voucherImg" [src]="voucherImg" alt="Voucher" />
   <div modal-footer>
     <button class="btn btn-success" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
