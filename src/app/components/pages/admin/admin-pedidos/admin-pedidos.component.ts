@@ -15,6 +15,7 @@ export class AdminPedidosComponent implements OnInit {
   selectedPedido: Pedido | null = null;
   voucherImg: string | null = null;
   processing = false;
+  showReasonDialog = false;
 
   constructor(private pedidoService: PedidoService) {}
 
@@ -72,7 +73,12 @@ export class AdminPedidosComponent implements OnInit {
 
   rechazarPago(): void {
     if (!this.selectedPedido) return;
-    const motivo = prompt('Motivo de rechazo (opcional)') || '';
+    this.showReasonDialog = true;
+  }
+
+  confirmarRechazo(motivo: string): void {
+    if (!this.selectedPedido) return;
+    this.showReasonDialog = false;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
     this.pedidoService.rejectVoucher(id, motivo).subscribe({
@@ -85,5 +91,9 @@ export class AdminPedidosComponent implements OnInit {
         this.processing = false;
       }
     });
+  }
+
+  cancelarRechazo(): void {
+    this.showReasonDialog = false;
   }
 }
