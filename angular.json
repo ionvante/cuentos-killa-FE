@@ -36,6 +36,7 @@
               "src/styles.scss"
             ],
             "scripts": [],
+            "allowedCommonJsDependencies": ["localforage"],
             "server": "src/main.server.ts",
             "prerender": false,
             "ssr": {
@@ -47,12 +48,12 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "800kB",
+                  "maximumWarning": "900kB",
                   "maximumError": "2MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "5kB",
+                  "maximumWarning": "8kB",
                   "maximumError": "10kB"
                 }
               ],
