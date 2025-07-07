@@ -1,1 +1,59 @@
-<p>admin-usuarios works!</p>
+<div class="admin-usuarios-container">
+  <h2>Usuarios</h2>
+
+  <div *ngIf="isLoading">Cargando usuarios...</div>
+  <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
+
+  <table *ngIf="!isLoading && !errorMensaje && !isMobile">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Rol</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let u of usuarios; trackBy: trackById">
+        <td>{{ u.id }}</td>
+        <td>{{ u.nombre }} {{ u.apellido }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.telefono }}</td>
+        <td>{{ u.role }}</td>
+        <td>{{ u.habilitado ? 'Habilitado' : 'Deshabilitado' }}</td>
+        <td class="acciones">
+          <button class="btn btn-success" (click)="toggleHabilitar(u)">
+            {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+          </button>
+          <button class="btn btn-secondary" (click)="enviarCorreo(u)">Correo</button>
+          <button class="btn btn-secondary" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">Hacer admin</button>
+          <button class="btn btn-primary" (click)="verPedidos(u)">Pedidos</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
+    <div class="usuario-cards">
+      <div class="usuario-card" *ngFor="let u of usuarios; trackBy: trackById">
+        <div><strong>ID:</strong> {{ u.id }}</div>
+        <div><strong>Nombre:</strong> {{ u.nombre }} {{ u.apellido }}</div>
+        <div><strong>Email:</strong> {{ u.email }}</div>
+        <div><strong>Teléfono:</strong> {{ u.telefono }}</div>
+        <div><strong>Rol:</strong> {{ u.role }}</div>
+        <div><strong>Estado:</strong> {{ u.habilitado ? 'Habilitado' : 'Deshabilitado' }}</div>
+        <div class="acciones">
+          <button class="btn btn-success" (click)="toggleHabilitar(u)">
+            {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+          </button>
+          <button class="btn btn-secondary" (click)="enviarCorreo(u)">Correo</button>
+          <button class="btn btn-secondary" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">Hacer admin</button>
+          <button class="btn btn-primary" (click)="verPedidos(u)">Pedidos</button>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

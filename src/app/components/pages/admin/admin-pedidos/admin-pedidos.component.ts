@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-admin-pedidos',
@@ -18,8 +19,9 @@ export class AdminPedidosComponent implements OnInit {
 
   isMobile = false;
   showReasonDialog = false;
+  private userIdFilter: string | null = null;
 
-  constructor(private pedidoService: PedidoService) {}
+  constructor(private pedidoService: PedidoService, private route: ActivatedRoute) {}
 
   @HostListener('window:resize')
   onResize() {
@@ -28,12 +30,19 @@ export class AdminPedidosComponent implements OnInit {
 
   ngOnInit(): void {
     this.onResize();
+    this.route.queryParamMap.subscribe(params => {
+      this.userIdFilter = params.get('userId');
+      this.cargarPedidos();
+    });
+  }
+
+  private cargarPedidos(): void {
     this.pedidoService.getOrders().subscribe({
       next: data => {
-         this.pedidos = data
-        //   .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
-        //   .slice(0, 5);
-       this.isLoading = false;
+        this.pedidos = this.userIdFilter
+          ? data.filter(p => String(p.userId) === this.userIdFilter)
+          : data;
+        this.isLoading = false;
       },
       error: err => {
         console.error('Error fetching orders:', err);

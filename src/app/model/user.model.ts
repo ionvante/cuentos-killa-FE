@@ -6,5 +6,6 @@ export interface User {
     telefono: string;
     documento?: string;
     role?: 'USER' | 'ADMIN';
-  }
+    habilitado?: boolean;
+}
   
