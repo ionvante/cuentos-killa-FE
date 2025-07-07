@@ -1,9 +1,12 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import * as Sentry from '@sentry/angular';
+import { Chart, registerables } from 'chart.js';
 
 import { appConfig } from './app/app.config';
 import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
+
+Chart.register(...registerables);
 
 Sentry.init({
   dsn: environment.sentryDsn,
