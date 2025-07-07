@@ -14,7 +14,7 @@ export class AdminPedidosComponent implements OnInit {
   isLoading = true;
   errorMensaje: string | null = null;
   selectedPedido: Pedido | null = null;
-  voucherImg: string | null = null;
+  voucherUrl: string | null = null;
   processing = false;
 
   isMobile = false;
@@ -55,28 +55,31 @@ export class AdminPedidosComponent implements OnInit {
   abrirModal(pedido: Pedido): void {
     this.selectedPedido = pedido;
     const id = pedido.Id || pedido.id || 0;
-    this.pedidoService.getVoucher(id).subscribe({
-      next: blob => {
-        this.voucherImg = URL.createObjectURL(blob);
+    this.pedidoService.getVoucherUrl(id).subscribe({
+      next: url => {
+        this.voucherUrl = url;
       },
-      error: err => console.error('Error fetching voucher', err)
+      error: err => console.error('Error fetching voucher url', err)
     });
   }
 
   cerrarModal(): void {
-    if (this.voucherImg) {
-      URL.revokeObjectURL(this.voucherImg);
-    }
     this.selectedPedido = null;
-    this.voucherImg = null;
+    this.voucherUrl = null;
     this.processing = false;
+  }
+
+  descargarVoucher(): void {
+    if (this.voucherUrl) {
+      window.open(this.voucherUrl, '_blank');
+    }
   }
 
   validarPago(): void {
     if (!this.selectedPedido) return;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
-    this.pedidoService.validateVoucher(id).subscribe({
+    this.pedidoService.updateOrderStatus(id, 'PAGO_VERIFICADO').subscribe({
       next: () => {
         this.selectedPedido!.estado = 'PAGO_VERIFICADO';
         this.cerrarModal();
@@ -98,7 +101,7 @@ export class AdminPedidosComponent implements OnInit {
     this.showReasonDialog = false;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
-    this.pedidoService.rejectVoucher(id, motivo).subscribe({
+    this.pedidoService.updateOrderStatus(id, 'PAGO_RECHAZADO', motivo).subscribe({
       next: () => {
         this.selectedPedido!.estado = 'PAGO_RECHAZADO';
         this.cerrarModal();

@@ -11,7 +11,7 @@ describe('AdminPedidosComponent', () => {
   let pedidoServiceSpy: jasmine.SpyObj<PedidoService>;
 
   beforeEach(async () => {
-    pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['rejectVoucher']);
+    pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['updateOrderStatus']);
 
     await TestBed.configureTestingModule({
       imports: [AdminPedidosComponent, InputDialogComponent, ModalComponent],
@@ -32,7 +32,7 @@ describe('AdminPedidosComponent', () => {
     component.rechazarPago();
     expect(component.showReasonDialog).toBeTrue();
     component.confirmarRechazo('no valido');
-    expect(pedidoServiceSpy.rejectVoucher).toHaveBeenCalledWith(1, 'no valido');
+    expect(pedidoServiceSpy.updateOrderStatus).toHaveBeenCalledWith(1, 'PAGO_RECHAZADO', 'no valido');
   });
 
   it('should not call service when canceling', () => {
@@ -40,7 +40,7 @@ describe('AdminPedidosComponent', () => {
     component.rechazarPago();
     component.cancelarRechazo();
     expect(component.showReasonDialog).toBeFalse();
-    expect(pedidoServiceSpy.rejectVoucher).not.toHaveBeenCalled();
+    expect(pedidoServiceSpy.updateOrderStatus).not.toHaveBeenCalled();
   });
 
   describe('trackByPedidoId', () => {
