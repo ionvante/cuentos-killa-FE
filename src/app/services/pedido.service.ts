@@ -40,18 +40,23 @@ export class PedidoService {
     return this.http.get(`${this.apiUrl}/${id}/pdf`, { responseType: 'blob' });
   }
 
-  getVoucher(id: number): Observable<Blob> {
-    return this.http.get(`${this.apiUrl}/${id}/voucher`, {
-      responseType: 'blob',
+  /** Obtiene la URL del voucher asociado al pedido */
+  getVoucherUrl(id: number): Observable<string> {
+    return this.http.get(`${this.apiUrl}/${id}/voucher-url`, {
+      responseType: 'text',
       withCredentials: true
     });
   }
 
-  validateVoucher(id: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/validate-voucher`, {}, { withCredentials: true });
-  }
-
-  rejectVoucher(id: number, motivo: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/${id}/reject-voucher`, { motivo }, { withCredentials: true });
+  /**
+   * Actualiza el estado del pedido. Opcionalmente se puede enviar un motivo
+   * en caso de que el estado sea de rechazo.
+   */
+  updateOrderStatus(id: number, estado: string, motivo?: string): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/${id}/status`,
+      { estado, motivo },
+      { withCredentials: true }
+    );
   }
 }
