@@ -56,3 +56,18 @@ ng build --configuration=production    # production build
 
 Replace `production` or `development` with the name of any custom configuration
 you create (for example `staging`).
+
+## Charts and statistics
+
+The dashboard charts are powered by [Chart.js](https://www.chartjs.org/) and
+[ng2-charts](https://github.com/valor-software/ng2-charts). Order metrics are
+provided through the `OrderStatsService` and visualized using the standalone
+`order-stats` component.
+
+To view these graphs locally:
+
+1. Install dependencies with `npm install`.
+2. Run the app using `ng serve` and open the admin dashboard.
+
+If the charts do not render, ensure `NgChartsModule` is imported and that both
+Chart.js and ng2-charts are installed.
