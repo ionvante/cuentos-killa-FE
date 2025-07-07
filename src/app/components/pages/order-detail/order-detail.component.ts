@@ -4,12 +4,13 @@ import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
+import { ModalComponent } from '../../app-modal/modal.component';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, LazyLoadImageDirective], // Add CommonModule here
+  imports: [CommonModule, LazyLoadImageDirective, ModalComponent], // Add CommonModule here
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })
@@ -17,6 +18,10 @@ export class OrderDetailComponent implements OnInit {
   pedido: Pedido|null =null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
+  showVoucherModal = false;
+  voucherFile: File | null = null;
+  uploading = false;
+  voucherNombre = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -67,5 +72,41 @@ export class OrderDetailComponent implements OnInit {
   // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
     return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE' ;
+  }
+
+  confirmReplaceVoucher(): void {
+    if (confirm('¿Deseas reemplazar el voucher enviado?')) {
+      this.showVoucherModal = true;
+      this.voucherFile = null;
+      this.voucherNombre = '';
+      this.uploading = false;
+    }
+  }
+
+  onVoucherSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.voucherFile = input.files[0];
+      this.voucherNombre = this.voucherFile.name;
+    }
+  }
+
+  enviarNuevoVoucher(): void {
+    if (!this.pedido || !this.voucherFile) return;
+    this.uploading = true;
+    const id = this.pedido.Id || this.pedido.id || 0;
+    this.pedidoService.uploadVoucher(id, this.voucherFile).subscribe({
+      next: () => {
+        this.toast.show('Voucher reemplazado exitosamente.');
+        this.showVoucherModal = false;
+        // mantener estado en PAGO_ENVIADO
+      },
+      error: () => {
+        this.toast.show('Error al subir el nuevo voucher.');
+      },
+      complete: () => {
+        this.uploading = false;
+      }
+    });
   }
 }
