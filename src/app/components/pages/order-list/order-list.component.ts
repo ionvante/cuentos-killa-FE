@@ -2,15 +2,16 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { Router, RouterModule } from '@angular/router';
 import { Pedido } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { BadgeComponent } from '../../badge/badge.component';
 import { AuthService } from '../../../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-order-list',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, BadgeComponent],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
