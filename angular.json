@@ -37,7 +37,9 @@
             "scripts": [],
             "allowedCommonJsDependencies": ["localforage"],
             "server": "src/main.server.ts",
-            "prerender": true,
+            "prerender": {
+              "routes": ["/"]
+            },
             "ssr": {
               "entry": "server.ts"
             }
