@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../services/pedido.service';
 import { ToastService } from '../../../services/toast.service';
 import { ModalComponent } from '../../app-modal/modal.component';
+import { SafePipe } from '../../../pipes/safe.pipe';
 
 @Component({
   selector: 'app-voucher',
   standalone: true,
-  imports: [CommonModule, ModalComponent],
+  imports: [CommonModule, ModalComponent, SafePipe],
   templateUrl: './voucher.component.html',
   styleUrls: ['./voucher.component.scss']
 })

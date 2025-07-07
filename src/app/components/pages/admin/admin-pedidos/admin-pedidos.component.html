@@ -74,8 +74,8 @@
 </div>
 <app-modal *ngIf="selectedPedido" [title]="'Voucher Pedido #' + (selectedPedido!.Id || selectedPedido!.id)" (close)="cerrarModal()">
   <ng-container *ngIf="voucherUrl">
-    <img *ngIf="!voucherUrl.endsWith('.pdf')" [src]="voucherUrl" alt="Voucher" />
-    <iframe *ngIf="voucherUrl.endsWith('.pdf')" [src]="voucherUrl" width="100%" height="500px"></iframe>
+    <img *ngIf="!voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" alt="Voucher" />
+    <iframe *ngIf="voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" width="100%" height="500px"></iframe>
     <div class="descargar">
       <button class="btn btn-primary" (click)="descargarVoucher()">Descargar</button>
     </div>
