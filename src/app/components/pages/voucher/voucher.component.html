@@ -5,7 +5,7 @@
     <p class="allowed-formats">PDF, JPG o PNG (máx. 5 MB)</p>
     <span class="file-name">{{ selectedFile?.name || 'Sin archivo seleccionado' }}</span>
     <div class="preview" *ngIf="selectedFile">
-      <img *ngIf="isImage && previewUrl" [src]="previewUrl" alt="Vista previa" class="thumbnail" />
+      <img *ngIf="isImage && previewUrl" [src]="previewUrl | safe" alt="Vista previa" class="thumbnail" />
       <span *ngIf="isPdf" class="pdf-icon material-icons">picture_as_pdf</span>
     </div>
   </div>
