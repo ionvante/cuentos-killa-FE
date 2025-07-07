@@ -13,4 +13,12 @@ export class UserService {
   obtenerUsuarios(): Observable<User[]> {
     return this.http.get<User[]>(`${this.apiUrl}/usuarios`);
   }
+
+  cambiarEstado(id: number, habilitado: boolean): Observable<User> {
+    return this.http.put<User>(`${this.apiUrl}/${id}/estado`, { habilitado }, { withCredentials: true });
+  }
+
+  convertirEnAdmin(id: number): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/${id}/make-admin`, {}, { withCredentials: true });
+  }
 }
