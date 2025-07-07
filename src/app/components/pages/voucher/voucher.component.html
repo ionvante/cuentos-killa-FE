@@ -1,1 +1,41 @@
-<p>voucher works!</p>
+<ng-template #content>
+  <div class="file-area">
+    <input type="file" id="voucherFile" accept="image/png,image/jpeg,application/pdf" (change)="onFileSelected($event)" hidden>
+    <label for="voucherFile" class="file-label">📎 Elegir Voucher</label>
+    <p class="allowed-formats">PDF, JPG o PNG (máx. 5 MB)</p>
+    <span class="file-name">{{ selectedFile?.name || 'Sin archivo seleccionado' }}</span>
+    <div class="preview" *ngIf="selectedFile">
+      <img *ngIf="isImage && previewUrl" [src]="previewUrl" alt="Vista previa" class="thumbnail" />
+      <span *ngIf="isPdf" class="pdf-icon material-icons">picture_as_pdf</span>
+    </div>
+  </div>
+</ng-template>
+
+<app-modal *ngIf="!isMobile" title="Subir comprobante" (close)="onClose()">
+  <ng-container *ngTemplateOutlet="content"></ng-container>
+  <div modal-footer>
+    <button class="btn-killa btn-confirmar" (click)="uploadVoucher()" [disabled]="!selectedFile || isUploading">
+      Subir
+      <span *ngIf="isUploading" class="spinner"></span>
+    </button>
+  </div>
+</app-modal>
+
+<div *ngIf="isMobile" class="drawer-wrapper">
+  <div class="drawer open">
+    <header class="drawer-header">
+      <h3>Subir comprobante</h3>
+      <button class="close-btn" (click)="onClose()">✖</button>
+    </header>
+    <div class="drawer-body">
+      <ng-container *ngTemplateOutlet="content"></ng-container>
+    </div>
+    <div class="drawer-footer">
+      <button class="btn-killa btn-confirmar" (click)="uploadVoucher()" [disabled]="!selectedFile || isUploading">
+        Subir
+        <span *ngIf="isUploading" class="spinner"></span>
+      </button>
+    </div>
+  </div>
+  <div class="drawer-backdrop show" (click)="onClose()"></div>
+</div>
