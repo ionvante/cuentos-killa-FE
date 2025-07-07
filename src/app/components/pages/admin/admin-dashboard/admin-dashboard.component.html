@@ -29,6 +29,10 @@
     </ng-container>
   </section>
 
+  <section class="orders-stats" *ngIf="!isLoading && !errorMensaje">
+    <app-order-stats></app-order-stats>
+  </section>
+
   <section class="users-section" *ngIf="!isLoading && !errorMensaje">
     <h3>Usuarios registrados</h3>
     <div class="users-grid">
