@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AlertBannerComponent } from '../../alert-banner/alert-banner.component';
+import { VoucherComponent } from '../voucher/voucher.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { PagoService } from '../../../services/pago.service'; // Added PagoService import
 import { environment } from '../../../../environments/environment';
@@ -9,21 +10,16 @@ import { environment } from '../../../../environments/environment';
 @Component({
   selector: 'app-pago',
   standalone: true,
-  imports: [RouterModule, CommonModule, AlertBannerComponent],
+  imports: [RouterModule, CommonModule, AlertBannerComponent, VoucherComponent],
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.scss']
 })
 export class PagoComponent implements OnInit {
   pedidoId: number = 0;
-  selectedFile: File | null = null;
   orderStatus: string = 'PENDIENTE DE PAGO'; // Default status
-  nombreArchivo: string = '';
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' | 'warning' = 'info';
-  isUploading = false;
-  previewUrl: string | null = null;
-  isImage = false;
-  isPdf = false;
+  showVoucherDialog = false;
   showMercadoModal = false;
   orderTotal = 0;
 
@@ -110,82 +106,19 @@ fetchOrderStatus(): void {
     this.showMercadoModal = false;
   }
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      const allowedTypes = [
-        'image/jpeg',
-        'image/png',
-        'image/jpg',
-        'application/pdf'
-      ];
-      const allowedExtensions = ['.pdf', '.jpg', '.jpeg', '.png'];
-      const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
-
-      if (!allowedTypes.includes(file.type) || !allowedExtensions.includes(extension)) {
-        this.mensaje = 'Formato no permitido';
-        this.mensajeTipo = 'error';
-        this.selectedFile = null;
-        this.nombreArchivo = '';
-        this.previewUrl = null;
-        return;
-      }
-
-      if (file.size > 5 * 1024 * 1024) {
-        this.mensaje = 'El archivo supera los 5 MB';
-        this.mensajeTipo = 'error';
-        this.selectedFile = null;
-        this.nombreArchivo = '';
-        this.previewUrl = null;
-        return;
-      }
-
-      this.selectedFile = file;
-      this.nombreArchivo = file.name;
-      this.mensaje = '';
-
-      if (file.type.startsWith('image/')) {
-        this.isImage = true;
-        this.isPdf = false;
-        const reader = new FileReader();
-        reader.onload = (e: any) => (this.previewUrl = e.target.result);
-        reader.readAsDataURL(file);
-      } else {
-        this.isImage = false;
-        this.isPdf = true;
-        this.previewUrl = 'pdf';
-      }
-    } else {
-      this.selectedFile = null;
-      this.nombreArchivo = '';
-      this.previewUrl = null;
-    }
+  openVoucherDialog(): void {
+    this.showVoucherDialog = true;
   }
 
-  uploadVoucher(): void {
-    if (!this.selectedFile) {
-      this.mensaje = 'Por favor, selecciona un archivo de voucher.';
-      this.mensajeTipo = 'error';
-      return;
-    }
+  closeVoucherDialog(): void {
+    this.showVoucherDialog = false;
+  }
 
-    this.isUploading = true;
-    this.pedidoService.uploadVoucher(this.pedidoId, this.selectedFile).subscribe({
-      next: () => {
-        this.orderStatus = 'Confirmación de Pago Enviada';
-        this.mensaje = 'Voucher subido exitosamente. El estado del pedido se actualizará en breve.';
-        this.mensajeTipo = 'success';
-        this.fetchOrderStatus();
-      },
-      error: (error) => {
-        console.error('Error uploading voucher:', error);
-        this.mensaje = 'Error al subir el voucher. Por favor, inténtalo de nuevo.';
-        this.mensajeTipo = 'error';
-      },
-      complete: () => {
-        this.isUploading = false;
-      }
-    });
+  onVoucherUploaded(): void {
+    this.orderStatus = 'PAGO_ENVIADO';
+    this.mensaje = 'Voucher enviado correctamente';
+    this.mensajeTipo = 'success';
+    this.fetchOrderStatus();
+    this.closeVoucherDialog();
   }
 }

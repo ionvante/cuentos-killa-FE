@@ -52,12 +52,20 @@
       </ng-template>
     </section>
 
-    <section class="acciones-pedido" *ngIf="!isLoading">
-      <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
-        <i class="fas fa-credit-card"></i> Pagar ahora
-      </button>
-      <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
-    </section>
+  <section class="acciones-pedido" *ngIf="!isLoading">
+    <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
+      <i class="fas fa-credit-card"></i> Pagar ahora
+    </button>
+    <button *ngIf="isPagoPendiente()" (click)="openVoucherDialog()" class="btn btn-primary">
+      Subir comprobante
+    </button>
+    <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
+  </section>
+  <app-voucher
+    *ngIf="showVoucherDialog && pedido"
+    [pedidoId]="pedido.Id"
+    (uploaded)="onVoucherUploaded()"
+    (close)="closeVoucherDialog()"></app-voucher>
 
   </div>
 </div>

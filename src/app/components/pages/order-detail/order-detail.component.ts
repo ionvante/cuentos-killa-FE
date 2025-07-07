@@ -5,11 +5,12 @@ import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { ToastService } from '../../../services/toast.service';
+import { VoucherComponent } from '../voucher/voucher.component';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, LazyLoadImageDirective], // Add CommonModule here
+  imports: [CommonModule, LazyLoadImageDirective, VoucherComponent],
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })
@@ -17,6 +18,7 @@ export class OrderDetailComponent implements OnInit {
   pedido: Pedido|null =null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
+  showVoucherDialog = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -67,5 +69,21 @@ export class OrderDetailComponent implements OnInit {
   // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
     return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE' ;
+  }
+
+  openVoucherDialog(): void {
+    this.showVoucherDialog = true;
+  }
+
+  closeVoucherDialog(): void {
+    this.showVoucherDialog = false;
+  }
+
+  onVoucherUploaded(): void {
+    if (this.pedido) {
+      this.pedido.estado = 'PAGO_ENVIADO';
+    }
+    this.toast.show('Voucher enviado correctamente', 'success');
+    this.closeVoucherDialog();
   }
 }
