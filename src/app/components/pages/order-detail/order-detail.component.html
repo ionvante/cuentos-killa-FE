@@ -51,21 +51,36 @@
         <p>No hay items en este pedido.</p>
       </ng-template>
     </section>
-
-  <section class="acciones-pedido" *ngIf="!isLoading">
-    <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
-      <i class="fas fa-credit-card"></i> Pagar ahora
-    </button>
-    <button *ngIf="isPagoPendiente()" (click)="openVoucherDialog()" class="btn btn-primary">
-      Subir comprobante
-    </button>
-    <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
-  </section>
-  <app-voucher
-    *ngIf="showVoucherDialog && pedido"
-    [pedidoId]="pedido.Id"
-    (uploaded)="onVoucherUploaded()"
-    (close)="closeVoucherDialog()"></app-voucher>
+      <section class="acciones-pedido" *ngIf="!isLoading">
+        <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
+          <i class="fas fa-credit-card"></i> Pagar ahora
+        </button>
+        <button *ngIf="pedido?.estado === 'PAGO_ENVIADO'" (click)="confirmReplaceVoucher()" class="btn btn-primary">
+          Reemplazar voucher
+        </button>
+        <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
+      </section>
 
   </div>
 </div>
+<app-modal
+  *ngIf="showVoucherModal"
+  title="Reemplazar voucher"
+  (close)="showVoucherModal = false"
+>
+  <div class="replace-voucher-modal">
+    <input
+      type="file"
+      accept="application/pdf,image/jpeg,image/png"
+      (change)="onVoucherSelected($event)"
+    />
+    <p>{{ voucherNombre || 'Sin archivo seleccionado' }}</p>
+    <button
+      class="btn btn-primary"
+      (click)="enviarNuevoVoucher()"
+      [disabled]="!voucherFile || uploading"
+    >
+      Enviar
+    </button>
+  </div>
+</app-modal>
