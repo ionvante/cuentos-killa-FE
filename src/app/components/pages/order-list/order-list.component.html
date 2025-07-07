@@ -40,7 +40,7 @@
             <h3 id="order-{{getPedidoId(pedido)}}">📚 Pedido #{{ getPedidoId(pedido) }}</h3>
             <span class="date">🗓️ {{ pedido.fecha | date:'dd/MM/yyyy' }}</span>
           </div>
-          <p class="estado" [ngClass]="getEstadoClass(pedido.estado)">{{ getEstadoVisible(pedido.estado) }}</p>
+          <app-badge [status]="pedido.estado" class="estado"></app-badge>
           <p class="total"><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</p>
           <div class="productos">
             <ul>

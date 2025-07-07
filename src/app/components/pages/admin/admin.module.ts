@@ -18,6 +18,7 @@ import { ConfigItemsComponent } from './admin-config/config-items.component';
 import { ConfigItemFormComponent } from './admin-config/config-item-form.component';
 import { SharedModule } from "../../shared.module";
 import { ModalComponent } from '../../app-modal/modal.component';
+import { BadgeComponent } from '../../badge/badge.component';
 
 // import { SharedModule } from '../../shared.module'; 
 
@@ -66,7 +67,8 @@ const routes: Routes = [
     SharedModule,
     AdminLayoutComponent,
     ModalComponent,
-    InputDialogComponent
+    InputDialogComponent,
+    BadgeComponent
   ]
 })
 export class AdminModule {}
