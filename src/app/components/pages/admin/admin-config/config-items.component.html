@@ -20,8 +20,8 @@
         <td>{{ i.label }}</td>
         <td>{{ i.sensitive ? 'Sí' : 'No' }}</td>
         <td class="acciones">
-          <button (click)="editar(i.id2)">Editar</button>
-          <button (click)="eliminar(i.id2)">Eliminar</button>
+          <button class="btn btn-primary" (click)="editar(i.id2)">Editar</button>
+          <button class="btn btn-danger" (click)="eliminar(i.id2)">Eliminar</button>
         </td>
       </tr>
     </tbody>
