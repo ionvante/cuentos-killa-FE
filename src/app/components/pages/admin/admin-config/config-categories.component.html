@@ -20,9 +20,9 @@
         <td>{{ c.name }}</td>
         <td>{{ c.createdAt | date:'short' }}</td>
         <td class="acciones">
-          <button (click)="editar(c.id1!)">Editar</button>
-          <button (click)="eliminar(c.id1!)">Eliminar</button>
-          <button (click)="verItems(c.id1!)">Ver ítems</button>
+          <button class="btn btn-primary" (click)="editar(c.id1!)">Editar</button>
+          <button class="btn btn-danger" (click)="eliminar(c.id1!)">Eliminar</button>
+          <button class="btn btn-secondary" (click)="verItems(c.id1!)">Ver ítems</button>
         </td>
       </tr>
     </tbody>
