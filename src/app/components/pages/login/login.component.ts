@@ -1,10 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService} from '../../../services/auth.service';
-import { MatDialogRef } from '@angular/material/dialog';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 
 @Component({
@@ -15,6 +14,7 @@ import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.dire
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  @Output() close = new EventEmitter<void>();
   loginForm!: FormGroup;
   error: string = '';
   returnTo: string = '/';
@@ -23,8 +23,7 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService:AuthService,
-    @Optional() private dialogRef?: MatDialogRef<LoginComponent> // 👈 usando @Optional()
+    private authService:AuthService
 
   ) {}
 
@@ -57,8 +56,8 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/home']);
       }
 
-      // CIERRA el modal
-      this.dialogRef?.close(); // 👈 Solo si existe
+      // Notifica al contenedor para cerrar el modal si aplica
+      this.close.emit();
       },
       error: (err) => {
         this.error=err;

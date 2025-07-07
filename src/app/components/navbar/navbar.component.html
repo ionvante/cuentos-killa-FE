@@ -43,3 +43,10 @@
   </ul>
   <div id="cart-announce" class="visually-hidden" aria-live="polite"></div>
 </nav>
+<app-modal
+  *ngIf="showLoginModal"
+  title="Iniciar sesión"
+  (close)="closeLoginDialog()"
+>
+  <app-login (close)="closeLoginDialog()"></app-login>
+</app-modal>

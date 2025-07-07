@@ -1,11 +1,26 @@
-import { Injectable } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { Injectable, Inject } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class ToastService {
-  constructor(private snackBar: MatSnackBar) {}
+  private container: HTMLElement | null = null;
 
-  show(message: string) {
-    this.snackBar.open(message, 'Cerrar', { duration: 2000 });
+  constructor(@Inject(DOCUMENT) private document: Document) {
+    this.container = this.document.getElementById('toast-container');
+  }
+
+  show(
+    message: string,
+    type: 'success' | 'warning' | 'error' | 'info' = 'info'
+  ): void {
+    if (!this.container) {
+      this.container = this.document.body;
+    }
+
+    const toast = this.document.createElement('div');
+    toast.className = `alert alert--${type}`;
+    toast.textContent = message;
+    this.container.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
   }
 }

@@ -5,7 +5,6 @@ import { HeroBannerComponent } from '../../hero-banner/hero-banner.component';
 import { CuentosGridComponent } from '../../cuentos-grid/cuentos-grid.component';
 import { HomeComponent } from './home.component';
 import { CuentosModule } from '../cuentos/cuentos.module';
-import { MatCardModule } from '@angular/material/card';
 import { SharedModule } from './../../shared.module';
 
 
@@ -14,7 +13,6 @@ import { SharedModule } from './../../shared.module';
   imports: [
     CommonModule,
     HomeRoutingModule,
-    MatCardModule,
     SharedModule,
     CuentosModule
   ],
