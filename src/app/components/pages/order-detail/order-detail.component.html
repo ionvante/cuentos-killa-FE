@@ -51,7 +51,6 @@
         <p>No hay items en este pedido.</p>
       </ng-template>
     </section>
-
       <section class="acciones-pedido" *ngIf="!isLoading">
         <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
           <i class="fas fa-credit-card"></i> Pagar ahora

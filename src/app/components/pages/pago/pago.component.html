@@ -20,40 +20,18 @@
   <div *ngIf="orderStatus !== 'Pago Verificado' && orderStatus !== 'PAGO_PENDIENTE'">
     <h3>Selecciona tu método de pago:</h3>
     <div class="payment-buttons-row">
-      <div class="custom-file-upload">
-        <input
-          type="file"
-          id="voucherFile"
-          accept="application/pdf,image/jpeg,image/png"
-          (change)="onFileSelected($event)"
-          hidden
-        />
-        <label for="voucherFile" class="file-label">
-          📎 Elegir Voucher
-        </label>
-        <p class="allowed-formats">📎 Formatos permitidos: PDF, JPG o PNG.</p>
-        <br />
-        <span class="file-name">{{ nombreArchivo || 'Sin archivos seleccionados' }}</span>
-        <div class="preview" *ngIf="previewUrl">
-          <img *ngIf="isImage" [src]="previewUrl" alt="Vista previa" class="thumbnail" />
-          <span *ngIf="isPdf" class="material-icons pdf-icon">picture_as_pdf</span>
-        </div>
-      </div>
-      <br />
-      <div class="custom-file-container">
-        <div>
-        <button           (click)="uploadVoucher()"          class="btn-killa btn-confirmar"          [disabled]="!selectedFile || isUploading">
-          Confirmar Subida
-          <span *ngIf="isUploading" class="spinner"></span>
-        </button>
-        </div>
-        <div class="payment-options">
-          <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
-            Pagar con Mercado Pago
-          </button>
-        </div>
-      </div>
+      <button class="btn-killa btn-voucher" (click)="openVoucherDialog()">
+        Subir comprobante
+      </button>
+      <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
+        Pagar con Mercado Pago
+      </button>
     </div>
+    <app-voucher
+      *ngIf="showVoucherDialog"
+      [pedidoId]="pedidoId"
+      (uploaded)="onVoucherUploaded()"
+      (close)="closeVoucherDialog()"></app-voucher>
   </div>
 </div>
 

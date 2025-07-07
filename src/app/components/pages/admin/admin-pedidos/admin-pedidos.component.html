@@ -27,7 +27,7 @@
         <td>{{ pedido.correo }}</td>
         <td>{{ pedido.direccion }}</td>
         <td>{{ pedido.telefono }}</td>
-        <td>{{ pedido.estado }}</td>
+        <td><app-badge [status]="pedido.estado"></app-badge></td>
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
@@ -56,7 +56,7 @@
         <div><strong>Correo:</strong> {{ pedido.correo }}</div>
         <div><strong>Dirección:</strong> {{ pedido.direccion }}</div>
         <div><strong>Teléfono:</strong> {{ pedido.telefono }}</div>
-        <div><strong>Estado Pago:</strong> {{ pedido.estado }}</div>
+        <div><strong>Estado Pago:</strong> <app-badge [status]="pedido.estado"></app-badge></div>
         <div><strong>Tipo Pago:</strong> {{ pedido.tipoPago || 'N/A' }}</div>
         <div><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</div>
         <div class="acciones">
@@ -81,8 +81,8 @@
     </div>
   </ng-container>
   <div modal-footer>
-    <button class="btn btn-success" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
-    <button class="btn btn-danger" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
+    <button class="btn btn-primary" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
+    <button class="btn btn-warn" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
   </div>
 </app-modal>
 <app-input-dialog

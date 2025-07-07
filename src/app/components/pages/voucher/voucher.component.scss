@@ -1,0 +1,107 @@
+.file-area {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+}
+
+.file-label {
+  background-color: #ffad60;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.file-name {
+  font-size: 0.9rem;
+  color: #444;
+}
+
+.preview {
+  margin-top: 0.5rem;
+}
+
+.thumbnail {
+  max-width: 120px;
+  border-radius: 4px;
+}
+
+.pdf-icon {
+  font-size: 48px;
+  color: #d32f2f;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #ffad60;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1s linear infinite;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.drawer-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1200;
+}
+
+.drawer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: #fff;
+  border-radius: 12px 12px 0 0;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.drawer.open {
+  transform: translateY(0);
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.drawer-body {
+  padding: 1rem;
+  text-align: center;
+}
+
+.drawer-footer {
+  padding: 1rem;
+  text-align: right;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.4);
+}

@@ -1,5 +1,4 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
 import { ActivatedRoute } from '@angular/router';

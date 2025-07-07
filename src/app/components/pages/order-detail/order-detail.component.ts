@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common'; // Import CommonModule
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { ModalComponent } from '../../app-modal/modal.component';
 import { ToastService } from '../../../services/toast.service';
+import { VoucherComponent } from '../voucher/voucher.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -18,6 +19,7 @@ export class OrderDetailComponent implements OnInit {
   pedido: Pedido|null =null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
+
   showVoucherModal = false;
   voucherFile: File | null = null;
   uploading = false;
