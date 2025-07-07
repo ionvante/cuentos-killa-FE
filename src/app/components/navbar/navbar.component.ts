@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginComponent } from '../pages/login/login.component';
-import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/carrito.service';
 import { Router, RouterModule } from '@angular/router';
 import { DrawerService } from '../../services/drawer.service';
@@ -13,6 +12,7 @@ import { Cuento } from '../../model/cuento.model';
 import { User } from '../../model/user.model';
 import { FormsModule } from '@angular/forms';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
+import { ModalComponent } from '../app-modal/modal.component';
 
 
 
@@ -27,7 +27,8 @@ import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directi
     RouterModule, // habilita routerLink en la plantilla
     FormsModule,
     LazyLoadImageDirective,
-    // otros imports que tengas como MatDialogModule, etc.
+    ModalComponent,
+    LoginComponent
   ]
 })
 export class NavbarComponent implements OnInit {
@@ -35,8 +36,9 @@ export class NavbarComponent implements OnInit {
   user: User | null = null;
   mostrarPerfil = false;
   searchQuery = '';
+  showLoginModal = false;
+
   constructor(
-    private dialog: MatDialog,
     public CartService: CartService,
     public authService: AuthService,
     private router: Router,
@@ -52,12 +54,12 @@ export class NavbarComponent implements OnInit {
 
 
 
-  openLoginDialog() {
-    this.dialog.open(LoginComponent, {
-     // maxWidth: '50vw',
-     // width: '80%',
-      panelClass: 'login-modal'
-    });
+  openLoginDialog(): void {
+    this.showLoginModal = true;
+  }
+
+  closeLoginDialog(): void {
+    this.showLoginModal = false;
   }
   ngOnInit(): void {
     this.CartService.items$.subscribe(items => {

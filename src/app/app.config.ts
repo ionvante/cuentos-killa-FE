@@ -5,7 +5,6 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient,withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { authInterceptor } from './services/auth.interceptor';
 import { ThemeService } from './services/theme.service';
 import * as Sentry from '@sentry/angular';
@@ -19,7 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimationsAsync(),
-    importProvidersFrom(MatSnackBarModule),
     {
       provide: APP_INITIALIZER,
       useFactory: (ts: ThemeService) => () => ts.loadTheme(),
