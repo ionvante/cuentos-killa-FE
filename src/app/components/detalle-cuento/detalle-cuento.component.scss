@@ -7,6 +7,20 @@
   justify-content: center;
 }
 
+.breadcrumb {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+
+  a {
+    color: #A66E38;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .detalle-grid {
   display: flex;
   flex-wrap: wrap;
