@@ -24,6 +24,7 @@ export class DetalleCuentoComponent implements OnInit {
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
   badgeLabel = '';
+  quantity = 1;
   selectedImageIndex = 0;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
@@ -149,9 +150,7 @@ export class DetalleCuentoComponent implements OnInit {
     if (!this.cuento.habilitado) {
       return 'Sin stock';
     }
-    return this.cuento.stock <= 5
-      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
-      : `Stock: ${this.cuento.stock}`;
+    return this.lowStock ? 'Últimas unidades' : 'En stock';
   }
 
   /** Indica si el cuento tiene pocas unidades disponibles */

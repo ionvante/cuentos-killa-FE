@@ -36,25 +36,26 @@
       <span class="material-icons">arrow_back</span>
     </button>
     <h1>{{ cuento?.titulo }}</h1>
+    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
+      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
+      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
+    </div>
     <div class="autor-precio">
       <h3>Autor: {{ cuento?.autor }}</h3>
       <div class="precio">
         <span class="original" *ngIf="hasDiscount">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
         <span class="final">S/ {{ precioFinal | number:'1.2-2' }}</span>
       </div>
+      <input type="number" min="1" [(ngModel)]="quantity" class="cantidad-input" />
     </div>
     <div class="meta">
       <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
       <span class="envio" *ngIf="cuento?.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
     </div>
-    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
-      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
-      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
-    </div>
     <blockquote class="testimonial">
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
-    <p class="stock" [ngClass]="{ 'low-stock': lowStock }">{{ stockMessage }}</p>
+    <p class="stock" [ngClass]="lowStock ? 'low-stock' : 'en-stock'">{{ stockMessage }}</p>
     <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
 
     <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
@@ -70,6 +71,7 @@
       <button class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
         Agregar al carrito
       </button>
+      <button class="btn btn-success" (click)="comprarAhora(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Comprar ahora</button>
       <button class="btn btn-secondary" (click)="volver(); $event.stopPropagation()">Volver</button>
       <div class="share">
         <button aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
