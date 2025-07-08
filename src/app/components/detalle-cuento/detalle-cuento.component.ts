@@ -18,6 +18,8 @@ export class DetalleCuentoComponent implements OnInit {
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
   openTech = false;
+  /** Cantidad seleccionada para agregar al carrito */
+  cantidad = 1;
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
@@ -53,7 +55,26 @@ export class DetalleCuentoComponent implements OnInit {
   }
   agregarAlCarrito() {
     if (this.cuento) {
-      this.carritoService.addItem(this.cuento);
+      this.carritoService.addItemCantidad(this.cuento, this.cantidad);
+    }
+  }
+
+  comprarAhora() {
+    if (this.cuento) {
+      this.carritoService.addItemCantidad(this.cuento, this.cantidad);
+      this.router.navigate(['/checkout']);
+    }
+  }
+
+  incrementarCantidad() {
+    if (this.cuento && this.cantidad < this.cuento.stock) {
+      this.cantidad++;
+    }
+  }
+
+  decrementarCantidad() {
+    if (this.cantidad > 1) {
+      this.cantidad--;
     }
   }
   cargarImagenPlaceholder(event: Event): void {
