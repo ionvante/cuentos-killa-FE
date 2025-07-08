@@ -36,7 +36,9 @@ export class CartService {
       this.items.push({ cuento, cantidad });
     }
     this.actualizarCarrito();
-    this.toast.show(`"${cuento.titulo}" agregado al carrito`);
+    this.toast.show(
+      `"${cuento.titulo}" agregado al carrito. <a href="/carrito">Ver carrito</a>`
+    );
   }
 
   /**
