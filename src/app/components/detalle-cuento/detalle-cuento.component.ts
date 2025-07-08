@@ -17,6 +17,7 @@ export class DetalleCuentoComponent implements OnInit {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
+  selectedTab: 'description' | 'tech' | 'reviews' = 'description';
   openTech = false;
   /** Cantidad seleccionada para agregar al carrito */
   cantidad = 1;
@@ -88,6 +89,9 @@ export class DetalleCuentoComponent implements OnInit {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
   }
 
+  selectTab(tab: 'description' | 'tech' | 'reviews'): void {
+    this.selectedTab = tab;
+  }
   selectImage(index: number): void {
     this.selectedImageIndex = index;
     this.cargandoImagen = true;

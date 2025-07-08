@@ -55,16 +55,74 @@
     <blockquote class="testimonial">
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
-    <p class="stock" [ngClass]="lowStock ? 'low-stock' : 'en-stock'">{{ stockMessage }}</p>
-    <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
-    <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
-    <div class="extra-info" id="tech-panel" [hidden]="!openTech">
-      <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
-      <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
-      <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
-      <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
-      <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+    <p class="stock" [ngClass]="{ 'low-stock': lowStock }">{{ stockMessage }}</p>
+    <div class="tab-container">
+      <div class="tab-headers" role="tablist">
+        <button
+          id="tab-desc"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'description'"
+          [attr.aria-selected]="selectedTab === 'description'"
+          aria-controls="panel-desc"
+          (click)="selectTab('description')"
+        >
+          Descripción
+        </button>
+        <button
+          id="tab-tech"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'tech'"
+          [attr.aria-selected]="selectedTab === 'tech'"
+          aria-controls="panel-tech"
+          (click)="selectTab('tech')"
+        >
+          Ficha técnica
+        </button>
+        <button
+          id="tab-reviews"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'reviews'"
+          [attr.aria-selected]="selectedTab === 'reviews'"
+          aria-controls="panel-reviews"
+          (click)="selectTab('reviews')"
+        >
+          Opiniones
+        </button>
+      </div>
+      <div
+        id="panel-desc"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-desc"
+        [hidden]="selectedTab !== 'description'"
+      >
+        <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+      </div>
+      <div
+        id="panel-tech"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-tech"
+        [hidden]="selectedTab !== 'tech'"
+      >
+        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
+        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
+        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
+        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
+        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+      </div>
+      <div
+        id="panel-reviews"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-reviews"
+        [hidden]="selectedTab !== 'reviews'"
+      >
+        <p>Aún no hay reseñas.</p>
+      </div>
     </div>
 
     <div class="acciones">

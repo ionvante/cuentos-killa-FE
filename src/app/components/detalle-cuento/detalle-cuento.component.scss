@@ -323,13 +323,33 @@
   color: #666;
 }
 
-.tech-toggle {
+
+.tab-container {
   margin-top: 1rem;
-  background: none;
-  border: none;
-  color: #a66e38;
-  cursor: pointer;
-  text-decoration: underline;
+
+  .tab-headers {
+    display: flex;
+    gap: 0.5rem;
+
+    .tab {
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      color: #5d4037;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab.active {
+      border-color: #ffad60;
+      color: #a66e38;
+      font-weight: 600;
+    }
+  }
+
+  .tab-panel {
+    padding: 0.5rem 0;
+  }
 }
 
 .relacionados {
