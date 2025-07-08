@@ -3,7 +3,7 @@
   <span class="badge" *ngIf="totalQuantity > 0">{{ totalQuantity }}</span>
 </button>
 
-<div class="backdrop" [class.show]="open" (click)="closeCart()"></div>
+<button class="backdrop" [class.show]="open" (click)="closeCart()" aria-label="Cerrar carrito"></button>
 <aside class="drawer mini-cart" [class.open]="open" role="dialog" aria-modal="true">
   <header class="drawer-header">
     <h3 tabindex="0">Mi carrito</h3>

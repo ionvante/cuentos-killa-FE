@@ -7,14 +7,17 @@
         <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
         <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
       </div>
-      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-      <img
-        [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
-        alt="Imagen del cuento"
-        (error)="cargarImagenPlaceholder($event)"
-        (load)="imagenCargada()"
-        [class.loaded]="!cargandoImagen"
-      />
+      <figure>
+        <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+        <img
+          [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
+          alt="Imagen del cuento"
+          (error)="cargarImagenPlaceholder($event)"
+          (load)="imagenCargada()"
+          [class.loaded]="!cargandoImagen"
+        />
+        <figcaption class="visually-hidden">{{ cuento?.titulo }}</figcaption>
+      </figure>
     </div>
 
   <div class="detalle-info">
