@@ -1,20 +1,29 @@
 <div class="detalle-pagina">
   <div class="detalle-grid">
     <div class="hero">
-      <div class="badges">
-        <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
-        <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
-        <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
-        <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
-      </div>
-      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-      <img
-        [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
-        alt="Imagen del cuento"
-        (error)="cargarImagenPlaceholder($event)"
-        (load)="imagenCargada()"
-        [class.loaded]="!cargandoImagen"
-      />
+      <figure class="galeria">
+        <div class="thumbnails" *ngIf="cuento?.galeria?.length">
+          <button type="button" *ngFor="let img of cuento?.galeria; let i = index" (click)="selectImage(i)" [class.active]="i===selectedImageIndex">
+            <img [appLazyLoad]="img" alt="Miniatura {{i + 1}}" />
+          </button>
+        </div>
+        <div class="main-image">
+          <div class="badges">
+            <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
+            <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
+            <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
+            <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
+          </div>
+          <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+          <img
+            [appLazyLoad]="mainImage"
+            alt="Imagen del cuento"
+            (error)="cargarImagenPlaceholder($event)"
+            (load)="imagenCargada()"
+            [class.loaded]="!cargandoImagen"
+          />
+        </div>
+      </figure>
     </div>
 
   <div class="detalle-info">

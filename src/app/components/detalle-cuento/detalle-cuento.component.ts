@@ -22,6 +22,7 @@ export class DetalleCuentoComponent implements OnInit {
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
   badgeLabel = '';
+  selectedImageIndex = 0;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -63,6 +64,19 @@ export class DetalleCuentoComponent implements OnInit {
   }
   imagenCargada(): void {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+
+  selectImage(index: number): void {
+    this.selectedImageIndex = index;
+    this.cargandoImagen = true;
+  }
+
+  get mainImage(): string {
+    return (
+      this.cuento?.galeria?.[this.selectedImageIndex] ||
+      this.cuento?.imagenUrl ||
+      'assets/placeholder-cuento.jpg'
+    );
   }
 
   toggleTech(): void {
