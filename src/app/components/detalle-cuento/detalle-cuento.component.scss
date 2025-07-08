@@ -58,6 +58,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .cantidad-input {
+    width: 70px;
+    margin-left: 1rem;
+  }
 }
 
 .badges {
@@ -204,6 +208,10 @@
   display: flex;
   gap: 15px;
   align-items: center;
+  .btn-primary,
+  .btn-success {
+    flex: 1;
+  }
 }
 
 .share {
@@ -371,6 +379,11 @@
 
   .acciones {
     flex-direction: column;
+  }
+
+  .cantidad-input {
+    margin-left: 0;
+    margin-top: 0.5rem;
   }
 }
 

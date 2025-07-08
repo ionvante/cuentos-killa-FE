@@ -22,6 +22,7 @@ export class DetalleCuentoComponent implements OnInit {
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
   badgeLabel = '';
+  quantity = 1;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -52,7 +53,14 @@ export class DetalleCuentoComponent implements OnInit {
   }
   agregarAlCarrito() {
     if (this.cuento) {
-      this.carritoService.addItem(this.cuento);
+      this.carritoService.addItem(this.cuento, this.quantity);
+    }
+  }
+
+  comprarAhora() {
+    if (this.cuento) {
+      this.carritoService.addItem(this.cuento, this.quantity);
+      this.router.navigate(['/checkout']);
     }
   }
   cargarImagenPlaceholder(event: Event): void {
