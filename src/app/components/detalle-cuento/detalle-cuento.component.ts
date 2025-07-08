@@ -17,7 +17,7 @@ export class DetalleCuentoComponent implements OnInit {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
-  openTech = false;
+  selectedTab: 'description' | 'tech' | 'reviews' = 'description';
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
@@ -65,8 +65,8 @@ export class DetalleCuentoComponent implements OnInit {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
   }
 
-  toggleTech(): void {
-    this.openTech = !this.openTech;
+  selectTab(tab: 'description' | 'tech' | 'reviews'): void {
+    this.selectedTab = tab;
   }
 
   scrollCarousel(direction: number) {
