@@ -22,6 +22,8 @@ export class DetalleCuentoComponent implements OnInit {
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
   badgeLabel = '';
+  quantity = 1;
+  selectedImageIndex = 0;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -52,7 +54,14 @@ export class DetalleCuentoComponent implements OnInit {
   }
   agregarAlCarrito() {
     if (this.cuento) {
-      this.carritoService.addItem(this.cuento);
+      this.carritoService.addItem(this.cuento, this.quantity);
+    }
+  }
+
+  comprarAhora() {
+    if (this.cuento) {
+      this.carritoService.addItem(this.cuento, this.quantity);
+      this.router.navigate(['/checkout']);
     }
   }
   cargarImagenPlaceholder(event: Event): void {
@@ -67,6 +76,22 @@ export class DetalleCuentoComponent implements OnInit {
 
   selectTab(tab: 'description' | 'tech' | 'reviews'): void {
     this.selectedTab = tab;
+  }
+  selectImage(index: number): void {
+    this.selectedImageIndex = index;
+    this.cargandoImagen = true;
+  }
+
+  get mainImage(): string {
+    return (
+      this.cuento?.galeria?.[this.selectedImageIndex] ||
+      this.cuento?.imagenUrl ||
+      'assets/placeholder-cuento.jpg'
+    );
+  }
+
+  toggleTech(): void {
+    this.openTech = !this.openTech;
   }
 
   scrollCarousel(direction: number) {
@@ -114,9 +139,7 @@ export class DetalleCuentoComponent implements OnInit {
     if (!this.cuento.habilitado) {
       return 'Sin stock';
     }
-    return this.cuento.stock <= 5
-      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
-      : `Stock: ${this.cuento.stock}`;
+    return this.lowStock ? 'Últimas unidades' : 'En stock';
   }
 
   /** Indica si el cuento tiene pocas unidades disponibles */
