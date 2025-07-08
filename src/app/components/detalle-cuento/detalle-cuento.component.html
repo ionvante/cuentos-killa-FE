@@ -1,24 +1,45 @@
 <div class="detalle-pagina">
+  <nav class="breadcrumb">
+    <a routerLink="/home">Inicio</a> /
+    <a routerLink="/cuentos">Cuentos</a> /
+    <span>{{ cuento?.titulo }}</span>
+  </nav>
   <div class="detalle-grid">
     <div class="hero">
-      <div class="badges">
-        <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
-        <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
-        <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
-        <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
-      </div>
-      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-      <img
-        [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
-        alt="Imagen del cuento"
-        (error)="cargarImagenPlaceholder($event)"
-        (load)="imagenCargada()"
-        [class.loaded]="!cargandoImagen"
-      />
+      <figure class="galeria">
+        <div class="thumbnails" *ngIf="cuento?.galeria?.length">
+          <button type="button" *ngFor="let img of cuento?.galeria; let i = index" (click)="selectImage(i)" [class.active]="i===selectedImageIndex">
+            <img [appLazyLoad]="img" alt="Miniatura {{i + 1}}" />
+          </button>
+        </div>
+        <div class="main-image">
+          <div class="badges">
+            <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
+            <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
+            <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
+            <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
+          </div>
+          <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+          <img
+            [appLazyLoad]="mainImage"
+            alt="Imagen del cuento"
+            (error)="cargarImagenPlaceholder($event)"
+            (load)="imagenCargada()"
+            [class.loaded]="!cargandoImagen"
+          />
+        </div>
+      </figure>
     </div>
 
   <div class="detalle-info">
+    <button class="back-btn" type="button" (click)="volver()">
+      <span class="material-icons">arrow_back</span>
+    </button>
     <h1>{{ cuento?.titulo }}</h1>
+    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
+      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
+      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
+    </div>
     <div class="autor-precio">
       <h3>Autor: {{ cuento?.autor }}</h3>
       <div class="precio">
@@ -31,14 +52,10 @@
       <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
       <span class="envio" *ngIf="cuento?.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
     </div>
-    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
-      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
-      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
-    </div>
     <blockquote class="testimonial">
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
-    <p class="stock" [ngClass]="{ 'low-stock': lowStock }">{{ stockMessage }}</p>
+    <p class="stock" [ngClass]="lowStock ? 'low-stock' : 'en-stock'">{{ stockMessage }}</p>
     <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
 
     <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>

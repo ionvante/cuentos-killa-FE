@@ -54,4 +54,4 @@
     <span class="badge" *ngIf="itemCount > 0">{{ itemCount }}</span>
   </button>
 </div>
-<div class="drawer-backdrop" [class.show]="drawer.isOpen$ | async" (click)="close()"></div>
+<button class="drawer-backdrop" [class.show]="drawer.isOpen$ | async" (click)="close()" aria-label="Cerrar menú"></button>

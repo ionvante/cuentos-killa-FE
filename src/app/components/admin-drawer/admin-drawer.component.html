@@ -6,4 +6,4 @@
     </a>
   </nav>
 </aside>
-<div class="backdrop" *ngIf="isOpen" (click)="closed.emit()"></div>
+<button class="backdrop" *ngIf="isOpen" (click)="closed.emit()" aria-label="Cerrar menú"></button>

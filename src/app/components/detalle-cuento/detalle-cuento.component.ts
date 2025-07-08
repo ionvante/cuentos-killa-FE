@@ -23,6 +23,7 @@ export class DetalleCuentoComponent implements OnInit {
   isNuevo = false;
   badgeLabel = '';
   quantity = 1;
+  selectedImageIndex = 0;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -71,6 +72,19 @@ export class DetalleCuentoComponent implements OnInit {
   }
   imagenCargada(): void {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+
+  selectImage(index: number): void {
+    this.selectedImageIndex = index;
+    this.cargandoImagen = true;
+  }
+
+  get mainImage(): string {
+    return (
+      this.cuento?.galeria?.[this.selectedImageIndex] ||
+      this.cuento?.imagenUrl ||
+      'assets/placeholder-cuento.jpg'
+    );
   }
 
   toggleTech(): void {
@@ -122,9 +136,7 @@ export class DetalleCuentoComponent implements OnInit {
     if (!this.cuento.habilitado) {
       return 'Sin stock';
     }
-    return this.cuento.stock <= 5
-      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
-      : `Stock: ${this.cuento.stock}`;
+    return this.lowStock ? 'Últimas unidades' : 'En stock';
   }
 
   /** Indica si el cuento tiene pocas unidades disponibles */
