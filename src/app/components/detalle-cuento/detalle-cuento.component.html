@@ -46,6 +46,7 @@
         <span class="original" *ngIf="hasDiscount">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
         <span class="final">S/ {{ precioFinal | number:'1.2-2' }}</span>
       </div>
+      <input type="number" min="1" [(ngModel)]="quantity" class="cantidad-input" />
     </div>
     <div class="meta">
       <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
@@ -70,6 +71,7 @@
       <button class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
         Agregar al carrito
       </button>
+      <button class="btn btn-success" (click)="comprarAhora(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Comprar ahora</button>
       <button class="btn btn-secondary" (click)="volver(); $event.stopPropagation()">Volver</button>
       <div class="share">
         <button aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
