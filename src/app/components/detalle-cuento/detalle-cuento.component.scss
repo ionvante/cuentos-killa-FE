@@ -406,6 +406,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .sticky-cta .price {
@@ -414,8 +415,34 @@
   color: #5d4037;
 }
 
+.sticky-cta .quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sticky-cta .quantity button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sticky-cta .quantity .amount {
+  min-width: 24px;
+  text-align: center;
+}
+
 .sticky-cta .btn {
   width: auto;
+}
+
+@media (min-width: 769px) {
+  .sticky-cta {
+    display: none;
+  }
 }
 
 /* Responsive */

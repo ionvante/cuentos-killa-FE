@@ -102,7 +102,13 @@
   </section>
   <div class="sticky-cta" *ngIf="cuento">
     <span class="price">S/ {{ precioFinal | number:'1.2-2' }}</span>
+    <div class="quantity">
+      <button type="button" (click)="decrementarCantidad()" [disabled]="cantidad <= 1">-</button>
+      <span class="amount">{{ cantidad }}</span>
+      <button type="button" (click)="incrementarCantidad()" [disabled]="cuento && cantidad >= cuento.stock">+</button>
+    </div>
     <button class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento.habilitado">Añadir al carrito</button>
+    <button class="btn btn-secondary" (click)="comprarAhora(); $event.stopPropagation()" [disabled]="!cuento.habilitado">Comprar ahora</button>
   </div>
 </div>
 
