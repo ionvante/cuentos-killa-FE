@@ -189,14 +189,16 @@
   margin: 2px 0;
 }
 
-.stock.low-stock {
-  color: #dc6a6a;
+.stock {
   font-weight: 600;
-}
 
-.stock.low-stock {
-  color: #dc6a6a;
-  font-weight: 600;
+  &.en-stock {
+    color: #28a745; /* green */
+  }
+
+  &.low-stock {
+    color: #ff9800; /* orange */
+  }
 }
 
 .acciones {
