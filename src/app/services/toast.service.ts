@@ -10,7 +10,7 @@ export class ToastService {
   }
 
   show(
-    message: string,
+    content: string | Node | ((toast: HTMLElement) => void),
     type: 'success' | 'warning' | 'error' | 'info' = 'info'
   ): void {
     if (!this.container) {
@@ -19,7 +19,15 @@ export class ToastService {
 
     const toast = this.document.createElement('div');
     toast.className = `alert alert--${type}`;
-    toast.textContent = message;
+
+    if (typeof content === 'function') {
+      content(toast);
+    } else if (typeof content === 'string') {
+      toast.innerHTML = content;
+    } else {
+      toast.appendChild(content);
+    }
+
     this.container.appendChild(toast);
     setTimeout(() => toast.remove(), 2000);
   }
