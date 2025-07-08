@@ -18,6 +18,7 @@ export class DetalleCuentoComponent implements OnInit {
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
   openTech = false;
+  shareOpen = false;
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;

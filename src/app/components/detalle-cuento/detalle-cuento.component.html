@@ -54,13 +54,18 @@
         Agregar al carrito
       </button>
       <button class="btn btn-secondary" (click)="volver(); $event.stopPropagation()">Volver</button>
-      <div class="share">
-        <button aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
-          <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
+      <div class="share-menu">
+        <button class="share-toggle" aria-haspopup="true" aria-expanded="{{shareOpen}}" aria-controls="share-options" (click)="shareOpen = !shareOpen">
+          Compartir
         </button>
-        <button aria-label="Compartir en TikTok" (click)="compartir('tiktok')">
-          <img appLazyLoad="assets/tiktok.svg" alt="TikTok">
-        </button>
+        <div id="share-options" class="share-options" [class.open]="shareOpen">
+          <button title="Compartir en WhatsApp" aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
+            <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
+          </button>
+          <button title="Compartir en TikTok" aria-label="Compartir en TikTok" (click)="compartir('tiktok')">
+            <img appLazyLoad="assets/tiktok.svg" alt="TikTok">
+          </button>
+        </div>
       </div>
     </div>
   </div>
