@@ -38,15 +38,49 @@
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
     <p class="stock" [ngClass]="{ 'low-stock': lowStock }">{{ stockMessage }}</p>
-    <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
-    <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
-    <div class="extra-info" id="tech-panel" [hidden]="!openTech">
-      <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
-      <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
-      <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
-      <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
-      <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+    <div class="tab-container">
+      <div class="tab-headers" role="tablist">
+        <button
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'description'"
+          [attr.aria-selected]="selectedTab === 'description'"
+          (click)="selectTab('description')"
+        >
+          Descripción
+        </button>
+        <button
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'tech'"
+          [attr.aria-selected]="selectedTab === 'tech'"
+          (click)="selectTab('tech')"
+        >
+          Ficha técnica
+        </button>
+        <button
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'reviews'"
+          [attr.aria-selected]="selectedTab === 'reviews'"
+          (click)="selectTab('reviews')"
+        >
+          Opiniones
+        </button>
+      </div>
+      <div class="tab-panel" role="tabpanel" [hidden]="selectedTab !== 'description'">
+        <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+      </div>
+      <div class="tab-panel" role="tabpanel" [hidden]="selectedTab !== 'tech'">
+        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
+        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
+        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
+        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
+        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+      </div>
+      <div class="tab-panel" role="tabpanel" [hidden]="selectedTab !== 'reviews'">
+        <p>Aún no hay reseñas.</p>
+      </div>
     </div>
 
     <div class="acciones">
