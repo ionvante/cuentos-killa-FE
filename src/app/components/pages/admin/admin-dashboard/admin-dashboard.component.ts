@@ -4,7 +4,7 @@ import { CuentoService } from '../../../../services/cuento.service';
 import { PedidoService } from '../../../../services/pedido.service';
 import { UserService } from '../../../../services/user.service';
 import { User } from '../../../../model/user.model';
-import { ChartOptions } from 'chart.js';
+import { ChartOptions, ChartData } from 'chart.js';
 import { subDays, addDays, format } from 'date-fns';
 
 @Component({
@@ -17,6 +17,15 @@ export class AdminDashboardComponent implements OnInit {
   pedidosEnProceso = 0;
   usuariosRegistrados = 0;
   ventasTotales = 0;
+  pedidosNuevos = 0;
+  ticketPromedio = 0;
+  tasaConversion = 0;
+  deltaPedidos = 0;
+  statusCounts: Record<string, number> = {};
+  statusKeys: string[] = [];
+  ingresosData: ChartData<'line'> = { labels: [], datasets: [{ data: [], label: 'Ingresos', borderColor: '#A66E38', fill: false }] };
+  funnelData: ChartData<'bar'> = { labels: ['Visitas', 'Carrito', 'Checkout', 'Pagos', 'Envíos'], datasets: [{ data: [1000, 150, 60, 50, 48], backgroundColor: '#FFAD60' }] };
+  chartOptions: ChartOptions = { responsive: true };
   cuentosData: number[] = [];
   pedidosData: number[] = [];
   usuariosData: number[] = [];
@@ -66,6 +75,35 @@ export class AdminDashboardComponent implements OnInit {
         this.pedidosEnProceso = pedidos.length;
         this.usuariosRegistrados = usuarios.length;
         this.usuarios = usuarios;
+        const rango = typeof this.selectedDays === 'number' ? this.selectedDays : 365;
+        const inicio = subDays(new Date(), rango);
+        const anteriorInicio = subDays(inicio, rango);
+        const pedidosActuales = pedidos.filter(p => new Date(p.fecha) >= inicio);
+        const pedidosPrevios = pedidos.filter(p => new Date(p.fecha) >= anteriorInicio && new Date(p.fecha) < inicio);
+        this.pedidosNuevos = pedidosActuales.length;
+        this.deltaPedidos = this.pedidosNuevos - pedidosPrevios.length;
+        this.ventasTotales = pedidosActuales.reduce((sum, p) => sum + p.total, 0);
+        this.ticketPromedio = this.pedidosNuevos ? this.ventasTotales / this.pedidosNuevos : 0;
+        this.tasaConversion = 0; // no visits data
+        this.statusCounts = pedidos.reduce((acc: Record<string, number>, p) => {
+          acc[p.estado] = (acc[p.estado] || 0) + 1;
+          return acc;
+        }, {});
+        this.statusKeys = Object.keys(this.statusCounts);
+        const ingresosPorDia: { [date: string]: number } = {};
+        for (let i = 0; i < rango; i++) {
+          const d = subDays(new Date(), rango - 1 - i);
+          const key = format(d, 'MM-dd');
+          ingresosPorDia[key] = 0;
+        }
+        pedidosActuales.forEach(p => {
+          const key = format(new Date(p.fecha), 'MM-dd');
+          if (ingresosPorDia[key] !== undefined) ingresosPorDia[key] += p.total;
+        });
+        this.ingresosData = {
+          labels: Object.keys(ingresosPorDia),
+          datasets: [{ data: Object.values(ingresosPorDia), label: 'Ingresos', borderColor: '#A66E38', fill: false }]
+        };
         this.cuentosData = this.ensureMinLength(
           cuentos.map(c => c.id ?? 0).slice(0, 10)
         );

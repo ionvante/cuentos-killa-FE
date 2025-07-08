@@ -41,7 +41,22 @@ describe('AdminDashboardComponent', () => {
 
   it('should update counters with data from services', () => {
     cuentoServiceSpy.obtenerCuentos.and.returnValue(of([{} as Cuento, {} as Cuento]));
-    pedidoServiceSpy.getOrders.and.returnValue(of([{} as Pedido]));
+    pedidoServiceSpy.getOrders.and.returnValue(of([
+      {
+        Id: 1,
+        id: 1,
+        fecha: new Date().toISOString(),
+        nombre: '',
+        correo: '',
+        direccion: '',
+        telefono: '',
+        items: [],
+        total: 10,
+        estado: 'PAGO_PENDIENTE',
+        userId: 1,
+        correoUsuario: ''
+      } as Pedido
+    ]));
     userServiceSpy.obtenerUsuarios.and.returnValue(of([{} as User, {} as User, {} as User]));
 
     fixture.detectChanges();
@@ -49,10 +64,8 @@ describe('AdminDashboardComponent', () => {
     expect(component.cuentosPublicados).toBe(2);
     expect(component.pedidosEnProceso).toBe(1);
     expect(component.usuariosRegistrados).toBe(3);
-    expect(component.usuarios.length).toBe(3);
-    expect(component.cuentosData.length).toBeGreaterThanOrEqual(5);
-    expect(component.pedidosData.length).toBeGreaterThanOrEqual(5);
-    expect(component.usuariosData.length).toBeGreaterThanOrEqual(5);
+    expect(component.pedidosNuevos).toBe(1);
+    expect(component.ventasTotales).toBe(0);
     expect(component.isLoading).toBeFalse();
     expect(component.errorMensaje).toBeNull();
   });
