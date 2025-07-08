@@ -13,36 +13,42 @@ export class ThemeService {
       "--btn-primary-text": "#ffffff",
       "--btn-secondary-bg": "#ffad60",
       "--btn-secondary-text": "#ffffff",
-      "--btn-ghost-border": "#a66e38",
-      "--btn-ghost-text": "#a66e38",
+      "--btn-ghost-border": "#3f2a14",
+      "--btn-ghost-text": "#3f2a14",
       "--btn-tertiary-bg": "#96ceb4",
       "--btn-tertiary-text": "#ffffff",
       "--btn-disabled-bg": "#eeeeee",
-      "--btn-disabled-text": "#aaaaaa"
+      "--btn-disabled-text": "#aaaaaa",
+      "--bg-color": "#fffefc",
+      "--text-color": "#3f2a14"
     },
     "2": {
       "--btn-primary-bg": "#96ceb4",
       "--btn-primary-text": "#ffffff",
       "--btn-secondary-bg": "#ffad60",
       "--btn-secondary-text": "#ffffff",
-      "--btn-ghost-border": "#96ceb4",
-      "--btn-ghost-text": "#96ceb4",
+      "--btn-ghost-border": "#3f2a14",
+      "--btn-ghost-text": "#3f2a14",
       "--btn-tertiary-bg": "#a66e38",
       "--btn-tertiary-text": "#ffffff",
       "--btn-disabled-bg": "#f7f4e9",
-      "--btn-disabled-text": "#cccccc"
+      "--btn-disabled-text": "#cccccc",
+      "--bg-color": "#fffefc",
+      "--text-color": "#3f2a14"
     },
     "3": {
       "--btn-primary-bg": "#ffad60",
       "--btn-primary-text": "#ffffff",
       "--btn-secondary-bg": "#ffeead",
       "--btn-secondary-text": "#a66e38",
-      "--btn-ghost-border": "#ffad60",
-      "--btn-ghost-text": "#ffad60",
+      "--btn-ghost-border": "#3f2a14",
+      "--btn-ghost-text": "#3f2a14",
       "--btn-tertiary-bg": "#96ceb4",
       "--btn-tertiary-text": "#ffffff",
       "--btn-disabled-bg": "#faf5e0",
-      "--btn-disabled-text": "#bbbbbb"
+      "--btn-disabled-text": "#bbbbbb",
+      "--bg-color": "#fffefc",
+      "--text-color": "#3f2a14"
     }
   };
 

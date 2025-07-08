@@ -8,12 +8,14 @@
   --btn-primary-text: #ffffff;
   --btn-secondary-bg: #ffad60;
   --btn-secondary-text: #ffffff;
-  --btn-ghost-border: #a66e38;
-  --btn-ghost-text: #a66e38;
+  --btn-ghost-border: #3f2a14;
+  --btn-ghost-text: #3f2a14;
   --btn-tertiary-bg: #96ceb4;
   --btn-tertiary-text: #ffffff;
   --btn-disabled-bg: #eeeeee;
   --btn-disabled-text: #aaaaaa;
+  --bg-color: #fffefc;
+  --text-color: #3f2a14;
 }
 
 html, body { height: 100%; }
@@ -24,8 +26,8 @@ body {
   font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #fffefc;
-  color: #333;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 * {
   box-sizing: border-box;

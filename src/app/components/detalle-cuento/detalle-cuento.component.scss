@@ -7,6 +7,20 @@
   justify-content: center;
 }
 
+.breadcrumb {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+
+  a {
+    color: #A66E38;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .detalle-grid {
   display: flex;
   flex-wrap: wrap;
@@ -20,8 +34,21 @@
 }
 
 .hero {
-  position: relative;
   width: 100%;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.galeria {
+  display: flex;
+  margin: 0;
+}
+
+.main-image {
+  position: relative;
+  flex: 1;
   height: 40vh;
   overflow: hidden;
 
@@ -32,6 +59,32 @@
   }
 }
 
+.thumbnails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 4px;
+      opacity: 0.6;
+    }
+
+    &.active img {
+      opacity: 1;
+      outline: 2px solid #ffad60;
+    }
+  }
+}
+
 
 .detalle-info {
   flex: 1;
@@ -39,6 +92,26 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.detalle-info .back-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+
+  .material-icons {
+    font-size: 1.5rem;
+  }
+
+  &:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+  }
 }
 
 .detalle-info h1 {
@@ -58,6 +131,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  .cantidad-input {
+    width: 70px;
+    margin-left: 1rem;
+  }
 }
 
 .badges {
@@ -189,14 +266,16 @@
   margin: 2px 0;
 }
 
-.stock.low-stock {
-  color: #dc6a6a;
+.stock {
   font-weight: 600;
-}
 
-.stock.low-stock {
-  color: #dc6a6a;
-  font-weight: 600;
+  &.en-stock {
+    color: #28a745; /* green */
+  }
+
+  &.low-stock {
+    color: #ff9800; /* orange */
+  }
 }
 
 .acciones {
@@ -204,6 +283,10 @@
   display: flex;
   gap: 15px;
   align-items: center;
+  .btn-primary,
+  .btn-success {
+    flex: 1;
+  }
 }
 
 .share {
@@ -343,6 +426,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .sticky-cta .price {
@@ -351,14 +435,55 @@
   color: #5d4037;
 }
 
+.sticky-cta .quantity {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sticky-cta .quantity button {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sticky-cta .quantity .amount {
+  min-width: 24px;
+  text-align: center;
+}
+
 .sticky-cta .btn {
   width: auto;
+}
+
+@media (min-width: 769px) {
+  .sticky-cta {
+    display: none;
+  }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .detalle-grid {
     flex-direction: column;
+  }
+
+  .hero {
+    flex-direction: column;
+  }
+
+  .main-image {
+    order: 1;
+    height: auto;
+  }
+
+  .thumbnails {
+    flex-direction: row;
+    order: 2;
+    justify-content: center;
   }
 
   .portada-container {
@@ -373,6 +498,11 @@
 @media (max-width: 600px) {
   .detalle-info {
     padding: 15px;
+  }
+
+  .thumbnails img {
+    width: 48px;
+    height: 48px;
   }
 
   .detalle-info h1 {
@@ -391,6 +521,11 @@
 
   .acciones {
     flex-direction: column;
+  }
+
+  .cantidad-input {
+    margin-left: 0;
+    margin-top: 0.5rem;
   }
 }
 
