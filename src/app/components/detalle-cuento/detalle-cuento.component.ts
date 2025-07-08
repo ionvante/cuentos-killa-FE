@@ -128,9 +128,7 @@ export class DetalleCuentoComponent implements OnInit {
     if (!this.cuento.habilitado) {
       return 'Sin stock';
     }
-    return this.cuento.stock <= 5
-      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
-      : `Stock: ${this.cuento.stock}`;
+    return this.lowStock ? 'Últimas unidades' : 'En stock';
   }
 
   /** Indica si el cuento tiene pocas unidades disponibles */
