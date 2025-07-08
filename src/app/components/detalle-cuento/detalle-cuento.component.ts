@@ -17,11 +17,16 @@ export class DetalleCuentoComponent implements OnInit {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
+  selectedTab: 'description' | 'tech' | 'reviews' = 'description';
   openTech = false;
+  /** Cantidad seleccionada para agregar al carrito */
+  cantidad = 1;
   @ViewChild('carousel', { static: false }) carousel?: ElementRef<HTMLDivElement>;
   minFreeShipping = environment.minFreeShipping;
   isNuevo = false;
   badgeLabel = '';
+  quantity = 1;
+  selectedImageIndex = 0;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -52,7 +57,26 @@ export class DetalleCuentoComponent implements OnInit {
   }
   agregarAlCarrito() {
     if (this.cuento) {
-      this.carritoService.addItem(this.cuento);
+      this.carritoService.addItemCantidad(this.cuento, this.cantidad);
+    }
+  }
+
+  comprarAhora() {
+    if (this.cuento) {
+      this.carritoService.addItemCantidad(this.cuento, this.cantidad);
+      this.router.navigate(['/checkout']);
+    }
+  }
+
+  incrementarCantidad() {
+    if (this.cuento && this.cantidad < this.cuento.stock) {
+      this.cantidad++;
+    }
+  }
+
+  decrementarCantidad() {
+    if (this.cantidad > 1) {
+      this.cantidad--;
     }
   }
   cargarImagenPlaceholder(event: Event): void {
@@ -63,6 +87,22 @@ export class DetalleCuentoComponent implements OnInit {
   }
   imagenCargada(): void {
     this.cargandoImagen = false; // 🔥 Cuando la imagen carga, quitamos skeleton
+  }
+
+  selectTab(tab: 'description' | 'tech' | 'reviews'): void {
+    this.selectedTab = tab;
+  }
+  selectImage(index: number): void {
+    this.selectedImageIndex = index;
+    this.cargandoImagen = true;
+  }
+
+  get mainImage(): string {
+    return (
+      this.cuento?.galeria?.[this.selectedImageIndex] ||
+      this.cuento?.imagenUrl ||
+      'assets/placeholder-cuento.jpg'
+    );
   }
 
   toggleTech(): void {
@@ -114,9 +154,7 @@ export class DetalleCuentoComponent implements OnInit {
     if (!this.cuento.habilitado) {
       return 'Sin stock';
     }
-    return this.cuento.stock <= 5
-      ? `¡Solo ${this.cuento.stock} unidades disponibles!`
-      : `Stock: ${this.cuento.stock}`;
+    return this.lowStock ? 'Últimas unidades' : 'En stock';
   }
 
   /** Indica si el cuento tiene pocas unidades disponibles */

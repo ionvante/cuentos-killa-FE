@@ -28,12 +28,28 @@ export class CartService {
     return this.items;
   }
 
-  addItem(cuento: Cuento): void {
+  addItem(cuento: Cuento, cantidad: number = 1): void {
     const itemExistente = this.items.find(item => item.cuento.id === cuento.id);
     if (itemExistente) {
-      itemExistente.cantidad += 1;
+      itemExistente.cantidad += cantidad;
     } else {
-      this.items.push({ cuento, cantidad: 1 });
+      this.items.push({ cuento, cantidad });
+    }
+    this.actualizarCarrito();
+    this.toast.show(
+      `"${cuento.titulo}" agregado al carrito. <a href="/carrito">Ver carrito</a>`
+    );
+  }
+
+  /**
+   * Agrega un cuento al carrito con la cantidad indicada
+   */
+  addItemCantidad(cuento: Cuento, cantidad: number): void {
+    const itemExistente = this.items.find(item => item.cuento.id === cuento.id);
+    if (itemExistente) {
+      itemExistente.cantidad += cantidad;
+    } else {
+      this.items.push({ cuento, cantidad });
     }
     this.actualizarCarrito();
     this.toast.show(`"${cuento.titulo}" agregado al carrito`);
@@ -56,5 +72,4 @@ export class CartService {
 
   private saveCart(): void {
     localStorage.setItem(this.cartKey, JSON.stringify(this.items));
-  }
-}
+  }}

@@ -1,47 +1,40 @@
 <div class="dashboard-content">
   <h2>Bienvenido, Admin!</h2>
 
-  <img src="/assets/libros_killa.png" appLazyLoad="assets/libros_killa.png" alt="Banner" class="dashboard-banner" />
-
   <div *ngIf="errorMensaje" class="error-mensaje">
     <p>{{ errorMensaje }}</p>
     <button (click)="onRangeChange()">Reintentar</button>
   </div>
 
-  <select [(ngModel)]="selectedDays" (change)="onRangeChange()">
-    <option [value]="7">Últimos 7 días</option>
-    <option [value]="30">Últimos 30 días</option>
-    <option [value]="90">Últimos 90 días</option>
-    <option [value]="'12m'">Últimos 12 meses</option>
-  </select>
-
-  <section class="stats-grid" aria-labelledby="stats-heading">
-    <h3 id="stats-heading" class="visually-hidden">Estadísticas</h3>
-
-    <ng-container *ngIf="isLoading">
-      <div class="stat-card skeleton" *ngFor="let s of [1,2,3]"></div>
-    </ng-container>
-
-    <ng-container *ngIf="!isLoading && !errorMensaje">
-      <app-stat-card [title]="'Cuentos publicados'" [value]="cuentosPublicados" [data]="cuentosData" [options]="sparklineOptions"></app-stat-card>
-      <app-stat-card [title]="'Pedidos en proceso'" [value]="pedidosEnProceso" [data]="pedidosData" [options]="sparklineOptions"></app-stat-card>
-      <app-stat-card [title]="'Usuarios registrados'" [value]="usuariosRegistrados" [data]="usuariosData" [options]="sparklineOptions"></app-stat-card>
-    </ng-container>
+  <section class="summary-row" aria-label="Resumen ejecutivo" *ngIf="!isLoading">
+    <app-stat-card icon="💰" [title]="'Ventas totales'" [value]="ventasTotales | currency:'PEN':'symbol'" ></app-stat-card>
+    <app-stat-card icon="🛒" [title]="'Pedidos nuevos'" [value]="pedidosNuevos" ></app-stat-card>
+    <app-stat-card icon="💳" [title]="'Ticket promedio'" [value]="ticketPromedio | number:'1.0-2'" ></app-stat-card>
+    <app-stat-card icon="🎯" [title]="'Conversión'" [value]="tasaConversion + '%'" ></app-stat-card>
   </section>
 
-  <section class="orders-stats" *ngIf="!isLoading && !errorMensaje">
-    <app-order-stats></app-order-stats>
+  <section class="charts-row" *ngIf="!isLoading">
+    <div class="chart-container">
+      <label for="periodo">Periodo:</label>
+      <select id="periodo" [(ngModel)]="selectedDays" (change)="onRangeChange()">
+        <option [value]="7">Hoy y 6 días</option>
+        <option [value]="30">Últimos 30 días</option>
+        <option [value]="90">Últimos 90 días</option>
+        <option [value]="'12m'">12 meses</option>
+      </select>
+      <canvas baseChart [data]="ingresosData" [options]="chartOptions" chartType="line"></canvas>
+    </div>
+    <div class="chart-container">
+      <canvas baseChart [data]="funnelData" [options]="chartOptions" chartType="bar"></canvas>
+    </div>
   </section>
 
-  <section class="users-section" *ngIf="!isLoading && !errorMensaje">
-    <h3>Usuarios registrados</h3>
-    <div class="users-grid">
-      <div class="user-card" *ngFor="let user of usuarios">
-        <p class="user-name">{{ user.nombre }} {{ user.apellido }}</p>
-        <p class="user-email">{{ user.email }}</p>
-        <p class="user-phone">{{ user.telefono }}</p>
-        <p class="user-role">{{ user.role }}</p>
-      </div>
+  <section class="status-row" *ngIf="!isLoading">
+    <h3>Estado de pedidos <button routerLink="/admin/pedidos" class="btn btn-link">Ver lista</button></h3>
+    <div class="status-bar" *ngFor="let s of statusKeys">
+      <span class="label">{{ s }}</span>
+      <div class="bar"><span [style.width.%]="statusCounts[s] * 5"></span></div>
+      <span class="count">{{ statusCounts[s] || 0 }}</span>
     </div>
   </section>
 </div>

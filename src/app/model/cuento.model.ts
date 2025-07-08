@@ -23,4 +23,6 @@ export interface Cuento {
   descuento?: number;
   /** Indica si el cuento califica para envío gratis */
   envioGratis?: boolean;
+  /** Galería de imágenes adicionales */
+  galeria?: string[];
 }

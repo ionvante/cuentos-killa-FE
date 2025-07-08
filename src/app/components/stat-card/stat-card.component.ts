@@ -12,7 +12,7 @@ import { ChartOptions } from 'chart.js';
 })
 export class StatCardComponent {
   @Input() title = '';
-  @Input() value: number | string = 0;
+  @Input() value: number | string | null = 0;
   @Input() data: number[] = [];
   @Input() icon = '';
   @Input() options: ChartOptions | undefined = undefined;

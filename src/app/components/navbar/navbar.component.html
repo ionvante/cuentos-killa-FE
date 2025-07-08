@@ -31,8 +31,10 @@
     <li *ngIf="!user">
       <button class="btn-login" (click)="openLoginDialog()">Mi cuenta</button>
     </li>
-    <li *ngIf="user?.nombre" class="avatar-wrapper" (click)="togglePerfil()">
-      <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>
+    <li *ngIf="user?.nombre" class="avatar-wrapper">
+      <button class="avatar-btn" (click)="togglePerfil()" [attr.aria-expanded]="mostrarPerfil" aria-haspopup="true">
+        <div class="avatar" [attr.title]="user?.nombre">{{ user?.nombre?.charAt(0) }}</div>
+      </button>
       <ul class="perfil-menu" *ngIf="mostrarPerfil">
         <li><a routerLink="/perfil">Mi perfil</a></li>
         <li><a routerLink="/direcciones">Direcciones</a></li>

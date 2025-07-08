@@ -6,58 +6,130 @@
   </nav>
   <div class="detalle-grid">
     <div class="hero">
-      <div class="badges">
-        <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
-        <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
-        <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
-        <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
-      </div>
-      <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-      <img
-        [appLazyLoad]="cuento?.imagenUrl || 'assets/placeholder-cuento.jpg'"
-        alt="Imagen del cuento"
-        (error)="cargarImagenPlaceholder($event)"
-        (load)="imagenCargada()"
-        [class.loaded]="!cargandoImagen"
-      />
+      <figure class="galeria">
+        <div class="thumbnails" *ngIf="cuento?.galeria?.length">
+          <button type="button" *ngFor="let img of cuento?.galeria; let i = index" (click)="selectImage(i)" [class.active]="i===selectedImageIndex">
+            <img [appLazyLoad]="img" alt="Miniatura {{i + 1}}" />
+          </button>
+        </div>
+        <div class="main-image">
+          <div class="badges">
+            <span class="badge category" *ngIf="cuento?.categoria">{{ cuento?.categoria }}</span>
+            <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
+            <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
+            <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
+          </div>
+          <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
+          <img
+            [appLazyLoad]="mainImage"
+            alt="Imagen del cuento"
+            (error)="cargarImagenPlaceholder($event)"
+            (load)="imagenCargada()"
+            [class.loaded]="!cargandoImagen"
+          />
+        </div>
+      </figure>
     </div>
 
   <div class="detalle-info">
+    <button class="back-btn" type="button" (click)="volver()">
+      <span class="material-icons">arrow_back</span>
+    </button>
     <h1>{{ cuento?.titulo }}</h1>
+    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
+      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
+      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
+    </div>
     <div class="autor-precio">
       <h3>Autor: {{ cuento?.autor }}</h3>
       <div class="precio">
         <span class="original" *ngIf="hasDiscount">S/ {{ cuento?.precio | number:'1.2-2' }}</span>
         <span class="final">S/ {{ precioFinal | number:'1.2-2' }}</span>
       </div>
+      <input type="number" min="1" [(ngModel)]="quantity" class="cantidad-input" />
     </div>
     <div class="meta">
       <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
       <span class="envio" *ngIf="cuento?.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
     </div>
-    <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
-      <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
-      <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
-    </div>
     <blockquote class="testimonial">
       “Un viaje mágico para toda la familia” – Carla R.
     </blockquote>
     <p class="stock" [ngClass]="{ 'low-stock': lowStock }">{{ stockMessage }}</p>
-    <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
-
-    <button class="tech-toggle" (click)="toggleTech()" aria-controls="tech-panel" [attr.aria-expanded]="openTech">Ficha técnica</button>
-    <div class="extra-info" id="tech-panel" [hidden]="!openTech">
-      <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
-      <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
-      <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
-      <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
-      <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+    <div class="tab-container">
+      <div class="tab-headers" role="tablist">
+        <button
+          id="tab-desc"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'description'"
+          [attr.aria-selected]="selectedTab === 'description'"
+          aria-controls="panel-desc"
+          (click)="selectTab('description')"
+        >
+          Descripción
+        </button>
+        <button
+          id="tab-tech"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'tech'"
+          [attr.aria-selected]="selectedTab === 'tech'"
+          aria-controls="panel-tech"
+          (click)="selectTab('tech')"
+        >
+          Ficha técnica
+        </button>
+        <button
+          id="tab-reviews"
+          class="tab"
+          role="tab"
+          [class.active]="selectedTab === 'reviews'"
+          [attr.aria-selected]="selectedTab === 'reviews'"
+          aria-controls="panel-reviews"
+          (click)="selectTab('reviews')"
+        >
+          Opiniones
+        </button>
+      </div>
+      <div
+        id="panel-desc"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-desc"
+        [hidden]="selectedTab !== 'description'"
+      >
+        <p class="descripcion">{{ cuento?.descripcionCorta }}</p>
+      </div>
+      <div
+        id="panel-tech"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-tech"
+        [hidden]="selectedTab !== 'tech'"
+      >
+        <p><strong>Editorial:</strong> {{ cuento?.editorial }}</p>
+        <p><strong>Tipo de Edición:</strong> {{ cuento?.tipoEdicion }}</p>
+        <p><strong>Páginas:</strong> {{ cuento?.nroPaginas }}</p>
+        <p><strong>Publicado en:</strong> {{ cuento?.fechaPublicacion | date }}</p>
+        <p><strong>Edad Recomendada:</strong> {{ cuento?.edadRecomendada }}</p>
+      </div>
+      <div
+        id="panel-reviews"
+        class="tab-panel"
+        role="tabpanel"
+        aria-labelledby="tab-reviews"
+        [hidden]="selectedTab !== 'reviews'"
+      >
+        <p>Aún no hay reseñas.</p>
+      </div>
     </div>
 
     <div class="acciones">
       <button class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">
         Agregar al carrito
       </button>
+      <button class="btn btn-success" (click)="comprarAhora(); $event.stopPropagation()" [disabled]="!cuento?.habilitado">Comprar ahora</button>
       <button class="btn btn-secondary" (click)="volver(); $event.stopPropagation()">Volver</button>
       <div class="share">
         <button aria-label="Compartir en WhatsApp" (click)="compartir('whatsapp')">
@@ -88,7 +160,13 @@
   </section>
   <div class="sticky-cta" *ngIf="cuento">
     <span class="price">S/ {{ precioFinal | number:'1.2-2' }}</span>
+    <div class="quantity">
+      <button type="button" (click)="decrementarCantidad()" [disabled]="cantidad <= 1">-</button>
+      <span class="amount">{{ cantidad }}</span>
+      <button type="button" (click)="incrementarCantidad()" [disabled]="cuento && cantidad >= cuento.stock">+</button>
+    </div>
     <button class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [disabled]="!cuento.habilitado">Añadir al carrito</button>
+    <button class="btn btn-secondary" (click)="comprarAhora(); $event.stopPropagation()" [disabled]="!cuento.habilitado">Comprar ahora</button>
   </div>
 </div>
 
