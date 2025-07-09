@@ -32,9 +32,6 @@
     </div>
 
   <div class="detalle-info">
-    <button class="back-btn" type="button" (click)="volver()">
-      <span class="material-icons">arrow_back</span>
-    </button>
     <h1>{{ cuento?.titulo }}</h1>
     <div class="rating" *ngIf="cuento?.rating != null" [attr.aria-label]="(cuento?.rating ?? 0) + ' de 5'">
       <span class="stars">{{ getRatingStars(cuento?.rating ?? 0) }}</span>
