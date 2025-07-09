@@ -366,6 +366,7 @@
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     gap: 1rem;
     padding: 1rem 0;
   }
