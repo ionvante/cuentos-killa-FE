@@ -117,6 +117,10 @@ export class DetalleCuentoComponent implements OnInit {
     }
   }
 
+  verDetalleCuento(id: number): void {
+    this.router.navigate(['/cuento', id]);
+  }
+
   compartir(red: 'whatsapp' | 'tiktok') {
     const url = encodeURIComponent(window.location.href);
     if (red === 'whatsapp') {
