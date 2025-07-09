@@ -111,25 +111,6 @@
   justify-content: center;
 }
 
-.detalle-info .back-btn {
-  align-self: flex-start;
-  display: inline-flex;
-  align-items: center;
-  background: transparent;
-  border: none;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-  cursor: pointer;
-
-  .material-icons {
-    font-size: 1.5rem;
-  }
-
-  &:hover {
-    color: var(--primary-dark);
-    text-decoration: underline;
-  }
-}
 
 .detalle-info h1 {
   margin-bottom: 10px;
