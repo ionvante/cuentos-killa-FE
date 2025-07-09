@@ -1,4 +1,4 @@
-<div class="cuento-card">
+<div class="cuento-card" (click)="verDetalle()">
   <div class="badges">
     <span class="badge category" *ngIf="cuento.categoria">{{ cuento.categoria }}</span>
     <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
@@ -28,18 +28,18 @@
   </div>
 
   <div class="acciones">
-    <button class="btn btn-ghost" (click)="verDetalle()">Ver detalle</button>
-    <button *ngIf="!isAdmin && cuento.habilitado" class="btn btn-primary" (click)="agregarAlCarrito()" [appFlyToCart]="cardImg">Añadir carrito</button>
+    <button class="btn btn-ghost" (click)="verDetalle(); $event.stopPropagation()">Ver detalle</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [appFlyToCart]="cardImg">Añadir carrito</button>
     <ng-container *ngIf="isAdmin">
-      <button (click)="editarCuento()" class="admin-button editar hover-scale">Editar</button>
-      <button (click)="deshabilitarCuento()" class="admin-button deshabilitar hover-scale">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
+      <button (click)="editarCuento(); $event.stopPropagation()" class="admin-button editar hover-scale">Editar</button>
+      <button (click)="deshabilitarCuento(); $event.stopPropagation()" class="admin-button deshabilitar hover-scale">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
     </ng-container>
   </div>
   <div class="share-buttons">
-    <button class="hover-scale" aria-label="Compartir por WhatsApp" (click)="compartir('whatsapp')">
+    <button class="hover-scale" aria-label="Compartir por WhatsApp" (click)="compartir('whatsapp'); $event.stopPropagation()">
       <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
     </button>
-    <button class="hover-scale" aria-label="Compartir por Instagram" (click)="compartir('instagram')">
+    <button class="hover-scale" aria-label="Compartir por Instagram" (click)="compartir('instagram'); $event.stopPropagation()">
       <img appLazyLoad="assets/instagram.svg" alt="Instagram">
     </button>
   </div>
