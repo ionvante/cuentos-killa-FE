@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CuentoService } from './../../services/cuento.service';
 import { Cuento } from './../../model/cuento.model';
@@ -13,7 +13,7 @@ import { environment } from '../../../environments/environment';
   templateUrl: './detalle-cuento.component.html',
   styleUrls: ['./detalle-cuento.component.scss']
 })
-export class DetalleCuentoComponent implements OnInit {
+export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy {
   cuento?: Cuento;
   cargandoImagen: boolean = true; // 🔥 Nueva bandera para el skeleton
   relatedCuentos: Cuento[] = [];
@@ -27,6 +27,7 @@ export class DetalleCuentoComponent implements OnInit {
   badgeLabel = '';
   quantity = 1;
   selectedImageIndex = 0;
+  private carouselInterval?: ReturnType<typeof setInterval>;
   /** Indica si el cuento posee un descuento válido */
   get hasDiscount(): boolean {
     return this.cuento?.descuento !== undefined && this.cuento.descuento > 0;
@@ -53,6 +54,26 @@ export class DetalleCuentoComponent implements OnInit {
       this.cuentoService.obtenerCuentos().subscribe(cuentos => {
         this.relatedCuentos = cuentos.filter(c => c.id !== +id).slice(0, 8);
       });
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.carouselInterval = setInterval(() => {
+      const container = this.carousel?.nativeElement;
+      if (container) {
+        const atEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth;
+        if (atEnd) {
+          container.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          this.scrollCarousel(1);
+        }
+      }
+    }, 4000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.carouselInterval) {
+      clearInterval(this.carouselInterval);
     }
   }
   agregarAlCarrito() {
@@ -115,6 +136,10 @@ export class DetalleCuentoComponent implements OnInit {
       const width = container.offsetWidth;
       container.scrollBy({ left: width * 0.8 * direction, behavior: 'smooth' });
     }
+  }
+
+  verDetalleCuento(id: number): void {
+    this.router.navigate(['/cuento', id]);
   }
 
   compartir(red: 'whatsapp' | 'tiktok') {

@@ -145,7 +145,7 @@
       <button class="prev" aria-label="Anterior" (click)="scrollCarousel(-1)">‹</button>
       <div class="carousel" #carousel>
         <div class="slide" *ngFor="let book of relatedCuentos">
-          <div class="card">
+          <div class="card" (click)="verDetalleCuento(book.id)">
             <img appLazyLoad="{{ book.imagenUrl || 'assets/placeholder-cuento.jpg' }}" alt="{{ book.titulo }}" class="w-full rounded-lg" />
             <p class="titulo">{{ book.titulo }}</p>
             <p class="precio">S/ {{ book.precio | number:'1.2-2' }}</p>

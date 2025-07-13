@@ -366,6 +366,7 @@
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
     gap: 1rem;
     padding: 1rem 0;
   }
@@ -382,6 +383,7 @@
     padding: 0.5rem;
     text-align: center;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 
     img {
       width: 100%;
