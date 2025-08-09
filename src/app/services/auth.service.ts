@@ -6,16 +6,22 @@ import { Subject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../model/auth-response.model';
 
-
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = `${environment.apiBaseUrl}/auth`;
-  private tokenKey = 'token';
-  private userKey = 'userData';
-  usuarioLogueado$ = new Subject<User>(); // 👈 Nuevo
+  private tokenKey = TOKEN_KEY;
+  private userKey = USER_KEY;
+  usuarioLogueado$ = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient, private router: Router) {
-   
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private storageService: StorageService
+  ) {
+    const user = this.getUser();
+    if (user) {
+      this.usuarioLogueado$.next(user);
+    }
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
@@ -27,34 +33,31 @@ export class AuthService {
   }
 
   guardarToken(token: string) {
-    localStorage.setItem(this.tokenKey, token);
-
+    this.storageService.setItem(this.tokenKey, token);
   }
 
   guardarUsuario(user: User) {
-    localStorage.setItem(this.userKey, JSON.stringify(user));
-    this.usuarioLogueado$.next(user); // 👈 Notifica a quien esté escuchando
-
+    this.storageService.setItem(this.userKey, JSON.stringify(user));
+    this.usuarioLogueado$.next(user);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+    return this.storageService.getItem(this.tokenKey);
   }
+
   cerrarSesion() {
-    localStorage.removeItem(this.tokenKey);
-    localStorage.removeItem(this.userKey);
+    this.storageService.removeItem(this.tokenKey);
+    this.storageService.removeItem(this.userKey);
+    this.usuarioLogueado$.next(null);
     this.router.navigate(['/login']);
   }
 
   estaAutenticado(): boolean {
     return !!this.getUser();
   }
-    getUser(): User | null {
-      if (typeof window !== 'undefined' && localStorage.getItem(this.userKey)) {
-        return JSON.parse(localStorage.getItem(this.userKey)!);
-      }
-      return null;
+
+  getUser(): User | null {
+    const data = this.storageService.getItem(this.userKey);
+    return data ? JSON.parse(data) : null;
   }
-
-
 }
