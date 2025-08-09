@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { User } from '../model/user.model';
-import { Subject } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { LoginResponse } from '../model/auth-response.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -17,12 +18,12 @@ export class AuthService {
    
   }
 
-  login(email: string, password: string) {
-    return this.http.post<any>(`${this.apiUrl}/login`, { email, password });
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password });
   }
 
-  register(data: any) {
-    return this.http.post<any>(`${this.apiUrl}/register`, data);
+  register(data: any): Observable<User> {
+    return this.http.post<User>(`${this.apiUrl}/register`, data);
   }
 
   guardarToken(token: string) {
