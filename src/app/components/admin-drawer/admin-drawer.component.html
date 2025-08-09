@@ -1,7 +1,9 @@
 <aside class="admin-drawer" [class.open]="isOpen">
   <nav>
     <a *ngFor="let item of menuItems" (click)="navigate(item)">
-      <span class="icon" [innerHTML]="sanitize(item.icon)"></span>
+      <span class="icon">
+        <img [src]="iconUrl(item.icon)" [alt]="item.label + ' icon'" />
+      </span>
       <span>{{ item.label }}</span>
     </a>
   </nav>
