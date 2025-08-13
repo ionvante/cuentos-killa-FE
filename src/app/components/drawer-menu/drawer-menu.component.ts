@@ -22,7 +22,7 @@ export class DrawerMenuComponent {
     private auth: AuthService
   ) {
     this.user = this.auth.getUser();
-    this.auth.usuarioLogueado$.subscribe(u => (this.user = u));
+    this.auth.usuarioLogueado$.subscribe((u: User | null) => (this.user = u));
   }
 
   close() {

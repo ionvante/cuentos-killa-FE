@@ -2,15 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { User } from '../model/user.model';
-import { Subject, Observable } from 'rxjs';
+import { Subject, Observable, BehaviorSubject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../model/auth-response.model';
+import { StorageService } from '../services/storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private apiUrl = `${environment.apiBaseUrl}/auth`;
-  private tokenKey = TOKEN_KEY;
-  private userKey = USER_KEY;
+  private tokenKey = 'TOKEN_KEY';
+  private userKey = 'USER_KEY';
   usuarioLogueado$ = new BehaviorSubject<User | null>(null);
 
   constructor(

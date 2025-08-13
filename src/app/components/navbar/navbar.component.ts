@@ -67,7 +67,7 @@ export class NavbarComponent implements OnInit {
       this.user = this.authService.getUser();
 
       // 👇 Escucha cambios de login
-      this.authService.usuarioLogueado$.subscribe((nuevoUsuario) => {
+      this.authService.usuarioLogueado$.subscribe((nuevoUsuario: User | null) => {
         this.user = nuevoUsuario;
       });
     });

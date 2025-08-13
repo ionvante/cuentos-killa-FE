@@ -19,7 +19,7 @@ export class AppComponent {
   constructor(private auth: AuthService, private router: Router) {
     const user = this.auth.getUser();
     this.userRole = user?.role ?? null;
-    this.auth.usuarioLogueado$.subscribe(u => this.userRole = u?.role ?? null);
+    this.auth.usuarioLogueado$.subscribe((u: { role?: string } | null) => this.userRole = u?.role ?? null);
   }
 
   get showMiniCart(): boolean {
