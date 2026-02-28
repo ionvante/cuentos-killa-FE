@@ -1,3 +1,5 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { AdminCuentosComponent } from './admin-cuentos.component';
@@ -8,9 +10,10 @@ describe('AdminCuentosComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminCuentosComponent]
+      declarations: [AdminCuentosComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(AdminCuentosComponent);
     component = fixture.componentInstance;

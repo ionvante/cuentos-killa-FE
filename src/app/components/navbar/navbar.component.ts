@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { LoginComponent } from '../pages/login/login.component';
 import { CartService } from '../../services/carrito.service';
 import { Router, RouterModule } from '@angular/router';
 import { DrawerService } from '../../services/drawer.service';
@@ -12,7 +11,6 @@ import { Cuento } from '../../model/cuento.model';
 import { User } from '../../model/user.model';
 import { FormsModule } from '@angular/forms';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
-import { ModalComponent } from '../app-modal/modal.component';
 
 
 
@@ -26,9 +24,7 @@ import { ModalComponent } from '../app-modal/modal.component';
     CommonModule, // 🔥 necesario para *ngIf, *ngFor
     RouterModule, // habilita routerLink en la plantilla
     FormsModule,
-    LazyLoadImageDirective,
-    ModalComponent,
-    LoginComponent
+    LazyLoadImageDirective
   ]
 })
 export class NavbarComponent implements OnInit {
@@ -36,7 +32,6 @@ export class NavbarComponent implements OnInit {
   user: User | null = null;
   mostrarPerfil = false;
   searchQuery = '';
-  showLoginModal = false;
 
   constructor(
     public CartService: CartService,
@@ -51,16 +46,6 @@ export class NavbarComponent implements OnInit {
   }
   public itemsCarrito: { cuento: Cuento, cantidad: number }[] = [];
 
-
-
-
-  openLoginDialog(): void {
-    this.showLoginModal = true;
-  }
-
-  closeLoginDialog(): void {
-    this.showLoginModal = false;
-  }
   ngOnInit(): void {
     this.CartService.items$.subscribe(items => {
       this.itemsCarrito = this.CartService.obtenerItems();

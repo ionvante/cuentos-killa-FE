@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { VoucherComponent } from './voucher.component';
 
@@ -8,9 +10,9 @@ describe('VoucherComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [VoucherComponent]
+      imports: [VoucherComponent, HttpClientTestingModule, RouterTestingModule]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(VoucherComponent);
     component = fixture.componentInstance;

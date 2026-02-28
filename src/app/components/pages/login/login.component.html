@@ -4,9 +4,13 @@
     <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
       <label for="correo">Correo electrónico</label>
       <input id="correo" type="email" formControlName="correo" required />
+      <app-form-error [control]="loginForm.get('correo')" [isSubmitted]="isSubmitted"></app-form-error>
 
       <label for="password">Contraseña</label>
       <input id="password" type="password" formControlName="password" required />
+      <app-form-error [control]="loginForm.get('password')" [isSubmitted]="isSubmitted"></app-form-error>
+
+      <div class="error" *ngIf="error" aria-live="polite">{{ error }}</div>
 
       <button type="submit" class="btn-primary">Iniciar sesión</button>
     </form>

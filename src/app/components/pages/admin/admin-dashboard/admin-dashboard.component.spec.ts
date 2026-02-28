@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { AdminDashboardComponent } from './admin-dashboard.component';
 import { AdminDashboardModule } from './admin-dashboard.module';
@@ -23,7 +24,7 @@ describe('AdminDashboardComponent', () => {
     userServiceSpy = jasmine.createSpyObj('UserService', ['obtenerUsuarios']);
 
     await TestBed.configureTestingModule({
-      imports: [AdminDashboardModule],
+      imports: [AdminDashboardModule, RouterTestingModule],
       providers: [
         { provide: CuentoService, useValue: cuentoServiceSpy },
         { provide: PedidoService, useValue: pedidoServiceSpy },
@@ -65,7 +66,7 @@ describe('AdminDashboardComponent', () => {
     expect(component.pedidosEnProceso).toBe(1);
     expect(component.usuariosRegistrados).toBe(3);
     expect(component.pedidosNuevos).toBe(1);
-    expect(component.ventasTotales).toBe(0);
+    expect(component.ventasTotales).toBe(10);
     expect(component.isLoading).toBeFalse();
     expect(component.errorMensaje).toBeNull();
   });

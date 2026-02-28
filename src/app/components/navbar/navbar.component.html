@@ -29,7 +29,7 @@
       <a routerLink="/pedidos" routerLinkActive="active">Pedidos</a>
     </li>
     <li *ngIf="!user">
-      <button class="btn-login" (click)="openLoginDialog()">Mi cuenta</button>
+      <button class="btn-login" routerLink="/login">Mi cuenta</button>
     </li>
     <li *ngIf="user?.nombre" class="avatar-wrapper">
       <button class="avatar-btn" (click)="togglePerfil()" [attr.aria-expanded]="mostrarPerfil" aria-haspopup="true">
@@ -45,10 +45,3 @@
   </ul>
   <div id="cart-announce" class="visually-hidden" aria-live="polite"></div>
 </nav>
-<app-modal
-  *ngIf="showLoginModal"
-  title="Iniciar sesión"
-  (close)="closeLoginDialog()"
->
-  <app-login (close)="closeLoginDialog()"></app-login>
-</app-modal>

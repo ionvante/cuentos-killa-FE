@@ -91,7 +91,7 @@
 
 ## 3) Historias de usuario (más historias) con detalle técnico y funcional esperado
 
-### HU-01 — Autenticación consistente
+### HU-01 — Autenticación consistente (✅ COMPLETADA)
 - **Como** comprador recurrente,
 - **quiero** un flujo de inicio de sesión consistente,
 - **para** no perder contexto ni confundirme entre modal y página.
@@ -114,7 +114,7 @@
 - **Esperado funcional**:
   - El usuario visualiza progreso y completa checkout con menos abandonos.
 
-### HU-03 — Validaciones claras y accesibles
+### HU-03 — Validaciones claras y accesibles (✅ COMPLETADA)
 - **Como** usuario,
 - **quiero** mensajes de error precisos y oportunos,
 - **para** corregir rápido sin frustración.
@@ -125,7 +125,7 @@
 - **Esperado funcional**:
   - Errores comprensibles campo por campo y éxito visible al enviar.
 
-### HU-04 — Precios consistentes
+### HU-04 — Precios consistentes (✅ COMPLETADA)
 - **Como** comprador,
 - **quiero** ver precios en una moneda única y formato coherente,
 - **para** confiar en el total antes de pagar.

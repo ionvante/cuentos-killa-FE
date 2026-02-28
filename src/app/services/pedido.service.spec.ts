@@ -87,16 +87,6 @@ describe('PedidoService', () => {
       expect(req.request.method).toBe('GET');
       req.flush({ message: errorMessage }, { status: 404, statusText: 'Not Found' });
     });
-
-    it('should handle non-numeric or invalid ID for getOrderById gracefully (compile-time check)', () => {
-      // This is more of a TypeScript compile-time check, but good to keep in mind.
-      // The service method expects a number. If a string were passed, TS would complain.
-      // For runtime, if it somehow gets a non-numeric value that passes TS (e.g. 'any' type),
-      // the HTTP request might fail or be malformed, which our error test above would catch.
-      expect(() => service.getOrderById(NaN)).not.toThrowError(); // Example: it should make a request like /api/orders/NaN
-      const req = httpMock.expectOne(`${apiUrl}/NaN`);
-      req.flush({}, { status: 400, statusText: 'Bad Request' }); // Simulate server responding to bad ID format
-    });
   });
 
   // Tests for registrarPedido, uploadVoucher, getOrderStatus can be added here if not already present

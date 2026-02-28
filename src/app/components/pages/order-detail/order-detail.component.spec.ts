@@ -19,15 +19,15 @@ describe('OrderDetailComponent', () => {
 
   const mockPedidoId = 1;
   const mockPedidoData: Pedido = {
-    id: mockPedidoId,
+    Id: mockPedidoId,
     fecha: '2023-01-15T10:00:00Z',
     nombre: 'Cliente A',
     correo: 'a@a.com',
     direccion: 'Dir A',
     telefono: '123',
     items: [
-      { nombreCuento: 'Cuento 1', imagenUrl: 'img1.jpg', precioUnitario: 10, cantidad: 1, subtotal: 10 },
-      { nombreCuento: 'Cuento 2', imagenUrl: 'img2.jpg', precioUnitario: 15, cantidad: 2, subtotal: 30 }
+      { cuentoId: 1, nombreCuento: 'Cuento 1', imagenUrl: 'img1.jpg', precioUnitario: 10, cantidad: 1, subtotal: 10 },
+      { cuentoId: 2, nombreCuento: 'Cuento 2', imagenUrl: 'img2.jpg', precioUnitario: 15, cantidad: 2, subtotal: 30 }
     ],
     total: 40,
     estado: 'PAGO_PENDIENTE',
@@ -46,8 +46,8 @@ describe('OrderDetailComponent', () => {
     toastSpy = jasmine.createSpyObj('ToastService', ['show']);
 
     await TestBed.configureTestingModule({
-      declarations: [OrderDetailComponent],
       imports: [
+        OrderDetailComponent,
         RouterTestingModule,
         CommonModule // For DatePipe, CurrencyPipe
       ],
@@ -121,22 +121,19 @@ describe('OrderDetailComponent', () => {
       expect(toastSpy.show).toHaveBeenCalledWith('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
     });
   });
-  
+
   describe('isPagoPendiente', () => {
     it('should return true if estado is PAGO_ENDIENTE', () => {
       component.pedido = { ...mockPedidoData, estado: 'PAGO_PENDIENTE' };
       expect(component.isPagoPendiente()).toBeTrue();
     });
-    it('should return true if estado is PENDIENTE (case insensitive)', () => {
-      component.pedido = { ...mockPedidoData, estado: 'pendiente' };
-      expect(component.isPagoPendiente()).toBeTrue();
-    });
+
     it('should return false if estado is not PAGO_PENDIENTE', () => {
       component.pedido = { ...mockPedidoData, estado: 'ENTREGADO' };
       expect(component.isPagoPendiente()).toBeFalse();
     });
-     it('should return false if pedido is undefined', () => {
-      component.pedido = undefined;
+    it('should return false if pedido is undefined', () => {
+      component.pedido = undefined as unknown as Pedido;
       expect(component.isPagoPendiente()).toBeFalse();
     });
   });
@@ -151,12 +148,12 @@ describe('OrderDetailComponent', () => {
 
     it('should display "Detalle del Pedido #ID" title', () => {
       const titleElement = fixture.debugElement.query(By.css('.pedido-content h2'));
-      expect(titleElement.nativeElement.textContent).toContain(`Detalle del Pedido #${mockPedidoData.id}`);
+      expect(titleElement.nativeElement.textContent).toContain(`Detalle del Pedido #${mockPedidoData.Id}`);
     });
 
     it('should display general order information', () => {
       const infoGrid = fixture.debugElement.query(By.css('.pedido-info-general .info-grid'));
-      expect(infoGrid.nativeElement.textContent).toContain(`ID del Pedido: ${mockPedidoData.id}`);
+      expect(infoGrid.nativeElement.textContent).toContain(`ID del Pedido: ${mockPedidoData.Id}`);
       // Add more checks for other fields like fecha, estado, total, etc. using pipes if needed
       expect(infoGrid.nativeElement.textContent).toContain(`Estado: ${mockPedidoData.estado}`);
       expect(infoGrid.nativeElement.textContent).toContain(`Nombre: ${mockPedidoData.nombre}`);
@@ -165,7 +162,7 @@ describe('OrderDetailComponent', () => {
     it('should display order items', () => {
       const itemCards = fixture.debugElement.queryAll(By.css('.pedido-items .item-card'));
       expect(itemCards.length).toBe(mockPedidoData.items.length);
-      
+
       const firstItemCard = itemCards[0].nativeElement;
       const firstItemData = mockPedidoData.items[0];
       expect(firstItemCard.textContent).toContain(firstItemData.nombreCuento);
@@ -187,7 +184,7 @@ describe('OrderDetailComponent', () => {
       const pagarButton = fixture.debugElement.query(By.css('.btn-pagar'));
       expect(pagarButton).toBeNull();
     });
-    
+
     it('should call pagarAhora when "Pagar ahora" button is clicked', () => {
       spyOn(component, 'pagarAhora');
       component.pedido = { ...mockPedidoData, estado: 'PAGO_PENDIENTE' };

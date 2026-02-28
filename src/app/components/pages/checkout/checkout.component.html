@@ -1,37 +1,38 @@
 <div class="checkout-container">
-    <h2>
-      Finalizar compra</h2>
-  
-    <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
-      <label>
-        Nombre:
-        <input formControlName="nombre" type="text" required />
-      </label>
-      <label>
-        Correo:
-        <input formControlName="correo" type="email" required />
-      </label>
-      <label>
-        Dirección:
-        <input formControlName="direccion" type="text" required />
-      </label>
-      <label>
-        Teléfono:
-        <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
-      </label>
-      <div class="error-mensaje" *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.errors?.['pattern']">
-        El teléfono debe tener 9 dígitos
+  <h2>
+    Finalizar compra</h2>
+
+  <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
+    <label>
+      Nombre:
+      <input formControlName="nombre" type="text" required />
+    </label>
+    <label>
+      Correo:
+      <input formControlName="correo" type="email" required />
+    </label>
+    <label>
+      Dirección:
+      <input formControlName="direccion" type="text" required />
+    </label>
+    <label>
+      Teléfono:
+      <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
+    </label>
+    <div class="error-mensaje"
+      *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.errors?.['pattern']">
+      El teléfono debe tener 9 dígitos
+    </div>
+
+    <div class="resumen-carrito">
+      <h3>Resumen del carrito</h3>
+      <div *ngFor="let item of itemsCarrito">
+        {{ item.cuento.titulo }} (x{{ item.cantidad }}) - {{ item.cuento.precio * item.cantidad |
+        currency:'PEN':'symbol':'1.2-2' }}
       </div>
-  
-      <div class="resumen-carrito">
-        <h3>Resumen del carrito</h3>
-        <div *ngFor="let item of itemsCarrito">
-          {{ item.cuento.titulo }} (x{{ item.cantidad }}) - S/ {{ item.cuento.precio * item.cantidad | number:'1.2-2' }}
-        </div>
-        <p><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN' }}</p>
-      </div>
-  
-      <button type="submit" class="btn-primary">Confirmar Pedido</button>
-    </form>
-  </div>
-  
+      <p><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN':'symbol':'1.2-2' }}</p>
+    </div>
+
+    <button type="submit" class="btn-primary">Confirmar Pedido</button>
+  </form>
+</div>

@@ -4,23 +4,25 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
+import { FormErrorComponent } from '../../shared/form-error.component';
 
 @Component({
   standalone: true,
   selector: 'app-register',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   error = '';
+  isSubmitted = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -34,6 +36,7 @@ export class RegisterComponent implements OnInit {
   }
 
   registrar(): void {
+    this.isSubmitted = true;
     if (this.registerForm.invalid) return;
 
     const { password, confirmarPassword, ...rest } = this.registerForm.value;
@@ -46,7 +49,7 @@ export class RegisterComponent implements OnInit {
 
     this.authService.register(data).subscribe({
       next: () => this.router.navigate(['/login']),
-      error: err => {
+      error: (err: any) => {
         console.error('Error al registrar usuario', err);
         this.error = 'No se pudo registrar el usuario';
       }

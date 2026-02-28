@@ -1,0 +1,11 @@
+﻿
+> cuentos-killa-fe@0.0.0 test
+> ng test
+
+node.exe : - Generating browser application bundles (phase: setup)...
+En C:\Program Files\nodejs\npm.ps1: 29 Carácter: 3
++   & $NODE_EXE $NPM_CLI_JS $args
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (- Generating br...hase: setup)...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

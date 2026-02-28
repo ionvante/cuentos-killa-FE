@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
@@ -25,11 +26,12 @@ describe('OrderListComponent', () => {
     mockRouter = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
-      declarations: [OrderListComponent], // Declare the component
       imports: [
+        OrderListComponent,
         RouterTestingModule, // Provides basic router stubs
         CommonModule,
-        FormsModule
+        FormsModule,
+        HttpClientTestingModule
       ],
       providers: [
         { provide: PedidoService, useValue: mockPedidoService },
@@ -42,6 +44,7 @@ describe('OrderListComponent', () => {
 
     fixture = TestBed.createComponent(OrderListComponent);
     component = fixture.componentInstance;
+    mockPedidoService.getOrders.and.returnValue(of(mockPedidosData));
   });
 
   it('should create', () => {
@@ -51,11 +54,11 @@ describe('OrderListComponent', () => {
   describe('ngOnInit', () => {
     it('should call pedidoService.getOrders and set isLoading to true initially, then false', fakeAsync(() => {
       mockPedidoService.getOrders.and.returnValue(of(mockPedidosData));
-      
+
       expect(component.isLoading).toBe(true); // Check initial state before ngOnInit
       component.ngOnInit(); // Trigger ngOnInit
       tick(); // Simulate passage of time for async operations like observables
-      
+
       expect(mockPedidoService.getOrders).toHaveBeenCalled();
       expect(component.isLoading).toBe(false);
     }));
@@ -109,7 +112,7 @@ describe('OrderListComponent', () => {
       const errorElement = fixture.debugElement.query(By.css('.error-mensaje p'));
       expect(errorElement.nativeElement.textContent).toContain('Test Error Message');
     });
-    
+
     it('should display "Aún no tienes pedidos." when pedidos is empty and not loading and no error', () => {
       component.isLoading = false;
       component.pedidos = [];
@@ -156,7 +159,7 @@ describe('OrderListComponent', () => {
 
       const payBtn = fixture.debugElement.query(By.css('.acciones .btn-primary'));
       payBtn.triggerEventHandler('click', null);
-      expect(component.irAPago).toHaveBeenCalledWith(mockPedidosData[0].id);
+      expect(component.irAPago).toHaveBeenCalledWith(mockPedidosData[0].id as number);
     }));
   });
 });

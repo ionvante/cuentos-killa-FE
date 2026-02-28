@@ -4,6 +4,10 @@ import { AdminPedidosComponent } from './admin-pedidos.component';
 import { PedidoService } from '../../../../services/pedido.service';
 import { InputDialogComponent } from '../../../input-dialog/input-dialog.component';
 import { ModalComponent } from '../../../app-modal/modal.component';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 
 describe('AdminPedidosComponent', () => {
   let component: AdminPedidosComponent;
@@ -11,10 +15,12 @@ describe('AdminPedidosComponent', () => {
   let pedidoServiceSpy: jasmine.SpyObj<PedidoService>;
 
   beforeEach(async () => {
-    pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['updateOrderStatus']);
+    pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['updateOrderStatus', 'getOrders']);
+    pedidoServiceSpy.updateOrderStatus.and.returnValue(of({} as any));
 
     await TestBed.configureTestingModule({
-      imports: [AdminPedidosComponent, InputDialogComponent, ModalComponent],
+      declarations: [AdminPedidosComponent],
+      imports: [InputDialogComponent, ModalComponent, FormsModule, CommonModule, RouterTestingModule],
       providers: [{ provide: PedidoService, useValue: pedidoServiceSpy }]
     }).compileComponents();
 
