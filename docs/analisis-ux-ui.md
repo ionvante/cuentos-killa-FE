@@ -103,7 +103,7 @@
   - En cualquier trigger de login, el usuario entiende dónde está y a dónde volverá.
   - Retorno exitoso al flujo previo tras autenticarse.
 
-### HU-02 — Checkout por pasos
+### HU-02 — Checkout por pasos (✅ COMPLETADA)
 - **Como** usuario comprador,
 - **quiero** completar mi pedido en pasos claros,
 - **para** reducir errores y sentir progreso.
@@ -145,7 +145,7 @@
 - **Esperado funcional**:
   - Se puede completar login, búsqueda, carrito y checkout sin mouse.
 
-### HU-06 — Carrito editable y claro
+### HU-06 — Carrito editable y claro (✅ COMPLETADA)
 - **Como** comprador,
 - **quiero** ajustar cantidades y ver subtotales en el carrito,
 - **para** decidir rápido antes de pagar.

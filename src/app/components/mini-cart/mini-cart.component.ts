@@ -16,17 +16,25 @@ import { MiniCartService } from '../../services/mini-cart.service';
 export class MiniCartComponent implements OnInit {
   open = false;
   items: { cuento: Cuento; cantidad: number }[] = [];
+  isAnimating = false;
 
   constructor(
     private cart: CartService,
     private router: Router,
     public drawer: DrawerService,
     private miniCart: MiniCartService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cart.items$.subscribe(items => (this.items = items));
     this.miniCart.isOpen$.subscribe(open => (this.open = open));
+
+    this.cart.itemAdded$.subscribe(() => {
+      this.isAnimating = true;
+      setTimeout(() => {
+        this.isAnimating = false;
+      }, 600); // 600ms duración de la animación bounce
+    });
   }
 
   get totalQuantity(): number {

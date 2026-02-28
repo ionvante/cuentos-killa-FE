@@ -59,6 +59,7 @@
     background: #fff;
     padding: 1rem;
   }
+
   .acciones {
     margin-top: 0.5rem;
     display: flex;
@@ -67,18 +68,24 @@
     gap: 0.5rem;
 
     // Estilos para botones de admin
-    button.admin-button { // More specific selector
-      &.editar { // Class for edit button
+    button.admin-button {
+
+      // More specific selector
+      &.editar {
+        // Class for edit button
         background-color: #ffc107; // Amarillo para "Editar"
         color: black;
+
         &:hover {
           background-color: #e0a800;
         }
       }
 
-      &.deshabilitar { // Class for disable button
+      &.deshabilitar {
+        // Class for disable button
         background-color: #dc3545; // Rojo para "Deshabilitar"
         color: white;
+
         &:hover {
           background-color: #c82333;
         }
@@ -104,13 +111,20 @@
   }
 
   .rating {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0.5rem;
+
     .stars {
-      color: #ffad60;
-      font-size: 0.9rem;
+      color: #ffc107; // Dorado para estrellas
+      font-size: 1.1rem;
+      letter-spacing: 2px;
     }
+
     .count {
-      margin-left: 0.25rem;
-      color: #4b3a2f;
+      margin-left: 0.4rem;
+      color: #888;
       font-size: 0.8rem;
     }
   }
@@ -172,7 +186,8 @@
   justify-content: center;
   align-items: center;
   background-color: #fff8e1;
-  height: 180px; /* Ajusta según tu diseño */
+  height: 180px;
+  /* Ajusta según tu diseño */
   overflow: hidden;
 
   img {
@@ -207,11 +222,23 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
 }
 
 @keyframes skeleton-loading {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
 }

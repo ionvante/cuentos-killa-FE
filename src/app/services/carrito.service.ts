@@ -13,6 +13,9 @@ export class CartService {
   private itemsSubject = new BehaviorSubject<{ cuento: Cuento, cantidad: number }[]>([]);
   items$ = this.itemsSubject.asObservable();
 
+  private itemAddedSubject = new BehaviorSubject<void>(undefined);
+  itemAdded$ = this.itemAddedSubject.asObservable();
+
 
   constructor(private toast: ToastService) {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
@@ -36,6 +39,7 @@ export class CartService {
       this.items.push({ cuento, cantidad });
     }
     this.actualizarCarrito();
+    this.itemAddedSubject.next();
     this.toast.show(
       `"${cuento.titulo}" agregado al carrito. <a href="/carrito">Ver carrito</a>`
     );
@@ -52,7 +56,32 @@ export class CartService {
       this.items.push({ cuento, cantidad });
     }
     this.actualizarCarrito();
+    this.itemAddedSubject.next();
     this.toast.show(`"${cuento.titulo}" agregado al carrito`);
+  }
+
+  calcularSubtotalGeneral(): number {
+    return this.items.reduce((acc, item) => acc + (item.cuento.precio * item.cantidad), 0);
+  }
+
+  incrementarCantidad(id: number): void {
+    const item = this.items.find(i => i.cuento.id === id);
+    if (item) {
+      item.cantidad++;
+      this.actualizarCarrito();
+    }
+  }
+
+  decrementarCantidad(id: number): void {
+    const item = this.items.find(i => i.cuento.id === id);
+    if (item) {
+      if (item.cantidad > 1) {
+        item.cantidad--;
+        this.actualizarCarrito();
+      } else {
+        this.removeItem(id);
+      }
+    }
   }
 
   actualizarCarrito(): void {
@@ -72,4 +101,5 @@ export class CartService {
 
   private saveCart(): void {
     localStorage.setItem(this.cartKey, JSON.stringify(this.items));
-  }}
+  }
+}

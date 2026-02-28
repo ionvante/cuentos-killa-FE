@@ -1,0 +1,37 @@
+<nav class="bottom-nav">
+    <a routerLink="/home" class="nav-item" [class.active]="isRouteActive('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        <span>Inicio</span>
+    </a>
+
+    <a routerLink="/cuentos" class="nav-item" [class.active]="isRouteActive('cuentos')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <span>Explorar</span>
+    </a>
+
+    <button class="nav-item cart-button" (click)="openCart($event)">
+        <div class="icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="badge" *ngIf="cartCount > 0">{{ cartCount }}</span>
+        </div>
+        <span>Mi Bolsa</span>
+    </button>
+
+    <a routerLink="/perfil" class="nav-item" [class.active]="isRouteActive('perfil')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <span>Perfil</span>
+    </a>
+</nav>

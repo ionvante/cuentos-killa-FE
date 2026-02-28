@@ -13,6 +13,74 @@
     margin-bottom: 24px;
   }
 
+  .stepper-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 2rem;
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      opacity: 0.5;
+      transition: all 0.3s;
+
+      &.active {
+        opacity: 1;
+
+        .step-number {
+          background-color: var(--btn-primary-bg, #A66E38);
+          color: white;
+          border-color: var(--btn-primary-bg, #A66E38);
+        }
+
+        .step-label {
+          font-weight: 600;
+          color: var(--btn-primary-bg, #A66E38);
+        }
+      }
+
+      &.completed {
+        opacity: 1;
+
+        .step-number {
+          background-color: #4CAF50;
+          border-color: #4CAF50;
+          color: white;
+        }
+      }
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      background: white;
+      transition: all 0.3s;
+    }
+
+    .step-label {
+      font-size: 0.9rem;
+    }
+
+    .step-divider {
+      flex: 1;
+      height: 2px;
+      background-color: #e0e0e0;
+      margin: 0 1rem;
+      transform: translateY(-10px);
+    }
+  }
+
   .checkout-form {
     background: #ffffff;
     border-radius: 12px;
@@ -58,8 +126,35 @@
     }
   }
 
+  .step-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.5rem;
+
+    button {
+      flex: 1;
+    }
+  }
+
+  .btn-secondary {
+    background-color: transparent;
+    color: #666;
+    padding: 14px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+
   .btn-primary {
-    background-color: var(--btn-primary-bg);
+    background-color: var(--btn-primary-bg, #A66E38);
     color: var(--btn-primary-text);
     padding: 14px;
     font-weight: bold;
@@ -69,16 +164,18 @@
     cursor: pointer;
     width: 100%;
     margin-top: 20px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
     &:hover {
       filter: brightness(1.1);
     }
+
     &:active {
       transform: scale(0.98);
     }
   }
 }
+
 .checkout-img {
   max-width: 180px;
   margin-bottom: 16px;

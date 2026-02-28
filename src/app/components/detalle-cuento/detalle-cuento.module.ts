@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DetalleCuentoComponent } from './detalle-cuento.component';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
+import { BreadcrumbComponent } from '../shared/breadcrumb/breadcrumb.component';
 
 const routes: Routes = [
   { path: '', component: DetalleCuentoComponent }
@@ -15,7 +16,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     RouterModule.forChild(routes),
-    LazyLoadImageDirective
+    LazyLoadImageDirective,
+    BreadcrumbComponent
   ]
 })
-export class DetalleCuentoModule {}
+export class DetalleCuentoModule { }

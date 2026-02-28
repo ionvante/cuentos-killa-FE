@@ -4,21 +4,33 @@
     <span class="brand-text">Cuentos de Killa</span>
   </a>
   <form class="search-form" (submit)="onSearch($event)" aria-label="Buscar">
-    <input
-      type="search"
-      placeholder="Buscar por título o autor"
-      [(ngModel)]="searchQuery"
-      name="q"
-      aria-label="Buscar por título o autor" />
+    <div class="search-wrapper">
+      <input type="search" placeholder="Buscar por título o autor" [ngModel]="searchQuery"
+        (ngModelChange)="onSearchInput($event)" (blur)="hideDropdown()" autocomplete="off" name="q"
+        aria-label="Buscar por título o autor" />
+
+      <div class="typeahead-dropdown" *ngIf="showDropdown">
+        <ul class="typeahead-list">
+          <li *ngFor="let result of searchResults" (mousedown)="selectResult(result)">
+            <img [src]="result.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{result.titulo}}">
+            <div class="info">
+              <span class="title">{{ result.titulo }}</span>
+              <span class="author">{{ result.autor }}</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </form>
   <button class="hamburger" aria-label="Menú" (click)="drawer.toggle()">☰</button>
   <ul class="nav-links">
     <li><a routerLink="/home" routerLinkActive="active">Inicio</a></li>
     <li><a routerLink="/cuentos" routerLinkActive="active">Cuentos</a></li>
     <li>
-      <a id="cart-icon" class="carrito-enlace" (click)="abrirCarrito()" style="cursor: pointer;" >
+      <a id="cart-icon" class="carrito-enlace" (click)="abrirCarrito()" style="cursor: pointer;">
         🛒
-        <span class="cart-badge" *ngIf="cantidadTotalItems > 0" [attr.aria-label]="'Carrito, ' + cantidadTotalItems + ' productos'">{{ cantidadTotalItems }}</span>
+        <span class="cart-badge" *ngIf="cantidadTotalItems > 0"
+          [attr.aria-label]="'Carrito, ' + cantidadTotalItems + ' productos'">{{ cantidadTotalItems }}</span>
         <span class="cart-label">Carrito</span>
       </a>
     </li>

@@ -1,0 +1,80 @@
+.bottom-nav {
+    display: none; // Hidden for desktop
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    border-top: 1px solid #f0f0f0;
+    padding-bottom: env(safe-area-inset-bottom);
+
+    @media (max-width: 768px) {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        height: 65px;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #8d6e63;
+        flex: 1;
+        height: 100%;
+        transition: color 0.2s ease;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+
+        svg {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
+        span {
+            font-size: 0.7rem;
+            font-weight: 500;
+        }
+
+        &.active {
+            color: #ffad60; // Active brand color
+
+            svg {
+                stroke-width: 2.5;
+                stroke: #ffad60;
+            }
+        }
+
+        &:hover {
+            color: #ffad60;
+        }
+    }
+
+    .cart-button {
+        .icon-wrapper {
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -6px;
+            right: -10px;
+            background-color: #dc6a6a;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 0.15rem 0.3rem;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            border: 2px solid #fff;
+        }
+    }
+}

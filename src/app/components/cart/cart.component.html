@@ -1,13 +1,45 @@
-<h2>Mi Carrito</h2>
+<div class="cart-container">
+  <h2>Mi Carrito</h2>
 
-<div *ngIf="cuentos.length === 0">
-  <p>Tu carrito está vacío.</p>
+  <div *ngIf="cuentos.length === 0" class="empty-cart">
+    <p>Tu carrito está vacío.</p>
+    <a routerLink="/cuentos" class="btn-primary">Explorar cuentos</a>
+  </div>
+
+  <div *ngIf="cuentos.length > 0" class="cart-content">
+    <div class="cart-items">
+      <div *ngFor="let item of cuentos" class="cart-item">
+        <div class="item-info">
+          <h3>{{ item.cuento.titulo }}</h3>
+          <p class="autor">{{ item.cuento.autor }}</p>
+          <p class="precio">{{ item.cuento.precio | currency:'PEN':'symbol':'1.2-2' }} c/u</p>
+        </div>
+        <div class="item-actions">
+          <div class="quantity-controls">
+            <button type="button" class="btn-icon" (click)="decrementar(item.cuento.id)" aria-label="Disminuir cantidad">-</button>
+            <span class="cantidad">{{ item.cantidad }}</span>
+            <button type="button" class="btn-icon" (click)="incrementar(item.cuento.id)" aria-label="Aumentar cantidad">+</button>
+          </div>
+          <div class="item-subtotal">
+            {{ item.cuento.precio * item.cantidad | currency:'PEN':'symbol':'1.2-2' }}
+          </div>
+          <button type="button" class="btn-eliminar" (click)="eliminarDelCarrito(item.cuento.id)" aria-label="Eliminar del carrito" title="Eliminar del carrito">
+            🗑️
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cart-summary">
+      <h3>Resumen del pedido</h3>
+      <div class="summary-row total">
+        <span>Total:</span>
+        <span>{{ calcularTotal() | currency:'PEN':'symbol':'1.2-2' }}</span>
+      </div>
+      <div class="summary-actions">
+        <a routerLink="/checkout" class="btn-checkout sticky-cta">Ir a checkout</a>
+        <button type="button" class="btn-secondary mt-2" (click)="limpiarCarrito()">Vaciar Carrito</button>
+      </div>
+    </div>
+  </div>
 </div>
-
-<div *ngFor="let cuento of cuentos">
-  <h3>{{ cuento.cuento.titulo }}</h3>
-  <p>{{ cuento.cuento.autor }}</p>
-  <button (click)="eliminarDelCarrito(cuento.cuento.id)">Eliminar</button>
-</div>
-
-<button *ngIf="cuentos.length > 0" (click)="limpiarCarrito()">Vaciar Carrito</button>

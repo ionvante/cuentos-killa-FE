@@ -17,6 +17,7 @@ export class CuentosComponent implements OnInit {
   precioFilter = '';
   categoriaFilter = '';
   ratingFilter = '';
+  isLoading = true;
 
   categorias = ['Aventura', 'Didáctico', 'Clásico'];
 
@@ -25,7 +26,7 @@ export class CuentosComponent implements OnInit {
     private cartService: CartService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
@@ -33,15 +34,19 @@ export class CuentosComponent implements OnInit {
     });
 
     this.cuentoService.obtenerCuentos().subscribe(data => {
-      this.cuentos = data
-        .map((c, idx) => ({
-          ...c,
-          categoria: this.categorias[Math.floor(Math.random() * this.categorias.length)],
-          rating: Math.floor(Math.random() * 5) + 1,
-          badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
-        }))
-        .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
-        .slice(0, 20);
+      // Retrasado artificialmente para visualizar los Skeleton Loaders de la Fase UX 2
+      setTimeout(() => {
+        this.cuentos = data
+          .map((c, idx) => ({
+            ...c,
+            categoria: this.categorias[Math.floor(Math.random() * this.categorias.length)],
+            rating: Math.floor(Math.random() * 5) + 1,
+            badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
+          }))
+          .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
+          .slice(0, 20);
+        this.isLoading = false;
+      }, 1000);
     });
   }
 

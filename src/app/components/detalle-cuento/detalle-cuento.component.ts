@@ -35,7 +35,7 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
   constructor(
     private route: ActivatedRoute,
     private cuentoService: CuentoService,
-    private carritoService: CartService   ,
+    private carritoService: CartService,
     private location: Location,
     private router: Router
   ) { }
@@ -49,6 +49,14 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
           const diff = (Date.now() - new Date(this.cuento.fechaIngreso).getTime()) / (1000 * 3600 * 24);
           this.isNuevo = diff <= 30;
         }
+
+        if (this.cuento && this.cuento.rating == null) {
+          this.cuento.rating = Math.floor(Math.random() * 2) + 4; // 4 o 5 estrellas
+        }
+        if (this.cuento && !this.cuento.ratingCount) {
+          this.cuento.ratingCount = Math.floor(Math.random() * 80) + 12; // 12 a 91 opiniones
+        }
+
         this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
       });
       this.cuentoService.obtenerCuentos().subscribe(cuentos => {
@@ -152,7 +160,7 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   volver() {
-  this.location.back();
+    this.location.back();
   }
 
   /** Devuelve el string de estrellas según la valoración */

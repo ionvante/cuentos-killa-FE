@@ -1,4 +1,5 @@
 <div class="cuentos-container">
+  <app-breadcrumb></app-breadcrumb>
   <h2>Últimos cuentos</h2>
   <div class="filter-bar">
     <div class="input-wrapper search">
@@ -45,7 +46,8 @@
     </div>
     <div class="select-wrapper">
       <svg viewBox="0 0 24 24" class="icon">
-        <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" stroke="#555" stroke-width="2" fill="none" />
+        <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" stroke="#555" stroke-width="2"
+          fill="none" />
       </svg>
       <select [(ngModel)]="ratingFilter">
         <option value="">Valoración</option>
@@ -59,16 +61,17 @@
     <button class="btn btn-ghost" type="button" (click)="limpiarFiltros()">Limpiar</button>
   </div>
   <a class="cta-link" href="#">¿No sabes dónde empezar? → Ver los 5 más leídos</a>
-  <div class="grid-cuentos">
-    <app-cuento-card
-      *ngFor="let cuento of filteredCuentos"
-      [cuento]="cuento"
-      (agregar)="agregarAlCarrito($event)"
-    ></app-cuento-card>
+  <div class="grid-cuentos" *ngIf="isLoading">
+    <!-- Repetir 8 esqueletos mientras se cargan los datos reales -->
+    <app-skeleton *ngFor="let i of [1,2,3,4,5,6,7,8]"></app-skeleton>
+  </div>
+
+  <div class="grid-cuentos" *ngIf="!isLoading">
+    <app-cuento-card *ngFor="let cuento of filteredCuentos" [cuento]="cuento"
+      (agregar)="agregarAlCarrito($event)"></app-cuento-card>
   </div>
   <div class="no-results" *ngIf="filteredCuentos.length === 0">
     <span class="icon">⚠</span>
     <span>¡Uy! No encontramos ese cuento. Prueba con otra palabra clave.</span>
   </div>
 </div>
-

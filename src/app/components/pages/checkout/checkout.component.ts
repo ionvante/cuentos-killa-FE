@@ -18,11 +18,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
-  
+
 
   checkoutForm!: FormGroup;
   itemsCarrito: any[] = [];
   user: User | null;
+  pasoActual: number = 1;
   // pedido:Pedido|null=null;
 
   constructor(
@@ -46,7 +47,7 @@ export class CheckoutComponent implements OnInit {
     //   telefono: [this.user?.telefono || '', Validators.required],
     // });
 
-     // 1. Inicializa el formulario
+    // 1. Inicializa el formulario
     this.checkoutForm = this.fb.group({
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
@@ -54,22 +55,69 @@ export class CheckoutComponent implements OnInit {
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]]
     });
 
-      // 2. Obtiene usuario logueado
-  const user = this.authService.getUser();
+    // 2. Obtiene usuario logueado
+    const user = this.authService.getUser();
 
-  // 3. Si existe, autocompleta
-  if (user) {
-    this.checkoutForm.patchValue({
-      nombre: user.nombre + ' ' + user.apellido || '',
-      correo: user.email || '',
-      // direccion: user.direccion || '',
-      telefono: user.telefono || ''
-    });  }
+    // 3. Si existe, autocompleta
+    if (user) {
+      this.checkoutForm.patchValue({
+        nombre: user.nombre + ' ' + user.apellido || '',
+        correo: user.email || '',
+        // direccion: user.direccion || '',
+        telefono: user.telefono || ''
+      });
+    }
 
-  // 4. Carga el carrito
-  this.itemsCarrito = this.cartService.obtenerItems();
+    // 4. Carga el carrito
+    this.itemsCarrito = this.cartService.obtenerItems();
+
+    // 5. Recuperar estado del stepper
+    const savedForm = sessionStorage.getItem('checkoutForm');
+    if (savedForm) {
+      this.checkoutForm.patchValue(JSON.parse(savedForm));
+    }
+
+    // Guardar en session storage en cada cambio
+    this.checkoutForm.valueChanges.subscribe(val => {
+      sessionStorage.setItem('checkoutForm', JSON.stringify(val));
+    });
   }
-  
+
+  siguientePaso() {
+    if (this.esPasoValido(this.pasoActual)) {
+      this.pasoActual++;
+    } else {
+      this.marcarPasoComoTocado(this.pasoActual);
+    }
+  }
+
+  pasoAnterior() {
+    if (this.pasoActual > 1) {
+      this.pasoActual--;
+    }
+  }
+
+  esPasoValido(paso: number): boolean {
+    if (paso === 1) {
+      return this.checkoutForm.get('nombre')?.valid! &&
+        this.checkoutForm.get('correo')?.valid! &&
+        this.checkoutForm.get('telefono')?.valid!;
+    } else if (paso === 2) {
+      return this.checkoutForm.get('direccion')?.valid!;
+    }
+    return true;
+  }
+
+  marcarPasoComoTocado(paso: number): void {
+    if (paso === 1) {
+      this.checkoutForm.get('nombre')?.markAsTouched();
+      this.checkoutForm.get('correo')?.markAsTouched();
+      this.checkoutForm.get('telefono')?.markAsTouched();
+    } else if (paso === 2) {
+      this.checkoutForm.get('direccion')?.markAsTouched();
+    }
+  }
+
   calcularSubtotal(): number {
     return this.itemsCarrito.reduce((acc, item) => acc + item.cuento.precio * item.cantidad, 0);
   }
@@ -83,7 +131,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     const formData = this.checkoutForm.value;
-  
+
     const pedido: Pedido = {
       Id: 0, // O usa UUID temporal si se espera del backend
       fecha: new Date().toISOString(), // Convert Date to ISO string      
@@ -104,12 +152,13 @@ export class CheckoutComponent implements OnInit {
       userId: this.user?.id || 0,
       correoUsuario: this.user?.email || ''
     };
-  
+
     this.pedidoService.registrarPedido(pedido).subscribe({
       next: (resp) => {
         console.log('Pedido registrado con éxito:', resp);
         // alert('Pedido registrado correctamente');
         this.cartService.clearCart();
+        sessionStorage.removeItem('checkoutForm');
         const pedidoId = resp.id;
         this.router.navigate(['/pago', pedidoId]); // Redirigir a página de pago
       },

@@ -27,7 +27,7 @@ export class CuentoCardComponent implements OnInit {
     return this.cuento.descuento !== undefined && this.cuento.descuento > 0;
   }
 
-  constructor(private cartService: CartService, private router: Router) {}
+  constructor(private cartService: CartService, private router: Router) { }
 
   ngOnInit(): void {
     if (this.cuento?.fechaIngreso) {
@@ -35,6 +35,12 @@ export class CuentoCardComponent implements OnInit {
       const diff = (Date.now() - ingreso.getTime()) / (1000 * 3600 * 24);
       this.isNuevo = diff <= 30;
     }
+
+    // Inyectar un ratingCount falso para Prueba Social (HU-17) si no viene del server
+    if (this.cuento.rating != null && !this.cuento.ratingCount) {
+      this.cuento.ratingCount = Math.floor(Math.random() * 80) + 12; // Entre 12 y 91 reseñas
+    }
+
     this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
   }
 

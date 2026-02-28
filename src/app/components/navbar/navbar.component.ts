@@ -11,6 +11,9 @@ import { Cuento } from '../../model/cuento.model';
 import { User } from '../../model/user.model';
 import { FormsModule } from '@angular/forms';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
+import { CuentoService } from '../../services/cuento.service';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 
 
@@ -32,13 +35,17 @@ export class NavbarComponent implements OnInit {
   user: User | null = null;
   mostrarPerfil = false;
   searchQuery = '';
+  searchSubject = new Subject<string>();
+  searchResults: Cuento[] = [];
+  showDropdown = false;
 
   constructor(
     public CartService: CartService,
     public authService: AuthService,
     private router: Router,
     public drawer: DrawerService,
-    private miniCart: MiniCartService
+    private miniCart: MiniCartService,
+    private cuentoService: CuentoService
   ) {
 
     this.actualizarCantidad();
@@ -55,6 +62,25 @@ export class NavbarComponent implements OnInit {
       this.authService.usuarioLogueado$.subscribe((nuevoUsuario: User | null) => {
         this.user = nuevoUsuario;
       });
+    });
+
+    // Typeahead Logic
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(query => {
+      if (query.length > 2) {
+        this.cuentoService.obtenerCuentos().subscribe(cuentos => {
+          this.searchResults = cuentos.filter(c =>
+            c.titulo.toLowerCase().includes(query.toLowerCase()) ||
+            c.autor.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, 5);
+          this.showDropdown = this.searchResults.length > 0;
+        });
+      } else {
+        this.searchResults = [];
+        this.showDropdown = false;
+      }
     });
   }
 
@@ -91,9 +117,25 @@ export class NavbarComponent implements OnInit {
     }
   }
 
+  onSearchInput(value: string) {
+    this.searchQuery = value;
+    this.searchSubject.next(value);
+  }
+
+  hideDropdown() {
+    setTimeout(() => this.showDropdown = false, 200); // Retraso para permitir click
+  }
+
+  selectResult(cuento: Cuento) {
+    this.searchQuery = '';
+    this.showDropdown = false;
+    this.router.navigate(['/cuento', cuento.id]);
+  }
+
   onSearch(event: Event) {
     event.preventDefault();
     const query = this.searchQuery.trim();
+    this.showDropdown = false;
     if (query) {
       this.router.navigate(['/cuentos'], { queryParams: { q: query } });
     } else {

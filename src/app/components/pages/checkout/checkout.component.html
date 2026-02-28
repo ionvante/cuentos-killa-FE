@@ -1,38 +1,98 @@
 <div class="checkout-container">
-  <h2>
-    Finalizar compra</h2>
+  <h2>Finalizar compra</h2>
+
+  <div class="stepper-header">
+    <div class="step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
+      <div class="step-number">1</div>
+      <div class="step-label">Contacto</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2">
+      <div class="step-number">2</div>
+      <div class="step-label">Dirección</div>
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" [class.active]="pasoActual === 3">
+      <div class="step-number">3</div>
+      <div class="step-label">Confirmación</div>
+    </div>
+  </div>
 
   <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
-    <label>
-      Nombre:
-      <input formControlName="nombre" type="text" required />
-    </label>
-    <label>
-      Correo:
-      <input formControlName="correo" type="email" required />
-    </label>
-    <label>
-      Dirección:
-      <input formControlName="direccion" type="text" required />
-    </label>
-    <label>
-      Teléfono:
-      <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
-    </label>
-    <div class="error-mensaje"
-      *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.errors?.['pattern']">
-      El teléfono debe tener 9 dígitos
-    </div>
-
-    <div class="resumen-carrito">
-      <h3>Resumen del carrito</h3>
-      <div *ngFor="let item of itemsCarrito">
-        {{ item.cuento.titulo }} (x{{ item.cantidad }}) - {{ item.cuento.precio * item.cantidad |
-        currency:'PEN':'symbol':'1.2-2' }}
+    <!-- Paso 1: Datos de Contacto -->
+    <div class="checkout-step" *ngIf="pasoActual === 1">
+      <h3>1. Datos de Contacto</h3>
+      <label>
+        Nombre completo:
+        <input formControlName="nombre" type="text" required />
+        <div class="error-mensaje" *ngIf="checkoutForm.get('nombre')?.touched && checkoutForm.get('nombre')?.invalid">
+          El nombre es requerido
+        </div>
+      </label>
+      <label>
+        Correo electrónico:
+        <input formControlName="correo" type="email" required />
+        <div class="error-mensaje" *ngIf="checkoutForm.get('correo')?.touched && checkoutForm.get('correo')?.invalid">
+          Ingresa un correo válido
+        </div>
+      </label>
+      <label>
+        Teléfono:
+        <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
+        <div class="error-mensaje"
+          *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.invalid">
+          El teléfono debe tener 9 dígitos numéricos
+        </div>
+      </label>
+      <div class="step-actions">
+        <button type="button" class="btn-primary" (click)="siguientePaso()">Continuar</button>
       </div>
-      <p><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN':'symbol':'1.2-2' }}</p>
     </div>
 
-    <button type="submit" class="btn-primary">Confirmar Pedido</button>
+    <!-- Paso 2: Dirección -->
+    <div class="checkout-step" *ngIf="pasoActual === 2">
+      <h3>2. Dirección de Envío</h3>
+      <label>
+        Dirección completa:
+        <input formControlName="direccion" type="text" required placeholder="Ej. Av. Siempre Viva 123" />
+        <div class="error-mensaje"
+          *ngIf="checkoutForm.get('direccion')?.touched && checkoutForm.get('direccion')?.invalid">
+          La dirección es requerida
+        </div>
+      </label>
+      <div class="step-actions">
+        <button type="button" class="btn-secondary" (click)="pasoAnterior()">Volver</button>
+        <button type="button" class="btn-primary" (click)="siguientePaso()">Continuar a Resumen</button>
+      </div>
+    </div>
+
+    <!-- Paso 3: Resumen y Pago -->
+    <div class="checkout-step" *ngIf="pasoActual === 3">
+      <h3>3. Confirmación del Pedido</h3>
+      <div class="resumen-pedido">
+        <div class="resumen-datos">
+          <h4>Enviando a:</h4>
+          <p>{{ checkoutForm.get('nombre')?.value }}</p>
+          <p>{{ checkoutForm.get('direccion')?.value }}</p>
+          <p>{{ checkoutForm.get('telefono')?.value }}</p>
+          <p>{{ checkoutForm.get('correo')?.value }}</p>
+        </div>
+
+        <div class="resumen-carrito mt-4">
+          <h4>Tus artículos:</h4>
+          <div *ngFor="let item of itemsCarrito" class="resumen-item">
+            <span>{{ item.cuento.titulo }} (x{{ item.cantidad }})</span>
+            <span>{{ item.cuento.precio * item.cantidad | currency:'PEN':'symbol':'1.2-2' }}</span>
+          </div>
+          <p class="resumen-total"><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN':'symbol':'1.2-2' }}
+          </p>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button type="button" class="btn-secondary" (click)="pasoAnterior()">Volver</button>
+        <button type="submit" class="btn-primary">Confirmar y Pagar</button>
+      </div>
+    </div>
   </form>
 </div>
