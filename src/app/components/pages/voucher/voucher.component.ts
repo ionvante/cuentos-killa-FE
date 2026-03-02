@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PedidoService } from '../../../services/pedido.service';
 import { ToastService } from '../../../services/toast.service';
@@ -13,6 +13,7 @@ import { SafePipe } from '../../../pipes/safe.pipe';
   styleUrls: ['./voucher.component.scss']
 })
 export class VoucherComponent implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
   @Input() pedidoId = 0;
   @Output() uploaded = new EventEmitter<void>();
   @Output() close = new EventEmitter<void>();
@@ -25,7 +26,7 @@ export class VoucherComponent implements OnInit {
   uploadComplete = false;
   isMobile = false;
 
-  constructor(private pedidoService: PedidoService, private toast: ToastService) {}
+  constructor(private pedidoService: PedidoService, private toast: ToastService) { }
 
   ngOnInit(): void {
     this.onResize();
@@ -77,6 +78,10 @@ export class VoucherComponent implements OnInit {
       error: () => this.toast.show('Error al subir el voucher', 'error'),
       complete: () => (this.isUploading = false)
     });
+  }
+
+  triggerFileInput(): void {
+    this.fileInput?.nativeElement?.click();
   }
 
   onClose(): void {

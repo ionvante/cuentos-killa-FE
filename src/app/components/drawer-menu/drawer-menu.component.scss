@@ -16,9 +16,11 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  z-index: 1100;
+  z-index: 1300;
   will-change: transform;
   box-shadow: 8px 0 32px rgba(0, 0, 0, 0.15);
+  padding-top: 64px;
+  /* accounts for fixed navbar height */
 
   &.open {
     transform: translateX(0);
@@ -188,53 +190,6 @@
   &:hover {
     opacity: 0.8;
   }
-}
-
-/* Cart FAB */
-.cart-fab {
-  position: absolute;
-  bottom: 5.5rem;
-  right: 1rem;
-  background: $secondary;
-  border: none;
-  border-radius: 50%;
-  width: 52px;
-  height: 52px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba($primary, 0.25);
-  transition: transform 0.2s;
-
-  svg {
-    color: $primary;
-  }
-
-  &:hover {
-    transform: scale(1.05);
-  }
-
-  &:active {
-    transform: scale(0.95);
-  }
-}
-
-.fab-badge {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: #fff;
-  color: $primary;
-  border-radius: 50%;
-  font-size: 0.7rem;
-  font-weight: 800;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
 }
 
 /* Backdrop */

@@ -1,19 +1,26 @@
+@import '../../../../styles/variables';
+
+/* ===============================
+   CUENTOS CATALOG — Premium design
+   =============================== */
+
 .cuentos-container {
-  padding: 2rem;
+  padding: 0;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-  .filter-bar {
-  background: #ffeead;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, auto));
+/* Filter bar — pill-style buttons */
+.filter-bar {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 
   .input-wrapper,
   .select-wrapper {
@@ -24,68 +31,105 @@
     width: 1rem;
     height: 1rem;
     position: absolute;
-    left: 0.5rem;
+    left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;
+    color: $primary;
   }
 
-    input,
-    select {
-      padding: 0.75rem 0.75rem 0.75rem 2rem;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: box-shadow 0.3s ease, width 0.3s ease;
-    }
+  input,
+  select {
+    padding: 0.6rem 1rem 0.6rem 2.25rem;
+    border: 2px solid #e8e0d6;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    color: #3B2A1A;
 
-    input {
-      width: 200px;
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba($primary, 0.1);
+      outline: none;
     }
+  }
 
-    input:focus {
+  input {
+    width: 220px;
+
+    &:focus {
       width: 300px;
-      box-shadow: 0 0 0 3px rgba(150, 206, 180, 0.4);
     }
+  }
+
+  select {
+    appearance: none;
+    cursor: pointer;
+    padding-right: 2rem;
+    background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A66E38' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+  }
 
   select option:checked {
-    background: #ffad60;
+    background: $secondary;
   }
-
 }
 
+/* Product grid — 4 columns on desktop */
 .grid-cuentos {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
+/* CTA link */
 .cta-link {
-  display: block;
-  margin: 0.5rem 0 1rem;
-  text-align: right;
-  color: #a66e38;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0.5rem 0 1.5rem;
+  float: right;
+  color: $primary;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
+/* No results */
 .no-results {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background: #ffad60;
-  color: #a66e38;
-  border-radius: 6px;
-  padding: 0.75rem;
+  background: #FDF6EC;
+  color: $primary;
+  border-radius: 16px;
+  padding: 1rem;
+  font-weight: 600;
+  border: 2px dashed #e8e0d6;
 }
 
 @media (max-width: 600px) {
   .grid-cuentos {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
   }
-  .filter-bar input {
-    width: 100%;
+
+  .filter-bar {
+    input {
+      width: 100%;
+
+      &:focus {
+        width: 100%;
+      }
+    }
   }
 }
