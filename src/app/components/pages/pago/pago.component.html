@@ -72,11 +72,14 @@
         </button>
 
         <!-- Yape / Plin -->
-        <button class="payment-card yape" (click)="openVoucherDialog()">
+        <button class="payment-card yape" (click)="openVoucherDialog()" [disabled]="isGuest"
+          [class.payment-disabled]="isGuest" [title]="isGuest ? 'Solo disponible para usuarios registrados' : ''">
           <div class="payment-icon">📸</div>
           <div class="payment-text">
             <span class="payment-name">Yape / Plin</span>
-            <span class="payment-desc">Subir comprobante de pago</span>
+            <span class="payment-desc" *ngIf="!isGuest">Subir comprobante de pago</span>
+            <span class="payment-desc" *ngIf="isGuest" style="color: #d32f2f; font-weight: 500;">Solo para
+              registrados</span>
           </div>
           <svg class="payment-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

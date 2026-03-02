@@ -8,6 +8,7 @@ import { ToastService } from '../../../services/toast.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
+import { UBIGEO_PERU, Departamento, Provincia, Distrito } from '../../../data/ubigeo';
 
 
 @Component({
@@ -27,9 +28,9 @@ export class CheckoutComponent implements OnInit {
   isLoading = false;
   gpsLoading = false;
 
-  departamentos = ['Lima', 'Arequipa', 'Cusco', 'La Libertad', 'Piura', 'Junín', 'Lambayeque', 'Cajamarca', 'Puno', 'Loreto'];
-  provincias = ['Lima', 'Callao', 'Huancayo', 'Trujillo', 'Arequipa', 'Cusco', 'Chiclayo', 'Piura'];
-  distritos = ['Miraflores', 'San Isidro', 'Surco', 'San Borja', 'Barranco', 'La Molina', 'Jesús María', 'Lince', 'Magdalena', 'Pueblo Libre'];
+  departamentos: Departamento[] = UBIGEO_PERU;
+  provincias: Provincia[] = [];
+  distritos: Distrito[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -55,13 +56,18 @@ export class CheckoutComponent implements OnInit {
     // 1. Inicializa el formulario
     this.checkoutForm = this.fb.group({
       nombre: ['', Validators.required],
+      documentoTipo: ['DNI', Validators.required],
+      documentoNumero: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
+      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
+
       departamento: ['', Validators.required],
       provincia: ['', Validators.required],
       distrito: ['', Validators.required],
       calle: ['', Validators.required],
+      referencia: [''],
+      ubicacionGps: [''],
       direccion: [''],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]]
     });
 
     // 2. Obtiene usuario logueado
@@ -83,8 +89,32 @@ export class CheckoutComponent implements OnInit {
     // 5. Recuperar estado del stepper
     const savedForm = sessionStorage.getItem('checkoutForm');
     if (savedForm) {
-      this.checkoutForm.patchValue(JSON.parse(savedForm));
+      const parsedForm = JSON.parse(savedForm);
+      // Restore ubigeo cascades manually before patching
+      if (parsedForm.departamento) {
+        const d = this.departamentos.find(dept => dept.nombre === parsedForm.departamento);
+        this.provincias = d ? d.provincias : [];
+      }
+      if (parsedForm.provincia) {
+        const p = this.provincias.find(prov => prov.nombre === parsedForm.provincia);
+        this.distritos = p ? p.distritos : [];
+      }
+      this.checkoutForm.patchValue(parsedForm);
     }
+
+    // Gestionar dependencias de UBIGEO
+    this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
+      const depto = this.departamentos.find(d => d.nombre === deptoNombre);
+      this.provincias = depto ? depto.provincias : [];
+      this.distritos = [];
+      this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
+    });
+
+    this.checkoutForm.get('provincia')?.valueChanges.subscribe(provId => {
+      const prov = this.provincias.find(p => p.nombre === provId);
+      this.distritos = prov ? prov.distritos : [];
+      this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
+    });
 
     // Guardar en session storage en cada cambio
     this.checkoutForm.valueChanges.subscribe(val => {
@@ -109,6 +139,8 @@ export class CheckoutComponent implements OnInit {
   esPasoValido(paso: number): boolean {
     if (paso === 1) {
       return this.checkoutForm.get('nombre')?.valid! &&
+        this.checkoutForm.get('documentoTipo')?.valid! &&
+        this.checkoutForm.get('documentoNumero')?.valid! &&
         this.checkoutForm.get('correo')?.valid! &&
         this.checkoutForm.get('telefono')?.valid!;
     } else if (paso === 2) {
@@ -123,6 +155,8 @@ export class CheckoutComponent implements OnInit {
   marcarPasoComoTocado(paso: number): void {
     if (paso === 1) {
       this.checkoutForm.get('nombre')?.markAsTouched();
+      this.checkoutForm.get('documentoTipo')?.markAsTouched();
+      this.checkoutForm.get('documentoNumero')?.markAsTouched();
       this.checkoutForm.get('correo')?.markAsTouched();
       this.checkoutForm.get('telefono')?.markAsTouched();
     } else if (paso === 2) {
@@ -139,9 +173,10 @@ export class CheckoutComponent implements OnInit {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         this.checkoutForm.patchValue({
-          calle: `Lat: ${pos.coords.latitude.toFixed(5)}, Lng: ${pos.coords.longitude.toFixed(5)}`
+          ubicacionGps: `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`
         });
         this.gpsLoading = false;
+        this.toast.show('Ubicación obtenida correctamente');
       },
       () => {
         this.gpsLoading = false;
@@ -166,11 +201,12 @@ export class CheckoutComponent implements OnInit {
 
     // Check essential fields only (address sub-fields compose into direccion)
     const nombre = this.checkoutForm.get('nombre');
+    const docNum = this.checkoutForm.get('documentoNumero');
     const correo = this.checkoutForm.get('correo');
     const telefono = this.checkoutForm.get('telefono');
     const direccion = this.checkoutForm.get('direccion');
 
-    if (!nombre?.value || !correo?.valid || !telefono?.valid || !direccion?.value) {
+    if (!nombre?.value || !docNum?.value || !correo?.valid || !telefono?.valid || !direccion?.value) {
       return;
     }
 
@@ -187,8 +223,12 @@ export class CheckoutComponent implements OnInit {
       Id: 0, // O usa UUID temporal si se espera del backend
       fecha: new Date().toISOString(), // Convert Date to ISO string      
       nombre: formData.nombre,
+      documentoTipo: formData.documentoTipo,
+      documentoNumero: formData.documentoNumero,
       correo: formData.correo,
       direccion: formData.direccion,
+      referencia: formData.referencia,
+      ubicacionGps: formData.ubicacionGps,
       telefono: formData.telefono,
       items: this.itemsCarrito.map(item => ({
         cuentoId: item.cuento.id,

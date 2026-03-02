@@ -22,6 +22,7 @@ export class PagoComponent implements OnInit {
   showMercadoModal = false;
   orderTotal = 0;
   isLoadingMercadoPago = false; // Indicador de carga al redirigir a MP
+  isGuest: boolean = false; // Add property to track if order belongs to a guest
 
   /** Mapa de estados del BE a etiquetas legibles */
   private readonly statusLabels: Record<string, string> = {
@@ -47,7 +48,10 @@ export class PagoComponent implements OnInit {
 
     // Cargar el total del pedido
     this.pedidoService.getOrderById(this.pedidoId).subscribe({
-      next: (pedido) => { this.orderTotal = pedido.total; },
+      next: (pedido) => {
+        this.orderTotal = pedido.total;
+        this.isGuest = !pedido.userId || pedido.userId === 0;
+      },
       error: (err) => console.error('Error cargando total del pedido:', err)
     });
 

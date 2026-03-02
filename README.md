@@ -32,7 +32,6 @@ The project relies on environment files located in `src/environments/`. Each
 file exports an `environment` object with the following keys:
 
 - `apiBaseUrl` – base URL for the backend API.
-- `sentryDsn` – [Sentry](https://sentry.io/) DSN used to report errors.
 - `minFreeShipping` – minimum order total required to obtain free shipping.
 
 The repository contains predefined files for development (`environment.ts`),

@@ -21,7 +21,13 @@ export interface Pedido {
   total: number;
   estado: string; // ejemplo: 'PAGO_PENDIENTE', 'PAGADO', 'ENVIADO', 'ENTREGADO'
   tipoPago?: string;
-  userId: number;
-  correoUsuario: string;
+  userId?: number;
+  correoUsuario?: string;
   voucherUrl?: string;
+
+  // Nuevos campos para checkout
+  documentoTipo?: string;
+  documentoNumero?: string;
+  referencia?: string;
+  ubicacionGps?: string;
 }

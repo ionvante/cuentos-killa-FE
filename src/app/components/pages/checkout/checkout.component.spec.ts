@@ -44,11 +44,16 @@ describe('CheckoutComponent', () => {
   });
 
   it('should not call servicio when cart is empty', () => {
-    component.checkoutForm.setValue({
+    component.checkoutForm.patchValue({
       nombre: 'John Doe',
+      documentoTipo: 'DNI',
+      documentoNumero: '12345678',
       correo: 'john@example.com',
-      direccion: 'Calle 1',
-      telefono: '123456789'
+      telefono: '123456789',
+      departamento: 'Lima',
+      provincia: 'Lima',
+      distrito: 'Miraflores',
+      calle: 'Av Principal 123'
     });
 
     component.itemsCarrito = [];
