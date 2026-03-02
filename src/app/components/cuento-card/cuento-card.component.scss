@@ -108,6 +108,13 @@
     color: #4b3a2f;
     font-size: 0.9rem;
     margin: 0.25rem 0 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    min-height: 2.5em;
+    /* espacio para 2 líneas aunque el texto sea corto */
   }
 
   .rating {

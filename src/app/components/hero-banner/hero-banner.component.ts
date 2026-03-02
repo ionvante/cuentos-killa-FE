@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero-banner',
@@ -7,9 +8,11 @@ import { Component, ChangeDetectionStrategy } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeroBannerComponent {
-  subtitle = 'Suscríbete y obtén 10 % de descuento en tu primera compra';
 
-  suscribirse(email: string) {
-    console.log('Suscribir', email);
+  constructor(private router: Router) { }
+
+  /** El hero completo actúa como botón "Ver cuentos" */
+  irACuentos(): void {
+    this.router.navigate(['/cuentos']);
   }
 }

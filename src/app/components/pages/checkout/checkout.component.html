@@ -1,97 +1,274 @@
 <div class="checkout-container">
-  <h2>Finalizar compra</h2>
+  <div class="checkout-header">
+    <h1 class="checkout-title">Finalizar compra</h1>
 
-  <div class="stepper-header">
-    <div class="step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
-      <div class="step-number">1</div>
-      <div class="step-label">Contacto</div>
-    </div>
-    <div class="step-divider"></div>
-    <div class="step" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2">
-      <div class="step-number">2</div>
-      <div class="step-label">Dirección</div>
-    </div>
-    <div class="step-divider"></div>
-    <div class="step" [class.active]="pasoActual === 3">
-      <div class="step-number">3</div>
-      <div class="step-label">Confirmación</div>
+    <!-- Step Indicator -->
+    <div class="stepper-header">
+      <div class="stepper-line"></div>
+      <div class="step" [class.active]="pasoActual === 1" [class.completed]="pasoActual > 1">
+        <div class="step-circle">
+          <svg *ngIf="pasoActual > 1" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span *ngIf="pasoActual <= 1">1</span>
+        </div>
+        <span class="step-label">Contacto</span>
+      </div>
+      <div class="step" [class.active]="pasoActual === 2" [class.completed]="pasoActual > 2">
+        <div class="step-circle">
+          <svg *ngIf="pasoActual > 2" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          <span *ngIf="pasoActual <= 2">2</span>
+        </div>
+        <span class="step-label">Dirección</span>
+      </div>
+      <div class="step" [class.active]="pasoActual === 3">
+        <div class="step-circle">
+          <span>3</span>
+        </div>
+        <span class="step-label">Confirmación</span>
+      </div>
     </div>
   </div>
 
   <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
     <!-- Paso 1: Datos de Contacto -->
-    <div class="checkout-step" *ngIf="pasoActual === 1">
-      <h3>1. Datos de Contacto</h3>
-      <label>
-        Nombre completo:
-        <input formControlName="nombre" type="text" required />
+    <div class="checkout-card" *ngIf="pasoActual === 1">
+      <div class="card-chip">Capítulo 1</div>
+      <h3 class="card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+          <circle cx="12" cy="7" r="4" />
+        </svg>
+        Datos de Contacto
+      </h3>
+
+      <div class="form-group">
+        <label class="form-label">Nombre completo:</label>
+        <div class="input-wrapper">
+          <input formControlName="nombre" type="text" required class="form-input" />
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        </div>
         <div class="error-mensaje" *ngIf="checkoutForm.get('nombre')?.touched && checkoutForm.get('nombre')?.invalid">
           El nombre es requerido
         </div>
-      </label>
-      <label>
-        Correo electrónico:
-        <input formControlName="correo" type="email" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico:</label>
+        <div class="input-wrapper">
+          <input formControlName="correo" type="email" required class="form-input" />
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="16" x="2" y="4" rx="2" />
+            <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+          </svg>
+        </div>
         <div class="error-mensaje" *ngIf="checkoutForm.get('correo')?.touched && checkoutForm.get('correo')?.invalid">
           Ingresa un correo válido
         </div>
-      </label>
-      <label>
-        Teléfono:
-        <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Teléfono:</label>
+        <div class="input-wrapper">
+          <input formControlName="telefono" type="tel" maxlength="9" pattern="[0-9]*" required class="form-input" />
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z" />
+          </svg>
+        </div>
         <div class="error-mensaje"
           *ngIf="checkoutForm.get('telefono')?.touched && checkoutForm.get('telefono')?.invalid">
           El teléfono debe tener 9 dígitos numéricos
         </div>
-      </label>
-      <div class="step-actions">
-        <button type="button" class="btn-primary" (click)="siguientePaso()">Continuar</button>
       </div>
+
+      <button type="button" class="btn-continue" (click)="siguientePaso()">
+        Continuar la historia
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+      </button>
     </div>
 
     <!-- Paso 2: Dirección -->
-    <div class="checkout-step" *ngIf="pasoActual === 2">
-      <h3>2. Dirección de Envío</h3>
-      <label>
-        Dirección completa:
-        <input formControlName="direccion" type="text" required placeholder="Ej. Av. Siempre Viva 123" />
+    <div class="checkout-card" *ngIf="pasoActual === 2">
+      <div class="card-chip">Capítulo 2</div>
+      <h3 class="card-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <rect width="20" height="8" x="2" y="14" rx="2" />
+          <path d="M6 14V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8" />
+          <circle cx="12" cy="18" r="1" />
+        </svg>
+        Datos de Envío
+      </h3>
+
+      <!-- GPS button -->
+      <button type="button" class="btn-gps" (click)="usarGPS()" [disabled]="gpsLoading">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        <span *ngIf="!gpsLoading">Usar mi ubicación actual (GPS)</span>
+        <span *ngIf="gpsLoading">Obteniendo ubicación...</span>
+      </button>
+
+      <!-- Departamento -->
+      <div class="form-group">
+        <label class="form-label">Departamento:</label>
+        <div class="input-wrapper">
+          <select formControlName="departamento" class="form-input form-select">
+            <option value="" disabled>Seleccionar</option>
+            <option *ngFor="let dept of departamentos" [value]="dept">{{ dept }}</option>
+          </select>
+        </div>
         <div class="error-mensaje"
-          *ngIf="checkoutForm.get('direccion')?.touched && checkoutForm.get('direccion')?.invalid">
+          *ngIf="checkoutForm.get('departamento')?.touched && checkoutForm.get('departamento')?.invalid">
+          Selecciona un departamento
+        </div>
+      </div>
+
+      <!-- Provincia -->
+      <div class="form-group">
+        <label class="form-label">Provincia:</label>
+        <div class="input-wrapper">
+          <select formControlName="provincia" class="form-input form-select">
+            <option value="" disabled>Seleccionar</option>
+            <option *ngFor="let prov of provincias" [value]="prov">{{ prov }}</option>
+          </select>
+        </div>
+        <div class="error-mensaje"
+          *ngIf="checkoutForm.get('provincia')?.touched && checkoutForm.get('provincia')?.invalid">
+          Selecciona una provincia
+        </div>
+      </div>
+
+      <!-- Distrito -->
+      <div class="form-group">
+        <label class="form-label">Distrito:</label>
+        <div class="input-wrapper">
+          <select formControlName="distrito" class="form-input form-select">
+            <option value="" disabled>Seleccionar</option>
+            <option *ngFor="let dist of distritos" [value]="dist">{{ dist }}</option>
+          </select>
+        </div>
+        <div class="error-mensaje"
+          *ngIf="checkoutForm.get('distrito')?.touched && checkoutForm.get('distrito')?.invalid">
+          Selecciona un distrito
+        </div>
+      </div>
+
+      <!-- Calle y número -->
+      <div class="form-group">
+        <label class="form-label">Calle y número:</label>
+        <div class="input-wrapper">
+          <input formControlName="calle" type="text" required placeholder="Av. Principal 123" class="form-input" />
+          <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('calle')?.touched && checkoutForm.get('calle')?.invalid">
           La dirección es requerida
         </div>
-      </label>
+      </div>
+
       <div class="step-actions">
-        <button type="button" class="btn-secondary" (click)="pasoAnterior()">Volver</button>
-        <button type="button" class="btn-primary" (click)="siguientePaso()">Continuar a Resumen</button>
+        <button type="button" class="btn-back" (click)="pasoAnterior()">Volver</button>
+        <button type="button" class="btn-continue" (click)="siguientePaso()">
+          Continuar la historia
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+          </svg>
+        </button>
       </div>
     </div>
 
     <!-- Paso 3: Resumen y Pago -->
-    <div class="checkout-step" *ngIf="pasoActual === 3">
-      <h3>3. Confirmación del Pedido</h3>
-      <div class="resumen-pedido">
-        <div class="resumen-datos">
-          <h4>Enviando a:</h4>
-          <p>{{ checkoutForm.get('nombre')?.value }}</p>
-          <p>{{ checkoutForm.get('direccion')?.value }}</p>
-          <p>{{ checkoutForm.get('telefono')?.value }}</p>
-          <p>{{ checkoutForm.get('correo')?.value }}</p>
-        </div>
+    <div class="checkout-card" *ngIf="pasoActual === 3">
+      <div class="card-chip">Capítulo 3</div>
 
-        <div class="resumen-carrito mt-4">
-          <h4>Tus artículos:</h4>
+      <!-- Order summary -->
+      <div class="summary-section">
+        <h3 class="section-heading">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          </svg>
+          Resumen del Pedido
+        </h3>
+
+        <div class="resumen-items">
           <div *ngFor="let item of itemsCarrito" class="resumen-item">
-            <span>{{ item.cuento.titulo }} (x{{ item.cantidad }})</span>
-            <span>{{ item.cuento.precio * item.cantidad | currency:'PEN':'symbol':'1.2-2' }}</span>
+            <div class="resumen-item-img">
+              <img [src]="item.cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" [alt]="item.cuento.titulo" />
+            </div>
+            <div class="resumen-item-info">
+              <p class="resumen-item-name">{{ item.cuento.titulo }}</p>
+              <p class="resumen-item-type">x{{ item.cantidad }}</p>
+              <div class="resumen-item-bottom">
+                <span class="resumen-item-price">{{ item.cuento.precio * item.cantidad | currency:'PEN':'S/ ':'1.2-2'
+                  }}</span>
+              </div>
+            </div>
           </div>
-          <p class="resumen-total"><strong>Total: </strong>{{ calcularSubtotal() | currency:'PEN':'symbol':'1.2-2' }}
-          </p>
+          <div class="resumen-total-row">
+            <span class="resumen-total-label">Total a Pagar</span>
+            <span class="resumen-total-value">{{ calcularSubtotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shipping info -->
+      <div class="summary-section">
+        <h3 class="section-heading">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect width="20" height="14" x="2" y="5" rx="2" />
+            <line x1="2" x2="22" y1="10" y2="10" />
+          </svg>
+          Datos de envío
+        </h3>
+        <div class="resumen-datos">
+          <p><strong>{{ checkoutForm.get('nombre')?.value }}</strong></p>
+          <p>{{ checkoutForm.get('direccion')?.value }}</p>
+          <p>{{ checkoutForm.get('telefono')?.value }} · {{ checkoutForm.get('correo')?.value }}</p>
         </div>
       </div>
 
       <div class="step-actions">
-        <button type="button" class="btn-secondary" (click)="pasoAnterior()">Volver</button>
-        <button type="submit" class="btn-primary">Confirmar y Pagar</button>
+        <button type="button" class="btn-back" (click)="pasoAnterior()" [disabled]="isLoading">Volver</button>
+        <button type="submit" class="btn-continue btn-confirm" [disabled]="isLoading">
+          <span *ngIf="!isLoading">
+            Finalizar Historia
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+            </svg>
+          </span>
+          <span *ngIf="isLoading" class="loading-text">
+            <span class="spinner"></span> Procesando...
+          </span>
+        </button>
       </div>
     </div>
   </form>

@@ -1,3 +1,100 @@
-<h2>Bienvenido a Cuentos de Killa</h2>
-<app-hero-banner></app-hero-banner>
-<app-cuentos-page></app-cuentos-page>
+<section class="home-page">
+
+    <!-- HERO BANNER -->
+    <app-hero-banner></app-hero-banner>
+
+    <!-- PROPUESTA DE VALOR -->
+    <section class="value-props" aria-label="Por qué Cuentos de Killa">
+        <div class="value-props-grid">
+            <div class="value-card">
+                <span class="value-icon">📚</span>
+                <h3>Cuentos que conectan</h3>
+                <p>Historias basadas en la cosmovisión andina, escritas para despertar el amor por la cultura peruana.
+                </p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🎨</span>
+                <h3>Ilustraciones únicas</h3>
+                <p>Cada libro es una obra de arte con ilustraciones vibrantes que hacen volar la imaginación.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🚚</span>
+                <h3>Envío a todo el Perú</h3>
+                <p>Llevamos la magia de Killa a cualquier rincón del país. Envío gratis en pedidos mayores a S/ 80.</p>
+            </div>
+            <div class="value-card">
+                <span class="value-icon">🛡️</span>
+                <h3>Compra segura</h3>
+                <p>Paga con Mercado Pago, Yape o Plin. Tu información siempre protegida.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATEGORÍAS POR EDAD -->
+    <section class="age-categories" aria-label="Categorías por edad">
+        <h2 class="section-title">¿Para qué edad buscas?</h2>
+        <div class="age-cards">
+            <a routerLink="/cuentos" [queryParams]="{ edad: '0-3' }" class="age-card age-0-3">
+                <span class="age-emoji">👶</span>
+                <strong>0 – 3 años</strong>
+                <span>Primeras palabras e imágenes</span>
+            </a>
+            <a routerLink="/cuentos" [queryParams]="{ edad: '4-6' }" class="age-card age-4-6">
+                <span class="age-emoji">🧒</span>
+                <strong>4 – 6 años</strong>
+                <span>Cuentos de aventura y magia</span>
+            </a>
+            <a routerLink="/cuentos" [queryParams]="{ edad: '7-10' }" class="age-card age-7-10">
+                <span class="age-emoji">📖</span>
+                <strong>7 – 10 años</strong>
+                <span>Historias más largas y emocionantes</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- CATÁLOGO PRINCIPAL -->
+    <section class="catalog-section" aria-label="Últimos cuentos">
+        <app-cuentos-page></app-cuentos-page>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="testimonials" aria-label="Lo que dicen nuestros lectores">
+        <h2 class="section-title">Lo que dicen los papás</h2>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"¡Mi hija de 4 años pide que le leamos 'Killa y la luna' todas las noches!
+                    Las ilustraciones son hermosas."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">M</div>
+                    <div>
+                        <strong>María R.</strong>
+                        <span>Lima, Perú ⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Excelente calidad de impresión. Me encanta que los cuentos enseñen sobre
+                    nuestra cultura andina de una manera tan bonita."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">C</div>
+                    <div>
+                        <strong>Carlos M.</strong>
+                        <span>Cusco, Perú ⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-text">"El envío fue rapidísimo y el libro llegó perfectamente empaquetado. Mi
+                    sobrino quedó encantado con los colores."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">A</div>
+                    <div>
+                        <strong>Ana L.</strong>
+                        <span>Arequipa, Perú ⭐⭐⭐⭐⭐</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</section>

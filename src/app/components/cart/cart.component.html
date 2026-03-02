@@ -1,45 +1,88 @@
 <div class="cart-container">
-  <h2>Mi Carrito</h2>
-
-  <div *ngIf="cuentos.length === 0" class="empty-cart">
-    <p>Tu carrito está vacío.</p>
-    <a routerLink="/cuentos" class="btn-primary">Explorar cuentos</a>
+  <!-- Header -->
+  <div class="cart-header">
+    <h2>Mi Carrito</h2>
+    <a routerLink="/cuentos" class="cart-close" aria-label="Volver">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </a>
   </div>
 
+  <!-- Empty state -->
+  <div *ngIf="cuentos.length === 0" class="empty-cart">
+    <div class="empty-cart-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" width="140" height="140">
+        <circle cx="60" cy="60" r="56" fill="#fff8ed" stroke="#ffad60" stroke-width="3" />
+        <path d="M28 38h8l10 36h36l8-28H44" stroke="#a66e38" stroke-width="3.5" stroke-linecap="round"
+          stroke-linejoin="round" />
+        <circle cx="52" cy="82" r="5" fill="#a66e38" />
+        <circle cx="76" cy="82" r="5" fill="#a66e38" />
+        <path d="M60 52v12M54 58h12" stroke="#ffad60" stroke-width="3" stroke-linecap="round" />
+      </svg>
+    </div>
+    <h3 class="empty-title">¡Tu carrito está vacío!</h3>
+    <p class="empty-subtitle">Descubre nuestros cuentos y llena tu carrito de magia andina 🌟</p>
+    <a routerLink="/cuentos" class="btn-explore">Explorar cuentos</a>
+  </div>
+
+  <!-- Cart items -->
   <div *ngIf="cuentos.length > 0" class="cart-content">
     <div class="cart-items">
       <div *ngFor="let item of cuentos" class="cart-item">
-        <div class="item-info">
-          <h3>{{ item.cuento.titulo }}</h3>
-          <p class="autor">{{ item.cuento.autor }}</p>
-          <p class="precio">{{ item.cuento.precio | currency:'PEN':'symbol':'1.2-2' }} c/u</p>
+        <!-- Item image/icon box -->
+        <div class="item-icon-box">
+          <img *ngIf="item.cuento.imagenUrl" [src]="item.cuento.imagenUrl" [alt]="item.cuento.titulo" />
+          <span *ngIf="!item.cuento.imagenUrl" class="item-emoji">📚</span>
         </div>
-        <div class="item-actions">
-          <div class="quantity-controls">
-            <button type="button" class="btn-icon" (click)="decrementar(item.cuento.id)" aria-label="Disminuir cantidad">-</button>
-            <span class="cantidad">{{ item.cantidad }}</span>
-            <button type="button" class="btn-icon" (click)="incrementar(item.cuento.id)" aria-label="Aumentar cantidad">+</button>
+        <!-- Item details -->
+        <div class="item-details">
+          <div class="item-top-row">
+            <h3 class="item-name">{{ item.cuento.titulo }}</h3>
+            <button type="button" class="btn-eliminar" (click)="eliminarDelCarrito(item.cuento.id)"
+              aria-label="Eliminar del carrito" title="Eliminar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              </svg>
+            </button>
           </div>
-          <div class="item-subtotal">
-            {{ item.cuento.precio * item.cantidad | currency:'PEN':'symbol':'1.2-2' }}
+          <p class="item-meta">{{ item.cuento.edadRecomendada || 'Todas las edades' }}
+            <ng-container *ngIf="item.cuento.tipoEdicion"> · {{ item.cuento.tipoEdicion }}</ng-container>
+          </p>
+          <div class="item-bottom-row">
+            <span class="item-qty-badge">x{{ item.cantidad }}</span>
+            <span class="item-price">{{ item.cuento.precio * item.cantidad | currency:'PEN':'S/ ':'1.2-2' }}</span>
           </div>
-          <button type="button" class="btn-eliminar" (click)="eliminarDelCarrito(item.cuento.id)" aria-label="Eliminar del carrito" title="Eliminar del carrito">
-            🗑️
-          </button>
         </div>
       </div>
     </div>
 
+    <!-- Summary footer -->
     <div class="cart-summary">
-      <h3>Resumen del pedido</h3>
-      <div class="summary-row total">
-        <span>Total:</span>
-        <span>{{ calcularTotal() | currency:'PEN':'symbol':'1.2-2' }}</span>
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value">{{ calcularTotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+        </div>
       </div>
-      <div class="summary-actions">
-        <a routerLink="/checkout" class="btn-checkout sticky-cta">Ir a checkout</a>
-        <button type="button" class="btn-secondary mt-2" (click)="limpiarCarrito()">Vaciar Carrito</button>
+      <div class="summary-total-row">
+        <span class="total-label">Total a Pagar</span>
+        <span class="total-value">{{ calcularTotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
       </div>
+
+      <a routerLink="/checkout" class="btn-checkout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+        </svg>
+        Finalizar Historia
+      </a>
+      <button type="button" class="btn-clear" (click)="limpiarCarrito()">Vaciar Carrito</button>
     </div>
   </div>
 </div>

@@ -1,0 +1,424 @@
+.exito-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fff8ed 0%, #fff3e0 50%, #fffefc 100%);
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* === CONFETTI === */
+.confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+$colors: #ffad60, #a66e38, #96ceb4, #ffd700, #ff6b6b, #4ecdc4, #45b7d1, #f7dc6f;
+
+.confetti-piece {
+    position: absolute;
+    width: 10px;
+    height: 16px;
+    border-radius: 2px;
+    animation: confetti-fall 3.5s ease-in forwards;
+    opacity: 0;
+}
+
+/* 20 piezas de confetti con posiciones y colores fijos */
+.piece-1 {
+    left: 5%;
+    background: #ffad60;
+    animation-delay: 0.12s;
+    animation-duration: 3.0s;
+    transform: rotate(45deg);
+}
+
+.piece-2 {
+    left: 12%;
+    background: #a66e38;
+    animation-delay: 0.24s;
+    animation-duration: 3.8s;
+    transform: rotate(120deg);
+}
+
+.piece-3 {
+    left: 18%;
+    background: #96ceb4;
+    animation-delay: 0.36s;
+    animation-duration: 3.2s;
+    transform: rotate(210deg);
+}
+
+.piece-4 {
+    left: 25%;
+    background: #ffd700;
+    animation-delay: 0.48s;
+    animation-duration: 4.0s;
+    transform: rotate(30deg);
+}
+
+.piece-5 {
+    left: 32%;
+    background: #ff6b6b;
+    animation-delay: 0.60s;
+    animation-duration: 3.5s;
+    transform: rotate(90deg);
+}
+
+.piece-6 {
+    left: 38%;
+    background: #4ecdc4;
+    animation-delay: 0.72s;
+    animation-duration: 3.1s;
+    transform: rotate(180deg);
+}
+
+.piece-7 {
+    left: 44%;
+    background: #45b7d1;
+    animation-delay: 0.84s;
+    animation-duration: 3.7s;
+    transform: rotate(270deg);
+}
+
+.piece-8 {
+    left: 50%;
+    background: #f7dc6f;
+    animation-delay: 0.96s;
+    animation-duration: 3.3s;
+    transform: rotate(15deg);
+}
+
+.piece-9 {
+    left: 57%;
+    background: #ffad60;
+    animation-delay: 1.08s;
+    animation-duration: 3.9s;
+    transform: rotate(135deg);
+}
+
+.piece-10 {
+    left: 63%;
+    background: #a66e38;
+    animation-delay: 1.20s;
+    animation-duration: 3.4s;
+    transform: rotate(225deg);
+}
+
+.piece-11 {
+    left: 70%;
+    background: #96ceb4;
+    animation-delay: 1.32s;
+    animation-duration: 2.8s;
+    transform: rotate(60deg);
+}
+
+.piece-12 {
+    left: 76%;
+    background: #ffd700;
+    animation-delay: 1.44s;
+    animation-duration: 4.1s;
+    transform: rotate(150deg);
+}
+
+.piece-13 {
+    left: 82%;
+    background: #ff6b6b;
+    animation-delay: 1.56s;
+    animation-duration: 3.6s;
+    transform: rotate(300deg);
+}
+
+.piece-14 {
+    left: 88%;
+    background: #4ecdc4;
+    animation-delay: 1.68s;
+    animation-duration: 2.9s;
+    transform: rotate(75deg);
+}
+
+.piece-15 {
+    left: 93%;
+    background: #45b7d1;
+    animation-delay: 1.80s;
+    animation-duration: 3.2s;
+    transform: rotate(195deg);
+}
+
+.piece-16 {
+    left: 8%;
+    background: #f7dc6f;
+    animation-delay: 1.92s;
+    animation-duration: 4.2s;
+    transform: rotate(330deg);
+}
+
+.piece-17 {
+    left: 35%;
+    background: #ffad60;
+    animation-delay: 2.04s;
+    animation-duration: 3.0s;
+    transform: rotate(45deg);
+}
+
+.piece-18 {
+    left: 55%;
+    background: #96ceb4;
+    animation-delay: 2.16s;
+    animation-duration: 3.7s;
+    transform: rotate(105deg);
+}
+
+.piece-19 {
+    left: 78%;
+    background: #ffd700;
+    animation-delay: 2.28s;
+    animation-duration: 2.7s;
+    transform: rotate(240deg);
+}
+
+.piece-20 {
+    left: 95%;
+    background: #ff6b6b;
+    animation-delay: 2.40s;
+    animation-duration: 3.8s;
+    transform: rotate(315deg);
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0.3;
+    }
+}
+
+/* === CARD CENTRAL === */
+.exito-card {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(166, 110, 56, 0.15);
+    animation: slide-up 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes slide-up {
+    from {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* === CHECK ANIMADO === */
+.check-circle {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 1.5rem;
+}
+
+.check-svg {
+    width: 90px;
+    height: 90px;
+}
+
+.check-circle-bg {
+    stroke: #a66e38;
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    animation: circle-draw 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.2s forwards;
+}
+
+.check-mark {
+    stroke: #a66e38;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: check-draw 0.4s ease 0.8s forwards;
+}
+
+@keyframes circle-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes check-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* === TEXTOS === */
+.exito-title {
+    font-size: 2rem;
+    color: #a66e38;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+}
+
+.exito-subtitle {
+    font-size: 1.1rem;
+    color: #4b3a2f;
+    margin: 0 0 1rem;
+}
+
+.exito-info {
+    font-size: 0.95rem;
+    color: #7a5c3a;
+    line-height: 1.7;
+    margin: 0 0 2rem;
+}
+
+/* === TIMELINE DE PASOS === */
+.exito-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    min-width: 70px;
+
+    .step-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    span:last-child {
+        font-size: 0.72rem;
+        color: #888;
+        text-align: center;
+    }
+
+    &.done .step-dot {
+        background: #a66e38;
+        color: #fff;
+    }
+
+    &.pending .step-dot {
+        background: #f0e8df;
+        color: #a66e38;
+    }
+}
+
+.step-divider {
+    flex: 1;
+    height: 2px;
+    background: #e8d5c0;
+    min-width: 20px;
+    max-width: 40px;
+    margin-bottom: 20px;
+}
+
+/* === BOTONES CTA === */
+.exito-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-pedidos {
+    background: #FFAD60;
+    color: #fff;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 0 darken(#FFAD60, 15%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &:hover {
+        background: darken(#FFAD60, 5%);
+    }
+
+    &:active {
+        transform: translateY(2px);
+        box-shadow: none;
+    }
+}
+
+.btn-seguir {
+    background: #fff;
+    color: #a66e38;
+    border: 2px solid #e8e0d6;
+    padding: 1rem 2rem;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    &:hover {
+        background: #fdf6ec;
+        border-color: #a66e38;
+    }
+}
+
+@media (max-width: 480px) {
+    .exito-card {
+        padding: 2rem 1.25rem;
+    }
+
+    .exito-title {
+        font-size: 1.6rem;
+    }
+
+    .exito-actions {
+        flex-direction: column;
+    }
+
+    .btn-pedidos,
+    .btn-seguir {
+        width: 100%;
+    }
+}

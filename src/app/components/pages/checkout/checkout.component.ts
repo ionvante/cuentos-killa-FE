@@ -24,7 +24,12 @@ export class CheckoutComponent implements OnInit {
   itemsCarrito: any[] = [];
   user: User | null;
   pasoActual: number = 1;
-  // pedido:Pedido|null=null;
+  isLoading = false;
+  gpsLoading = false;
+
+  departamentos = ['Lima', 'Arequipa', 'Cusco', 'La Libertad', 'Piura', 'Junín', 'Lambayeque', 'Cajamarca', 'Puno', 'Loreto'];
+  provincias = ['Lima', 'Callao', 'Huancayo', 'Trujillo', 'Arequipa', 'Cusco', 'Chiclayo', 'Piura'];
+  distritos = ['Miraflores', 'San Isidro', 'Surco', 'San Borja', 'Barranco', 'La Molina', 'Jesús María', 'Lince', 'Magdalena', 'Pueblo Libre'];
 
   constructor(
     private fb: FormBuilder,
@@ -51,7 +56,11 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm = this.fb.group({
       nombre: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      direccion: ['', Validators.required],
+      departamento: ['', Validators.required],
+      provincia: ['', Validators.required],
+      distrito: ['', Validators.required],
+      calle: ['', Validators.required],
+      direccion: [''],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]]
     });
 
@@ -103,7 +112,10 @@ export class CheckoutComponent implements OnInit {
         this.checkoutForm.get('correo')?.valid! &&
         this.checkoutForm.get('telefono')?.valid!;
     } else if (paso === 2) {
-      return this.checkoutForm.get('direccion')?.valid!;
+      return this.checkoutForm.get('departamento')?.valid! &&
+        this.checkoutForm.get('provincia')?.valid! &&
+        this.checkoutForm.get('distrito')?.valid! &&
+        this.checkoutForm.get('calle')?.valid!;
     }
     return true;
   }
@@ -114,8 +126,35 @@ export class CheckoutComponent implements OnInit {
       this.checkoutForm.get('correo')?.markAsTouched();
       this.checkoutForm.get('telefono')?.markAsTouched();
     } else if (paso === 2) {
-      this.checkoutForm.get('direccion')?.markAsTouched();
+      this.checkoutForm.get('departamento')?.markAsTouched();
+      this.checkoutForm.get('provincia')?.markAsTouched();
+      this.checkoutForm.get('distrito')?.markAsTouched();
+      this.checkoutForm.get('calle')?.markAsTouched();
     }
+  }
+
+  usarGPS(): void {
+    if (!navigator.geolocation) return;
+    this.gpsLoading = true;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        this.checkoutForm.patchValue({
+          calle: `Lat: ${pos.coords.latitude.toFixed(5)}, Lng: ${pos.coords.longitude.toFixed(5)}`
+        });
+        this.gpsLoading = false;
+      },
+      () => {
+        this.gpsLoading = false;
+      }
+    );
+  }
+
+  /** Compose full direccion string before submit */
+  private composeDireccion(): void {
+    const f = this.checkoutForm.value;
+    this.checkoutForm.patchValue({
+      direccion: `${f.calle}, ${f.distrito}, ${f.provincia}, ${f.departamento}`
+    });
   }
 
   calcularSubtotal(): number {
@@ -123,12 +162,24 @@ export class CheckoutComponent implements OnInit {
   }
 
   registrarPedido(): void {
-    if (this.checkoutForm.invalid) return;
+    this.composeDireccion();
+
+    // Check essential fields only (address sub-fields compose into direccion)
+    const nombre = this.checkoutForm.get('nombre');
+    const correo = this.checkoutForm.get('correo');
+    const telefono = this.checkoutForm.get('telefono');
+    const direccion = this.checkoutForm.get('direccion');
+
+    if (!nombre?.value || !correo?.valid || !telefono?.valid || !direccion?.value) {
+      return;
+    }
 
     if (this.itemsCarrito.length === 0) {
       this.toast.show('Tu carrito est\u00e1 vac\u00edo');
       return;
     }
+    if (this.isLoading) return; // evita doble submit
+    this.isLoading = true;
 
     const formData = this.checkoutForm.value;
 
@@ -155,8 +206,6 @@ export class CheckoutComponent implements OnInit {
 
     this.pedidoService.registrarPedido(pedido).subscribe({
       next: (resp) => {
-        console.log('Pedido registrado con éxito:', resp);
-        // alert('Pedido registrado correctamente');
         this.cartService.clearCart();
         sessionStorage.removeItem('checkoutForm');
         const pedidoId = resp.id;
@@ -165,6 +214,7 @@ export class CheckoutComponent implements OnInit {
       error: (err) => {
         console.error('Error al registrar pedido:', err);
         this.toast.show('Ocurrió un error al registrar el pedido');
+        this.isLoading = false;
       }
     });
   }

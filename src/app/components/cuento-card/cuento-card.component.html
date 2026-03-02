@@ -6,7 +6,8 @@
     <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento.descuento }}% OFF</span>
   </div>
   <div class="image-wrapper">
-    <img #cardImg class="hover-scale" [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'" alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
+    <img #cardImg class="hover-scale" [appLazyLoad]="cuento.imagenUrl || 'assets/placeholder-cuento.jpg'"
+      alt="{{cuento.titulo}}" (load)="imagenCargada()" (error)="cargarImagenPlaceholder($event)">
     <div class="image-placeholder" *ngIf="cargandoImagen"></div>
   </div>
   <div class="cuento-content">
@@ -16,7 +17,7 @@
       <span class="count" *ngIf="cuento.ratingCount as rc">({{ rc }})</span>
     </div>
     <p class="autor">Autor: {{ cuento.autor }}</p>
-    <p class="excerpt">{{ cuento.descripcionCorta | slice:0:50 }}...</p>
+    <p class="excerpt">{{ cuento.descripcionCorta }}</p>
     <div class="meta">
       <span class="edad" *ngIf="cuento.edadRecomendada">Edad: {{ cuento.edadRecomendada }}+</span>
       <span class="envio" *ngIf="cuento.envioGratis">🚚 Envío gratis desde S/ {{ minFreeShipping }}</span>
@@ -29,17 +30,21 @@
 
   <div class="acciones">
     <button class="btn btn-ghost" (click)="verDetalle(); $event.stopPropagation()">Ver detalle</button>
-    <button *ngIf="!isAdmin && cuento.habilitado" class="btn btn-primary" (click)="agregarAlCarrito(); $event.stopPropagation()" [appFlyToCart]="cardImg">Añadir carrito</button>
+    <button *ngIf="!isAdmin && cuento.habilitado" class="btn btn-primary"
+      (click)="agregarAlCarrito(); $event.stopPropagation()" [appFlyToCart]="cardImg">Añadir carrito</button>
     <ng-container *ngIf="isAdmin">
       <button (click)="editarCuento(); $event.stopPropagation()" class="admin-button editar hover-scale">Editar</button>
-      <button (click)="deshabilitarCuento(); $event.stopPropagation()" class="admin-button deshabilitar hover-scale">{{ cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
+      <button (click)="deshabilitarCuento(); $event.stopPropagation()" class="admin-button deshabilitar hover-scale">{{
+        cuento.habilitado ? 'Deshabilitar' : 'Habilitar' }}</button>
     </ng-container>
   </div>
   <div class="share-buttons">
-    <button class="hover-scale" aria-label="Compartir por WhatsApp" (click)="compartir('whatsapp'); $event.stopPropagation()">
+    <button class="hover-scale" aria-label="Compartir por WhatsApp"
+      (click)="compartir('whatsapp'); $event.stopPropagation()">
       <img appLazyLoad="assets/whatsapp.svg" alt="WhatsApp">
     </button>
-    <button class="hover-scale" aria-label="Compartir por Instagram" (click)="compartir('instagram'); $event.stopPropagation()">
+    <button class="hover-scale" aria-label="Compartir por Instagram"
+      (click)="compartir('instagram'); $event.stopPropagation()">
       <img appLazyLoad="assets/instagram.svg" alt="Instagram">
     </button>
   </div>

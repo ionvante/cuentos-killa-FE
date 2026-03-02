@@ -1,0 +1,54 @@
+<!-- Página de éxito post-pago — animada con confetti CSS -->
+<div class="exito-page" [class.show]="showConfetti">
+
+    <!-- Confetti particles (CSS animados) -->
+    <div class="confetti" aria-hidden="true">
+        <span *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" class="confetti-piece"
+            [class]="'piece-' + i"></span>
+    </div>
+
+    <div class="exito-card">
+        <!-- Checkmark animado -->
+        <div class="check-circle">
+            <svg viewBox="0 0 52 52" class="check-svg">
+                <circle class="check-circle-bg" cx="26" cy="26" r="25" fill="none" />
+                <path class="check-mark" fill="none" d="M14.1 27.2l7.2 7.2 16.7-16.8" />
+            </svg>
+        </div>
+
+        <h1 class="exito-title">¡Pago exitoso!</h1>
+        <p class="exito-subtitle">Tu pedido <strong>#{{ pedidoId }}</strong> ha sido confirmado.</p>
+        <p class="exito-info">
+            Recibirás un correo de confirmación en breve.<br>
+            Prepárate para disfrutar de la magia de <em>Los Cuentos de Killa</em> 🌙✨
+        </p>
+
+        <div class="exito-steps">
+            <div class="step-item done">
+                <span class="step-dot">✓</span>
+                <span>Pago confirmado</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item pending">
+                <span class="step-dot">📦</span>
+                <span>Empaquetando</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item pending">
+                <span class="step-dot">🚚</span>
+                <span>En camino</span>
+            </div>
+            <div class="step-divider"></div>
+            <div class="step-item pending">
+                <span class="step-dot">🎉</span>
+                <span>Entregado</span>
+            </div>
+        </div>
+
+        <div class="exito-actions">
+            <button class="btn-pedidos" (click)="irAPedidos()">Ver mis pedidos</button>
+            <button class="btn-seguir" (click)="seguirComprando()">Seguir comprando</button>
+        </div>
+    </div>
+
+</div>

@@ -1,47 +1,65 @@
 <div class="container">
   <h2>¡Gracias por tu pedido!</h2>
-  <p class="voucher-instruction">¡Gracias por tu compra! Sube una foto del voucher de Yape o Plin para que podamos validar tu pago y preparar tu pedido con mucho cariño.</p>
   <p>Tu número de pedido es: <span class="font-semibold">#{{ pedidoId }}</span></p>
-  <p>Estado del pedido: <span class="font-semibold">{{ orderStatus }}</span></p>
+  <p>Estado: <span class="font-semibold estado-badge">{{ orderStatus }}</span></p>
   <p class="progress-text">1. Pedido generado → 2. Pago validado → 3. Pedido enviado</p>
 
+  <!-- Banner de alerta/confirmación -->
   <app-alert-banner *ngIf="mensaje" [type]="mensajeTipo">
     {{ mensaje }}
   </app-alert-banner>
 
-  <div *ngIf="orderStatus === 'Pago Verificado'" class="payment-success-message">
-    <p>Tu pago ha sido verificado exitosamente.</p>
+  <!-- Estado: Pago verificado / pagado -->
+  <div *ngIf="isPaid" class="payment-success-message">
+    <span class="check-icon">✅</span>
+    <p>¡Tu pago fue verificado exitosamente! Estamos preparando tu pedido.</p>
   </div>
 
-  <div *ngIf="orderStatus === 'PAGO_PENDIENTE'" class="pending-validation-message">
-    <p>Su pedido está en proceso de validación, nosotros lo notificaremos pronto para darle detalles de su pedido.</p>
+  <!-- Estado: Comprobante enviado, esperando verificación manual -->
+  <div *ngIf="isPendingVerification && !isPaid" class="pending-validation-message">
+    <p>Recibimos tu comprobante. Lo verificaremos pronto y te notificaremos por correo.</p>
   </div>
 
-  <div *ngIf="orderStatus !== 'Pago Verificado' && orderStatus !== 'PAGO_PENDIENTE'">
+  <!-- Métodos de pago (solo si no está pagado/verificado) -->
+  <div *ngIf="!isPaid && !isPendingVerification">
     <h3>Selecciona tu método de pago:</h3>
+
     <div class="payment-buttons-row">
-      <button class="btn-killa btn-voucher" (click)="openVoucherDialog()">
-        Subir comprobante
+      <!-- Botón Mercado Pago -->
+      <button class="btn-killa btn-mercado" (click)="openMercadoPagoModal()" [disabled]="isLoadingMercadoPago">
+        <span *ngIf="!isLoadingMercadoPago">💳 Pagar con Mercado Pago</span>
+        <span *ngIf="isLoadingMercadoPago">Conectando con Mercado Pago...</span>
       </button>
-      <button (click)="openMercadoPagoModal()" class="btn-killa btn-mercado">
-        Pagar con Mercado Pago
+
+      <!-- Botón Voucher (Yape / Plin) -->
+      <button class="btn-killa btn-voucher" (click)="openVoucherDialog()">
+        📸 Subir comprobante (Yape / Plin)
       </button>
     </div>
-    <app-voucher
-      *ngIf="showVoucherDialog"
-      [pedidoId]="pedidoId"
-      (uploaded)="onVoucherUploaded()"
-      (close)="closeVoucherDialog()"></app-voucher>
+
+    <!-- Componente de subida de voucher -->
+    <app-voucher *ngIf="showVoucherDialog" [pedidoId]="pedidoId" (uploaded)="onVoucherUploaded()"
+      (close)="closeVoucherDialog()">
+    </app-voucher>
   </div>
 </div>
 
+<!-- Modal de confirmación de Mercado Pago -->
 <div class="overlay" *ngIf="showMercadoModal">
   <div class="mercado-modal">
     <h3>Pagar con Mercado Pago</h3>
-    <p>Monto a pagar: {{ orderTotal | currency:'USD':'symbol':'1.2-2' }}</p>
-    <p>Tu estado cambiará a 'Pago Verificado' en 1–2 minutos tras la transacción.</p>
+    <p class="modal-amount">
+      Monto a pagar:
+      <strong>{{ orderTotal | currency:'PEN':'symbol':'1.2-2' }}</strong>
+    </p>
+    <p class="modal-note">
+      Serás redirigido al checkout seguro de Mercado Pago.
+      Puedes pagar con tarjeta, Yape o saldo MP.
+    </p>
     <div class="modal-buttons">
-      <button class="btn-killa" (click)="pagarConMercadoPagoConfirmado()">Continuar</button>
+      <button class="btn-killa" (click)="pagarConMercadoPago()" [disabled]="isLoadingMercadoPago">
+        {{ isLoadingMercadoPago ? 'Redirigiendo...' : 'Continuar al pago' }}
+      </button>
       <button class="btn-killa btn-cancel" (click)="closeMercadoPagoModal()">Cancelar</button>
     </div>
   </div>

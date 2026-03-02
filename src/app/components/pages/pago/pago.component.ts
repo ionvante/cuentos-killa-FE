@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AlertBannerComponent } from '../../alert-banner/alert-banner.component';
 import { VoucherComponent } from '../voucher/voucher.component';
 import { PedidoService } from '../../../services/pedido.service';
-import { PagoService } from '../../../services/pago.service'; // Added PagoService import
-import { environment } from '../../../../environments/environment';
+import { PagoService } from '../../../services/pago.service';
 
 @Component({
   selector: 'app-pago',
@@ -16,86 +15,133 @@ import { environment } from '../../../../environments/environment';
 })
 export class PagoComponent implements OnInit {
   pedidoId: number = 0;
-  orderStatus: string = 'PENDIENTE DE PAGO'; // Default status
+  orderStatus: string = 'PENDIENTE DE PAGO';
   mensaje: string = '';
   mensajeTipo: 'success' | 'error' | 'info' | 'warning' = 'info';
   showVoucherDialog = false;
   showMercadoModal = false;
   orderTotal = 0;
+  isLoadingMercadoPago = false; // Indicador de carga al redirigir a MP
+
+  /** Mapa de estados del BE a etiquetas legibles */
+  private readonly statusLabels: Record<string, string> = {
+    GENERADO: 'Pedido generado',
+    PAGO_PENDIENTE: 'Pendiente de pago',
+    PAGO_ENVIADO: 'Comprobante enviado',
+    PAGADO: 'Pago verificado',
+    VERIFICADO: 'Pago verificado',
+    EMPAQUETADO: 'Pedido empaquetado',
+    ENVIADO: 'Pedido enviado',
+    ENTREGADO: 'Pedido entregado'
+  };
 
   constructor(
     private route: ActivatedRoute,
     private pedidoService: PedidoService,
-    private pagoService: PagoService // Injected PagoService
-  ) {}
+    private pagoService: PagoService
+  ) { }
 
   ngOnInit(): void {
-    // Get pedidoId from route params
     this.pedidoId = Number(this.route.snapshot.paramMap.get('id'));
-    this.fetchOrderStatus(); // Initial status fetch
+    this.fetchOrderStatus();
+
+    // Cargar el total del pedido
     this.pedidoService.getOrderById(this.pedidoId).subscribe({
-      next: (pedido) => {
-        this.orderTotal = pedido.total;
-      },
-      error: (err) => console.error('Error fetching order detail:', err)
+      next: (pedido) => { this.orderTotal = pedido.total; },
+      error: (err) => console.error('Error cargando total del pedido:', err)
     });
 
-    // Check for Mercado Pago callback query parameters
+    // Procesar callback de Mercado Pago cuando redirige de vuelta al FE
     this.route.queryParamMap.subscribe(params => {
-      const paymentStatus = params.get('status'); // Mercado Pago uses 'status'
-      const externalReference = params.get('external_reference');
-      const collectionStatus = params.get('collection_status'); // More specific status
+      const mpStatus = params.get('status');            // 'approved', 'pending', 'failure'
+      const collectionStatus = params.get('collection_status'); // más específico: 'approved'
+      const externalReference = params.get('external_reference'); // nuestro orderId
 
-      console.log('Mercado Pago callback params:', { paymentStatus, externalReference, collectionStatus, pedidoId: this.pedidoId });
+      if (!mpStatus || !externalReference) return; // No es callback de MP
 
-      // It's common for external_reference to be the order ID.
-      // Mercado Pago status 'approved' usually means success.
-      if (collectionStatus === 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
-        console.log(`Attempting to confirm Mercado Pago payment for order ${this.pedidoId}`);
+      const orderRef = Number(externalReference);
+      if (orderRef !== this.pedidoId) return; // No corresponde a este pedido
+
+      console.log(`Callback MP: status=${mpStatus}, collection_status=${collectionStatus}, orderId=${orderRef}`);
+
+      if (collectionStatus === 'approved' || mpStatus === 'approved') {
+        // Llamar al BE para confirmar el pago (el webhook pudo haberse procesado ya)
         this.pagoService.confirmarPagoMercadoPago(this.pedidoId).subscribe({
-          next: () => {
-            console.log('Payment confirmation successful');
-            this.orderStatus = 'Pago Verificado';
-            this.mensaje = '¡Pago con Mercado Pago confirmado exitosamente! Estado del pedido actualizado a Pago Verificado.';
-            this.mensajeTipo = 'success';
+          next: (response) => {
+            if (response.status === 'success') {
+              this.mensaje = '¡Pago con Mercado Pago confirmado! Tu pedido está siendo preparado.';
+              this.mensajeTipo = 'success';
+            } else {
+              // El webhook aún no llegó — el estado se actualizará en segundos
+              this.mensaje = 'Tu pago está siendo procesado. El estado se actualizará en breve.';
+              this.mensajeTipo = 'info';
+            }
             this.fetchOrderStatus();
           },
-          error: (error) => {
-            console.error('Error confirming Mercado Pago payment:', error);
-            this.mensaje = 'Error al confirmar el pago con Mercado Pago. Por favor, contacta a soporte.';
+          error: (err) => {
+            console.error('Error confirmando pago MP:', err);
+            this.mensaje = 'Hubo un error al verificar tu pago. Por favor contáctanos.';
             this.mensajeTipo = 'error';
             this.fetchOrderStatus();
           }
         });
-      } else if (paymentStatus && paymentStatus !== 'approved' && externalReference && Number(externalReference) === this.pedidoId) {
-        // Handle cases like 'pending', 'rejected', etc.
-        console.log(`Mercado Pago payment status for order ${this.pedidoId}: ${paymentStatus}`);
-        this.mensaje = `El pago con Mercado Pago está ${paymentStatus}.`;
+      } else if (mpStatus === 'failure') {
+        this.mensaje = 'El pago fue rechazado. Por favor intenta con otro método de pago.';
+        this.mensajeTipo = 'error';
+        this.fetchOrderStatus();
+      } else if (mpStatus === 'pending') {
+        this.mensaje = 'Tu pago está pendiente de acreditación. Te notificaremos cuando se confirme.';
         this.mensajeTipo = 'info';
         this.fetchOrderStatus();
       }
     });
   }
-  private statusLabels: Record<string,string> = {
-  GENERADO:        'Pedido generado',
-  PAGO_PENDIENTE:  'PENDIENTE DE PAGO',
-  PAGO_VERIFICADO: 'Pago verificado',
-  ENVIADO:         'Pedido enviado',
-  ENTREGADO:       'Pedido entregado'
-};
-fetchOrderStatus(): void {
-  this.pedidoService.getOrderStatus(this.pedidoId)
-    .subscribe({
+
+  fetchOrderStatus(): void {
+    this.pedidoService.getOrderStatus(this.pedidoId).subscribe({
       next: ({ estado }) => {
-        // Si tienes una etiqueta para ese estado, úsala; si no, muestra el valor crudo
         this.orderStatus = this.statusLabels[estado] ?? estado;
       },
-      error: err => console.error('Error fetching order status:', err)
+      error: err => console.error('Error obteniendo estado del pedido:', err)
     });
-}
+  }
 
-  pagarConMercadoPagoConfirmado(): void {
-    window.location.href = `${environment.apiBaseUrl}/mercado-pago/pagar/${this.pedidoId}`;
+  /** Inicia el pago con Mercado Pago: pide al BE el initPoint y redirige al checkout de MP */
+  pagarConMercadoPago(): void {
+    this.isLoadingMercadoPago = true;
+    this.mensaje = '';
+
+    // Construir el DTO mínimo necesario para que el BE cree la preferencia
+    // El BE también necesita el userId — se obtiene del token JWT en el BE
+    const pedidoDTO = {
+      userId: 0, // El BE lo toma del @AuthenticationPrincipal, no del body
+      items: [] // El BE reconstruye los items desde el pedido guardado en BD
+    };
+
+    // Nota: como el pedido ya fue guardado en BD al hacer checkout,
+    // usamos el endpoint /pay que recrea la preferencia desde el pedido existente
+    this.pedidoService.getOrderById(this.pedidoId).subscribe({
+      next: (pedido) => {
+        this.pagoService.crearPreferenciaMercadoPago(pedido).subscribe({
+          next: (response) => {
+            // Redirigir al checkout de Mercado Pago
+            window.location.href = response.initPoint;
+          },
+          error: (err) => {
+            console.error('Error creando preferencia MP:', err);
+            this.isLoadingMercadoPago = false;
+            this.mensaje = 'No se pudo conectar con Mercado Pago. Por favor intenta de nuevo.';
+            this.mensajeTipo = 'error';
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error obteniendo pedido:', err);
+        this.isLoadingMercadoPago = false;
+        this.mensaje = 'Error al obtener los datos del pedido.';
+        this.mensajeTipo = 'error';
+      }
+    });
   }
 
   openMercadoPagoModal(): void {
@@ -115,10 +161,20 @@ fetchOrderStatus(): void {
   }
 
   onVoucherUploaded(): void {
-    this.orderStatus = 'PAGO_ENVIADO';
-    this.mensaje = 'Voucher enviado correctamente';
+    this.orderStatus = this.statusLabels['PAGO_ENVIADO'];
+    this.mensaje = 'Comprobante enviado correctamente. Lo verificaremos pronto.';
     this.mensajeTipo = 'success';
     this.fetchOrderStatus();
     this.closeVoucherDialog();
+  }
+
+  /** True cuando el pedido ya fue pagado/verificado (no mostrar botones de pago) */
+  get isPaid(): boolean {
+    return ['Pago verificado'].includes(this.orderStatus);
+  }
+
+  /** True cuando el comprobante fue enviado (esperando verificación manual) */
+  get isPendingVerification(): boolean {
+    return this.orderStatus === this.statusLabels['PAGO_ENVIADO'];
   }
 }

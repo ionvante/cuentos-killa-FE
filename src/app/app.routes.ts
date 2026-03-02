@@ -35,6 +35,11 @@ export const routes: Routes = [
           import('./components/pages/pago/pago.component').then(m => m.PagoComponent)
       },
       {
+        path: 'pago-exito/:id',
+        loadComponent: () =>
+          import('./components/pages/pago-exito/pago-exito.component').then(m => m.PagoExitoComponent)
+      },
+      {
         path: 'voucher/:id',
         loadComponent: () =>
           import('./components/pages/voucher/voucher.component').then(m => m.VoucherComponent)

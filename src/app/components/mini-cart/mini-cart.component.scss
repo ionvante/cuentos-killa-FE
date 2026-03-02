@@ -1,20 +1,35 @@
+@import '../../../styles/variables';
+
+/* ===============================
+   MINI-CART — Drawer sidebar
+   Matches prototype design
+   =============================== */
+
+/* Floating cart button */
 .floating-cart {
   position: fixed;
-  bottom: 1rem;
+  bottom: 5rem;
   right: 1rem;
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: #ffad60;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background: $secondary;
+  box-shadow: 0 4px 16px rgba($primary, 0.3);
   border: none;
-  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 9999;
   transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   &.bounce {
     animation: cartBounce 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
@@ -24,13 +39,18 @@
     position: absolute;
     top: -4px;
     right: -4px;
-    background: #a66e38;
+    background: $primary;
     color: #fff;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 0.7rem;
+    font-weight: 800;
     min-width: 20px;
-    padding: 2px 4px;
-    text-align: center;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
   }
 }
 
@@ -56,19 +76,15 @@
   }
 }
 
-.mini-cart {
-  z-index: 1000;
-  margin-bottom: 72px;
-}
-
 @media (max-width: 768px) {
   .floating-cart {
     width: 48px;
     height: 48px;
-    bottom: 1rem;
+    bottom: 5rem;
   }
 }
 
+/* Backdrop */
 .backdrop {
   position: fixed;
   top: 0;
@@ -76,10 +92,12 @@
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
   z-index: 1180;
+  border: none;
 
   &.show {
     opacity: 1;
@@ -87,112 +105,275 @@
   }
 }
 
-.drawer {
+/* Cart Drawer */
+.cart-drawer {
   position: fixed;
   top: 0;
   right: 0;
-  width: 360px;
-  max-width: 80%;
+  width: 380px;
+  max-width: 88%;
   height: 100%;
-  background: #fffef5;
+  background: #FDF6EC;
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  opacity: 0;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1190;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
 
   &.open {
     transform: translateX(0);
-    opacity: 1;
+  }
+}
+
+/* Header */
+.cart-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+  h3 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: $primary;
+    margin: 0;
+  }
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #3B2A1A;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: $primary;
+  }
+}
+
+/* Empty state */
+.cart-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #b8a08a;
+  gap: 0.5rem;
+
+  .cart-empty-emoji {
+    font-size: 3rem;
+    opacity: 0.5;
   }
 
-  .drawer-header {
+  p {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+  }
+}
+
+/* Items list */
+.cart-items {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Individual item card — rounded, with shadow */
+.cart-item {
+  background: #fff;
+  border-radius: 24px;
+  padding: 1rem;
+  box-shadow: 0 4px 16px rgba($primary, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 6px 20px rgba($primary, 0.12);
+  }
+}
+
+/* Image thumbnail */
+.item-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f5efe8;
+  box-shadow: 0 2px 8px rgba($primary, 0.08);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+/* Info section */
+.item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.item-name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.item-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #3B2A1A;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #d4cfc8;
+  padding: 2px;
+  transition: color 0.2s;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #e53e3e;
+  }
+}
+
+.item-meta {
+  font-size: 0.65rem;
+  color: #b8a08a;
+  margin: 2px 0 6px;
+}
+
+/* Bottom: qty + price */
+.item-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-qty {
+  display: flex;
+  align-items: center;
+  background: #f5f0ea;
+  border-radius: 8px;
+  padding: 2px;
+
+  button {
+    width: 26px;
+    height: 26px;
+    background: none;
+    border: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #7a5c3a;
+    cursor: pointer;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 1rem;
+    justify-content: center;
+    border-radius: 6px;
+    transition: background 0.2s;
 
-    .close-btn {
-      background: none;
-      border: none;
-      font-size: 1.2rem;
-      cursor: pointer;
+    &:hover {
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
   }
 
-  .drawer-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 1rem;
+  span {
+    width: 26px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #3B2A1A;
+  }
+}
 
-    .item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid #eee;
+.item-price {
+  font-weight: 800;
+  color: $primary;
+  font-size: 0.95rem;
+}
 
-      .thumb {
-        width: 40px;
-        height: 40px;
-        object-fit: cover;
-        border-radius: 4px;
-      }
+/* Checkout bar */
+.checkout-bar {
+  padding: 1.25rem 1.5rem;
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -8px 24px rgba($primary, 0.06);
+}
 
-      .info {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
+.checkout-subtotal {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #b8a08a;
+  margin-bottom: 0.25rem;
+}
 
-        .title {
-          font-size: 14px;
-        }
+.checkout-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.25rem;
+  margin-bottom: 0.75rem;
 
-        .qty {
-          display: flex;
-          align-items: center;
-          gap: 4px;
+  span:first-child {
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: #3B2A1A;
+  }
+}
 
-          button {
-            width: 24px;
-            height: 24px;
-            border: 1px solid #ccc;
-            background: none;
-            cursor: pointer;
-          }
-        }
-      }
+.checkout-total-value {
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: $primary;
+}
 
-      .price {
-        font-weight: 600;
-        color: #a66e38;
-        min-width: 60px;
-        text-align: right;
-      }
+/* CTA Button — 3D press effect */
+.btn-checkout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  background: $primary;
+  color: #fff;
+  padding: 0.9rem;
+  border-radius: 16px;
+  border: none;
+  font-weight: 800;
+  font-size: 1.05rem;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #8B5A2E;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 
-      .delete {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 1.2rem;
-        margin-left: 4px;
-      }
-    }
+  &:hover {
+    background: darken($primary, 5%);
   }
 
-  .checkout-bar {
-    position: sticky;
-    bottom: 0;
-    background: #fffef5;
-    padding: 1rem;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-
-    .subtotal {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
+  &:active {
+    transform: translateY(2px);
+    box-shadow: none;
   }
 }
