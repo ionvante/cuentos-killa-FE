@@ -10,22 +10,23 @@
   <div *ngIf="isLoading">Cargando cuentos...</div>
   <div class="error-mensaje" *ngIf="errorMensaje">{{ errorMensaje }}</div>
   <div class="grid-cuentos" *ngIf="!isLoading && !errorMensaje">
-    <app-cuento-card
-      *ngFor="let cuento of cuentos"
-      [cuento]="cuento"
-      [isAdmin]="true"
-      (detalle)="verDetalle(cuento.id)"
-      (editar)="editarCuento($event)"
-      (deshabilitar)="deshabilitarCuento($event)"
-      class="admin-cuento-card"
-    ></app-cuento-card>
+    <app-cuento-card *ngFor="let cuento of cuentos" [cuento]="cuento" [isAdmin]="true" (detalle)="verDetalle(cuento.id)"
+      (editar)="editarCuento($event)" (deshabilitar)="deshabilitarCuento($event)"
+      class="admin-cuento-card"></app-cuento-card>
     <!-- (agregar) ya no se maneja aquí, sino dentro de la tarjeta si es necesario -->
   </div>
 
-  <app-confirm-dialog
-    *ngIf="cuentoParaDeshabilitar"
-    [message]="'¿Desea dar de baja el cuento?'"
-    (confirm)="confirmarDeshabilitar()"
-    (cancel)="cancelarDeshabilitar()">
+  <div class="pagination-controls" *ngIf="totalPages > 1 && !isLoading">
+    <button (click)="prevPage()" [disabled]="currentPage === 0" class="btn btn-secondary">
+      &laquo; Anterior
+    </button>
+    <span class="page-info">Página {{ currentPage + 1 }} de {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage >= totalPages - 1" class="btn btn-secondary">
+      Siguiente &raquo;
+    </button>
+  </div>
+
+  <app-confirm-dialog *ngIf="cuentoParaDeshabilitar" [message]="'¿Desea dar de baja el cuento?'"
+    (confirm)="confirmarDeshabilitar()" (cancel)="cancelarDeshabilitar()">
   </app-confirm-dialog>
 </div>

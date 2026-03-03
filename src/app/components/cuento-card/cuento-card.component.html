@@ -1,8 +1,9 @@
-<div class="cuento-card" (click)="verDetalle()">
+<div class="cuento-card" [class.disabled-admin]="isAdmin && !cuento.habilitado" (click)="verDetalle()">
   <div class="badges">
     <span class="badge category" *ngIf="cuento.categoria">{{ cuento.categoria }}</span>
     <span class="badge nuevo" *ngIf="badgeLabel==='Nuevo'">Nuevo</span>
     <span class="badge top" *ngIf="badgeLabel && badgeLabel!=='Nuevo'">{{ badgeLabel }}</span>
+    <span class="badge inactivo" *ngIf="isAdmin && !cuento.habilitado">Oculto</span>
     <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento.descuento }}% OFF</span>
   </div>
   <div class="image-wrapper">

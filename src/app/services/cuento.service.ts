@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Cuento } from '../model/cuento.model';
+import { Page } from '../model/page.model';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -12,6 +13,10 @@ export class CuentoService {
 
   obtenerCuentos(): Observable<Cuento[]> {
     return this.http.get<Cuento[]>(this.apiUrl);
+  }
+
+  obtenerCuentosPaginados(page: number = 0, size: number = 10): Observable<Page<Cuento>> {
+    return this.http.get<Page<Cuento>>(`${this.apiUrl}/page?page=${page}&size=${size}`);
   }
 
   getCuentoById(id: number): Observable<Cuento> {

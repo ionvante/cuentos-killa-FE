@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Cuento } from '../../../../model/cuento.model';
 import { CuentoService } from '../../../../services/cuento.service';
 import { Router } from '@angular/router';
-// import { CartService } from '../../../../services/carrito.service'; // Assuming CartService is not needed here for admin actions directly
 
 @Component({
   selector: 'app-admin-cuentos',
@@ -10,31 +9,53 @@ import { Router } from '@angular/router';
   styleUrls: ['./admin-cuentos.component.scss']
 })
 export class AdminCuentosComponent implements OnInit {
-  // @Input() cuento!: Cuento; // This Input seems unused here, more for a detail/card component
   cuentos: Cuento[] = [];
   cuentoParaDeshabilitar: Cuento | null = null;
   isLoading = true;
   errorMensaje: string | null = null;
-  // cargandoImagen: boolean = true; // This logic is now in CuentoCardComponent
+
+  // Paginación
+  currentPage: number = 0;
+  pageSize: number = 8;
+  totalPages: number = 0;
 
   constructor(
     private cuentoService: CuentoService,
     // private cartService: CartService, // Removed as admin actions are different
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.cuentoService.obtenerCuentos().subscribe({
-      next: data => {
-        this.cuentos = data;
+    this.cargarCuentos(this.currentPage);
+  }
+
+  cargarCuentos(page: number): void {
+    this.isLoading = true;
+    this.cuentoService.obtenerCuentosPaginados(page, this.pageSize).subscribe({
+      next: (pageData) => {
+        this.cuentos = pageData.content;
+        this.currentPage = pageData.number;
+        this.totalPages = pageData.totalPages;
         this.isLoading = false;
       },
       error: err => {
-        console.error('Error al cargar cuentos:', err);
+        console.error('Error al cargar cuentos paginados:', err);
         this.errorMensaje = 'No se pudieron cargar los cuentos';
         this.isLoading = false;
       }
     });
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.cargarCuentos(this.currentPage + 1);
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 0) {
+      this.cargarCuentos(this.currentPage - 1);
+    }
   }
 
   // Placeholder for image loading logic if needed directly in this component,

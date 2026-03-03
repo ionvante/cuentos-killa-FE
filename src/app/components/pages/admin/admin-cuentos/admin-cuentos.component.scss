@@ -31,33 +31,76 @@
 }
 
 // Responsive adjustments if necessary
-  @media (max-width: 768px) {
-    .cuentos-admin-container h2 {
-      font-size: 1.8em;
+@media (max-width: 768px) {
+  .cuentos-admin-container h2 {
+    font-size: 1.8em;
+  }
+
+  .admin-acciones-globales {
+    text-align: center;
+
+    .btn {
+      width: 100%;
+      margin-bottom: 15px;
     }
-    .admin-acciones-globales {
-      text-align: center;
-      .btn {
-        width: 100%;
-        margin-bottom: 15px;
-      }
-    }
+  }
+
   .grid-cuentos {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
   }
 }
 
-  @media (max-width: 480px) {
-    .cuentos-admin-container h2 {
-      font-size: 1.5em;
+@media (max-width: 480px) {
+  .cuentos-admin-container h2 {
+    font-size: 1.5em;
+  }
+
+  .grid-cuentos {
+    grid-template-columns: 1fr; // Single column on very small screens
+    gap: 15px;
+  }
+
+  .admin-acciones-globales .btn {
+    font-size: 1em;
+    padding: 10px 15px;
+  }
+}
+
+/* Pagination Controls */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+  padding-bottom: 2rem;
+
+  .btn-secondary {
+    background-color: #fff;
+    border: 1px solid #d4cfc8;
+    color: #3B2A1A;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      background-color: #f5efe8;
+      border-color: #b8a08a;
     }
-     .grid-cuentos {
-      grid-template-columns: 1fr; // Single column on very small screens
-      gap: 15px;
-    }
-    .admin-acciones-globales .btn {
-      font-size: 1em;
-      padding: 10px 15px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: #f9f9f9;
     }
   }
+
+  .page-info {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #7a5c3a;
+  }
+}
