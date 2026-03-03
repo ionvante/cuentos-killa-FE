@@ -9,6 +9,40 @@
     color: #3f2a14;
   }
 
+  .admin-toolbar {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .filtro-estado {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      label {
+        font-weight: 600;
+        color: #3f2a14;
+      }
+
+      select {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        border: 1px solid #d4cfc8;
+        background-color: #fff;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+        outline: none;
+        min-width: 250px;
+
+        &:focus {
+          border-color: #8c735d;
+        }
+      }
+    }
+  }
+
   table {
     width: 100%;
     border-collapse: collapse;

@@ -4,6 +4,22 @@
   <div *ngIf="isLoading">Cargando pedidos...</div>
   <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
 
+  <div class="admin-toolbar" *ngIf="!isLoading && !errorMensaje">
+    <div class="filtro-estado">
+      <label for="filtroEstado">Filtrar por Etapa:</label>
+      <select id="filtroEstado" (change)="filtrarPorEstado($event)" [value]="estadoFiltro">
+        <option value="">Todos (Predeterminado)</option>
+        <option value="GENERADO">Generados (Espera a Pagar)</option>
+        <option value="PAGO_ENVIADO">Voucher Enviado (Validar Pago)</option>
+        <option value="PAGO_VERIFICADO">Pago Verificado (Falta Empaquetar)</option>
+        <option value="EMPAQUETADO">Empaquetado (Falta Enviar)</option>
+        <option value="ENVIADO">Enviado (Falta Entregar)</option>
+        <option value="ENTREGADO">Entregados (Completados)</option>
+        <option value="PAGO_RECHAZADO">Rechazados</option>
+      </select>
+    </div>
+  </div>
+
   <table *ngIf="!isLoading && !errorMensaje && !isMobile">
     <thead>
       <tr>
@@ -20,7 +36,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
+      <tr *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId"
         [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
@@ -54,7 +70,7 @@
 
   <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
     <div class="pedido-cards">
-      <div class="pedido-card" *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
+      <div class="pedido-card" *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId"
         [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <div><strong>ID:</strong> {{ pedido.Id || pedido.id }}</div>
         <div><strong>Fecha/Hora:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>

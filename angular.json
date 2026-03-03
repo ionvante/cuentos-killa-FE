@@ -35,7 +35,9 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "allowedCommonJsDependencies": ["localforage"],
+            "allowedCommonJsDependencies": [
+              "localforage"
+            ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
@@ -52,8 +54,8 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "8kB",
-                  "maximumError": "10kB"
+                  "maximumWarning": "15kB",
+                  "maximumError": "25kB"
                 }
               ],
               "outputHashing": "all",

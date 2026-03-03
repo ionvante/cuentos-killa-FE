@@ -10,6 +10,8 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class AdminPedidosComponent implements OnInit {
   pedidos: Pedido[] = [];
+  pedidosMostrar: Pedido[] = []; // Array filtrado para la vista
+  estadoFiltro: string = ''; // Estado seleccionado
   isLoading = true;
   errorMensaje: string | null = null;
   selectedPedido: Pedido | null = null;
@@ -41,6 +43,11 @@ export class AdminPedidosComponent implements OnInit {
         this.pedidos = this.userIdFilter
           ? data.filter(p => String(p.userId) === this.userIdFilter)
           : data;
+
+        // Ordenar pedidos para mostrar los últimos primero por defecto
+        this.pedidos.sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime());
+
+        this.pedidosMostrar = [...this.pedidos]; // Clonamos para mostrar
         this.isLoading = false;
       },
       error: err => {
@@ -130,5 +137,16 @@ export class AdminPedidosComponent implements OnInit {
 
   trackByPedidoId(index: number, pedido: Pedido): number | undefined {
     return pedido.Id || pedido.id;
+  }
+
+  filtrarPorEstado(event: Event): void {
+    const target = event.target as HTMLSelectElement;
+    this.estadoFiltro = target.value;
+
+    if (this.estadoFiltro === '') {
+      this.pedidosMostrar = [...this.pedidos];
+    } else {
+      this.pedidosMostrar = this.pedidos.filter(p => p.estado === this.estadoFiltro);
+    }
   }
 }
