@@ -20,7 +20,7 @@ export class AdminPedidosComponent implements OnInit {
   showReasonDialog = false;
   private userIdFilter: string | null = null;
 
-  constructor(private pedidoService: PedidoService, private route: ActivatedRoute) {}
+  constructor(private pedidoService: PedidoService, private route: ActivatedRoute) { }
 
   @HostListener('window:resize')
   onResize() {
@@ -115,6 +115,19 @@ export class AdminPedidosComponent implements OnInit {
   cancelarRechazo(): void {
     this.showReasonDialog = false;
   }
+
+  cambiarEstado(pedido: Pedido, nuevoEstado: string): void {
+    const id = pedido.Id || pedido.id || 0;
+    this.pedidoService.updateOrderStatus(id, nuevoEstado).subscribe({
+      next: () => {
+        pedido.estado = nuevoEstado;
+      },
+      error: err => {
+        console.error('Error changing order status', err);
+      }
+    });
+  }
+
   trackByPedidoId(index: number, pedido: Pedido): number | undefined {
     return pedido.Id || pedido.id;
   }

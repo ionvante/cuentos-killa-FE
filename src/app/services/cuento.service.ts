@@ -8,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class CuentoService {
   private apiUrl = `${environment.apiBaseUrl}/cuentos`; // ajustable según tu backend
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   obtenerCuentos(): Observable<Cuento[]> {
     return this.http.get<Cuento[]>(this.apiUrl);
@@ -19,14 +19,23 @@ export class CuentoService {
   }
 
   // POST: /api/cuentos
-  crearCuento(cuentoData: Partial<Cuento>): Observable<Cuento> {
-    // El backend ahora espera un JSON con los datos del cuento.
-    return this.http.post<Cuento>(this.apiUrl, cuentoData);
+  crearCuento(cuentoData: Partial<Cuento>, file?: File): Observable<Cuento> {
+    const formData = new FormData();
+    formData.append('cuento', new Blob([JSON.stringify(cuentoData)], { type: 'application/json' }));
+    if (file) {
+      formData.append('file', file);
+    }
+    return this.http.post<Cuento>(this.apiUrl, formData);
   }
 
   // PUT: /api/cuentos/{id}
-  actualizarCuento(id: number, cuentoData: Partial<Cuento>): Observable<Cuento> {
-    return this.http.put<Cuento>(`${this.apiUrl}/${id}`, cuentoData);
+  actualizarCuento(id: number, cuentoData: Partial<Cuento>, file?: File): Observable<Cuento> {
+    const formData = new FormData();
+    formData.append('cuento', new Blob([JSON.stringify(cuentoData)], { type: 'application/json' }));
+    if (file) {
+      formData.append('file', file);
+    }
+    return this.http.put<Cuento>(`${this.apiUrl}/${id}`, formData);
   }
 
   // PUT: /api/cuentos/{id}/deshabilitar (o similar, podría ser un PATCH o PUT al recurso principal)

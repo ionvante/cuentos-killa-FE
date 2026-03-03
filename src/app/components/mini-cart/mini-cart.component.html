@@ -1,5 +1,5 @@
 <!-- Floating cart button -->
-<button class="floating-cart" [class.bounce]="isAnimating" *ngIf="!open && !(drawer.isOpen$ | async)"
+<button class="floating-cart" [class.bounce]="isAnimating" *ngIf="!open && !(drawer.isOpen$ | async) && !isCheckoutFlow"
   (click)="openCart()" aria-label="Ver carrito" [attr.aria-live]="'polite'">
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#A66E38" stroke-width="2" stroke-linecap="round"
     stroke-linejoin="round">

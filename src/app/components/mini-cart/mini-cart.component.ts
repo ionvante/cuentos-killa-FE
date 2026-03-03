@@ -74,4 +74,9 @@ export class MiniCartComponent implements OnInit {
   handleEscape() {
     if (this.open) this.closeCart();
   }
+
+  get isCheckoutFlow(): boolean {
+    const url = this.router.url;
+    return url.includes('/carrito') || url.includes('/checkout') || url.includes('/pago');
+  }
 }

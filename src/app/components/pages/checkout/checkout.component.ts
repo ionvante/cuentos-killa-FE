@@ -27,6 +27,8 @@ export class CheckoutComponent implements OnInit {
   pasoActual: number = 1;
   isLoading = false;
   gpsLoading = false;
+  loadingProvincias = false;
+  loadingDistritos = false;
 
   departamentos: Departamento[] = UBIGEO_PERU;
   provincias: Provincia[] = [];
@@ -55,17 +57,17 @@ export class CheckoutComponent implements OnInit {
 
     // 1. Inicializa el formulario
     this.checkoutForm = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
       documentoTipo: ['DNI', Validators.required],
-      documentoNumero: ['', Validators.required],
-      correo: ['', [Validators.required, Validators.email]],
-      telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
+      documentoNumero: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\\d{8}$/)], updateOn: 'blur' }),
+      correo: this.fb.control('', { validators: [Validators.required, Validators.email], updateOn: 'blur' }),
+      telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)], updateOn: 'blur' }),
 
       departamento: ['', Validators.required],
-      provincia: ['', Validators.required],
-      distrito: ['', Validators.required],
-      calle: ['', Validators.required],
-      referencia: [''],
+      provincia: [{ value: '', disabled: false }, Validators.required],
+      distrito: [{ value: '', disabled: false }, Validators.required],
+      calle: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
+      referencia: this.fb.control('', { updateOn: 'blur' }),
       ubicacionGps: [''],
       direccion: [''],
     });
@@ -104,16 +106,46 @@ export class CheckoutComponent implements OnInit {
 
     // Gestionar dependencias de UBIGEO
     this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
-      const depto = this.departamentos.find(d => d.nombre === deptoNombre);
-      this.provincias = depto ? depto.provincias : [];
-      this.distritos = [];
-      this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
+      this.loadingProvincias = true;
+      this.checkoutForm.get('provincia')?.disable({ emitEvent: false });
+
+      setTimeout(() => {
+        const depto = this.departamentos.find(d => d.nombre === deptoNombre);
+        this.provincias = depto ? depto.provincias : [];
+        this.distritos = [];
+        this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
+        this.checkoutForm.get('provincia')?.enable({ emitEvent: false });
+        this.loadingProvincias = false;
+      }, 400);
     });
 
     this.checkoutForm.get('provincia')?.valueChanges.subscribe(provId => {
-      const prov = this.provincias.find(p => p.nombre === provId);
-      this.distritos = prov ? prov.distritos : [];
-      this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
+      this.loadingDistritos = true;
+      this.checkoutForm.get('distrito')?.disable({ emitEvent: false });
+
+      setTimeout(() => {
+        const prov = this.provincias.find(p => p.nombre === provId);
+        this.distritos = prov ? prov.distritos : [];
+        this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
+        this.checkoutForm.get('distrito')?.enable({ emitEvent: false });
+        this.loadingDistritos = false;
+      }, 400);
+    });
+
+    // Validaciones dinámicas según tipo de documento
+    this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe(tipo => {
+      const docInput = this.checkoutForm.get('documentoNumero');
+      if (docInput) {
+        docInput.clearValidators();
+        if (tipo === 'DNI') {
+          docInput.setValidators([Validators.required, Validators.pattern(/^\\d{8}$/)]);
+        } else if (tipo === 'CE') {
+          docInput.setValidators([Validators.required, Validators.pattern(/^\\d{9}$/)]);
+        } else {
+          docInput.setValidators([Validators.required]);
+        }
+        docInput.updateValueAndValidity();
+      }
     });
 
     // Guardar en session storage en cada cambio
@@ -168,20 +200,47 @@ export class CheckoutComponent implements OnInit {
   }
 
   usarGPS(): void {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      this.toast.show('Tu navegador no soporta geolocalización.');
+      return;
+    }
+
     this.gpsLoading = true;
+
+    const gpsTimeout = setTimeout(() => {
+      if (this.gpsLoading) {
+        this.gpsLoading = false;
+        this.toast.show('Tiempo de espera agotado. Revisa permisos o ingresa la dirección manualmente.');
+      }
+    }, 10000);
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        clearTimeout(gpsTimeout);
         this.checkoutForm.patchValue({
           ubicacionGps: `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`
         });
         this.gpsLoading = false;
         this.toast.show('Ubicación obtenida correctamente');
       },
-      () => {
+      (error) => {
+        clearTimeout(gpsTimeout);
         this.gpsLoading = false;
-      }
+        if (error.code === error.PERMISSION_DENIED) {
+          this.toast.show('Permiso de ubicación denegado.');
+        } else {
+          this.toast.show('No se pudo obtener la ubicación.');
+        }
+      },
+      { timeout: 10000 }
     );
+  }
+
+  enfocarDocumento(): void {
+    setTimeout(() => {
+      const el = document.getElementById('docNumeroInput');
+      if (el) el.focus();
+    }, 50);
   }
 
   /** Compose full direccion string before submit */

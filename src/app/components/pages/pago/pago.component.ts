@@ -23,6 +23,7 @@ export class PagoComponent implements OnInit {
   orderTotal = 0;
   isLoadingMercadoPago = false; // Indicador de carga al redirigir a MP
   isGuest: boolean = false; // Add property to track if order belongs to a guest
+  isMercadoPagoError = false;
 
   /** Mapa de estados del BE a etiquetas legibles */
   private readonly statusLabels: Record<string, string> = {
@@ -86,12 +87,14 @@ export class PagoComponent implements OnInit {
             console.error('Error confirmando pago MP:', err);
             this.mensaje = 'Hubo un error al verificar tu pago. Por favor contáctanos.';
             this.mensajeTipo = 'error';
+            this.isMercadoPagoError = true;
             this.fetchOrderStatus();
           }
         });
       } else if (mpStatus === 'failure') {
         this.mensaje = 'El pago fue rechazado. Por favor intenta con otro método de pago.';
         this.mensajeTipo = 'error';
+        this.isMercadoPagoError = true;
         this.fetchOrderStatus();
       } else if (mpStatus === 'pending') {
         this.mensaje = 'Tu pago está pendiente de acreditación. Te notificaremos cuando se confirme.';
@@ -136,6 +139,7 @@ export class PagoComponent implements OnInit {
             this.isLoadingMercadoPago = false;
             this.mensaje = 'No se pudo conectar con Mercado Pago. Por favor intenta de nuevo.';
             this.mensajeTipo = 'error';
+            this.isMercadoPagoError = true;
           }
         });
       },
@@ -144,12 +148,19 @@ export class PagoComponent implements OnInit {
         this.isLoadingMercadoPago = false;
         this.mensaje = 'Error al obtener los datos del pedido.';
         this.mensajeTipo = 'error';
+        this.isMercadoPagoError = true;
       }
     });
   }
 
   openMercadoPagoModal(): void {
     this.showMercadoModal = true;
+  }
+
+  resetMercadoPago(): void {
+    this.mensaje = '';
+    this.isMercadoPagoError = false;
+    this.isLoadingMercadoPago = false;
   }
 
   closeMercadoPagoModal(): void {

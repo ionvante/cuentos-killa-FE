@@ -15,7 +15,6 @@ export class CuentoFormComponent implements OnInit {
   cuentoId?: number;
   imagePreview: string | null = null;
   selectedFile?: File;
-  imagenBase64: string | null = null;
   errorMensaje: string | null = null;
 
   constructor(
@@ -23,7 +22,7 @@ export class CuentoFormComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private cuentoService: CuentoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.cuentoForm = this.fb.group({
@@ -73,8 +72,7 @@ export class CuentoFormComponent implements OnInit {
       this.selectedFile = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreview = reader.result as string;
-        this.imagenBase64 = reader.result as string;
+        this.imagePreview = reader.result as string; // Solo para vista previa
       };
       reader.readAsDataURL(this.selectedFile);
     }
@@ -85,13 +83,10 @@ export class CuentoFormComponent implements OnInit {
     const cuentoData: Partial<Cuento> = {
       ...this.cuentoForm.value
     };
-    if (this.imagenBase64) {
-      cuentoData.imagenUrl = this.imagenBase64;
-    }
 
     const request$ = this.isEditMode && this.cuentoId
-      ? this.cuentoService.actualizarCuento(this.cuentoId, cuentoData)
-      : this.cuentoService.crearCuento(cuentoData);
+      ? this.cuentoService.actualizarCuento(this.cuentoId, cuentoData, this.selectedFile)
+      : this.cuentoService.crearCuento(cuentoData, this.selectedFile);
 
     request$.subscribe({
       next: () => this.router.navigate(['/admin/cuentos']),

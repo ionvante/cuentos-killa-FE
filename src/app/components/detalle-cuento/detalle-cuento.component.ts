@@ -1,9 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CuentoService } from './../../services/cuento.service';
 import { Cuento } from './../../model/cuento.model';
 import { CartService } from '../../services/carrito.service';
-import { Location } from '@angular/common';
+import { Location, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 
@@ -37,46 +37,57 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
     private cuentoService: CuentoService,
     private carritoService: CartService,
     private location: Location,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
   ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.cuentoService.getCuentoById(+id).subscribe(data => {
-        this.cuento = data;
-        if (this.cuento?.fechaIngreso) {
-          const diff = (Date.now() - new Date(this.cuento.fechaIngreso).getTime()) / (1000 * 3600 * 24);
-          this.isNuevo = diff <= 30;
-        }
+    this.route.paramMap.subscribe(params => {
+      const id = params.get('id');
+      if (id) {
+        this.cargandoImagen = true;
+        this.cantidad = 1;
+        this.selectedTab = 'description';
+        this.selectedImageIndex = 0;
 
-        if (this.cuento && this.cuento.rating == null) {
-          this.cuento.rating = Math.floor(Math.random() * 2) + 4; // 4 o 5 estrellas
-        }
-        if (this.cuento && !this.cuento.ratingCount) {
-          this.cuento.ratingCount = Math.floor(Math.random() * 80) + 12; // 12 a 91 opiniones
-        }
+        this.cuentoService.getCuentoById(+id).subscribe(data => {
+          this.cuento = data;
+          if (this.cuento?.fechaIngreso) {
+            const diff = (Date.now() - new Date(this.cuento.fechaIngreso).getTime()) / (1000 * 3600 * 24);
+            this.isNuevo = diff <= 30;
+          }
 
-        this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
-      });
-      this.cuentoService.obtenerCuentos().subscribe(cuentos => {
-        this.relatedCuentos = cuentos.filter(c => c.id !== +id).slice(0, 8);
-      });
-    }
+          if (this.cuento && this.cuento.rating == null) {
+            this.cuento.rating = Math.floor(Math.random() * 2) + 4; // 4 o 5 estrellas
+          }
+          if (this.cuento && !this.cuento.ratingCount) {
+            this.cuento.ratingCount = Math.floor(Math.random() * 80) + 12; // 12 a 91 opiniones
+          }
+
+          this.badgeLabel = this.cuento.badge || (this.isNuevo ? 'Nuevo' : '');
+        });
+
+        this.cuentoService.obtenerCuentos().subscribe(cuentos => {
+          this.relatedCuentos = cuentos.filter(c => c.id !== +id).slice(0, 8);
+        });
+      }
+    });
   }
 
   ngAfterViewInit(): void {
-    this.carouselInterval = setInterval(() => {
-      const container = this.carousel?.nativeElement;
-      if (container) {
-        const atEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth;
-        if (atEnd) {
-          container.scrollTo({ left: 0, behavior: 'smooth' });
-        } else {
-          this.scrollCarousel(1);
+    if (isPlatformBrowser(this.platformId)) {
+      this.carouselInterval = setInterval(() => {
+        const container = this.carousel?.nativeElement;
+        if (container) {
+          const atEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth;
+          if (atEnd) {
+            container.scrollTo({ left: 0, behavior: 'smooth' });
+          } else {
+            this.scrollCarousel(1);
+          }
         }
-      }
-    }, 4000);
+      }, 4000);
+    }
   }
 
   ngOnDestroy(): void {
@@ -147,15 +158,18 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   verDetalleCuento(id: number): void {
-    this.router.navigate(['/cuento', id]);
+    this.router.navigate(['/cuento', id]).then(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   compartir(red: 'whatsapp' | 'tiktok') {
-    const url = encodeURIComponent(window.location.href);
+    const url = window.location.href; // no encodeURIComponent for the full concatenation yet or let's encode the whole text
     if (red === 'whatsapp') {
-      window.open(`https://wa.me/?text=${url}`, '_blank');
+      const text = encodeURIComponent(`Hola , estoy interesado en : ${url}`);
+      window.open(`https://wa.me/51914279693?text=${text}`, '_blank');
     } else {
-      window.open('https://www.tiktok.com/upload?url=' + url, '_blank');
+      window.open('https://www.tiktok.com/@cuentosdekilla', '_blank');
     }
   }
 

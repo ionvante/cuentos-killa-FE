@@ -97,19 +97,29 @@
     width: 100%;
   }
 
-  .search-icon {
+  .search-submit-btn {
     position: absolute;
-    left: 0.85rem;
+    right: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    cursor: pointer;
     color: #8C7B70;
-    pointer-events: none;
-    z-index: 1;
+    z-index: 2;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+
+    &:hover {
+      color: $secondary;
+    }
   }
 
   input {
     width: 100%;
-    padding: 0.6rem 1rem 0.6rem 2.75rem;
+    padding: 0.6rem 2.75rem 0.6rem 1.25rem;
     border-radius: 9999px;
     border: none;
     font-size: 0.88rem;

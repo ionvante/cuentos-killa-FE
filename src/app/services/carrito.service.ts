@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Cuento } from '../model/cuento.model';
 import { ToastService } from './toast.service';
-
+import { MiniCartService } from './mini-cart.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +17,7 @@ export class CartService {
   itemAdded$ = this.itemAddedSubject.asObservable();
 
 
-  constructor(private toast: ToastService) {
+  constructor(private toast: ToastService, private miniCart: MiniCartService) {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
       const carritoGuardado = localStorage.getItem('carrito');
       if (carritoGuardado) {
@@ -43,6 +43,7 @@ export class CartService {
     this.toast.show(
       `"${cuento.titulo}" agregado al carrito. <a href="/carrito">Ver carrito</a>`
     );
+    this.miniCart.open(); // Abre el Slide automáticamente
   }
 
   /**
@@ -58,6 +59,7 @@ export class CartService {
     this.actualizarCarrito();
     this.itemAddedSubject.next();
     this.toast.show(`"${cuento.titulo}" agregado al carrito`);
+    this.miniCart.open(); // Abre el Slide automáticamente
   }
 
   calcularSubtotalGeneral(): number {

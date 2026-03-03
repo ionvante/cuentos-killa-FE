@@ -40,6 +40,11 @@
       {{ mensaje }}
     </app-alert-banner>
 
+    <div *ngIf="mensajeTipo === 'error' && isMercadoPagoError" style="margin-top: 1rem; text-align: center;">
+      <button class="btn-login" style="background: #3B2A1A;" (click)="resetMercadoPago()">Volver a intentar / Cambiar
+        método</button>
+    </div>
+
     <!-- Paid state -->
     <div *ngIf="isPaid" class="success-message">
       <span class="success-emoji">🎉</span>

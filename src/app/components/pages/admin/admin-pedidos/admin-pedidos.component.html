@@ -20,7 +20,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let pedido of pedidos; trackBy: trackByPedidoId" [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
+      <tr *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
+        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <td>{{ pedido.Id || pedido.id }}</td>
         <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
         <td>{{ pedido.nombre }}</td>
@@ -31,12 +32,20 @@
         <td>{{ pedido.tipoPago || 'N/A' }}</td>
         <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
         <td>
-          <button
-            *ngIf="pedido.estado === 'PAGO_ENVIADO'"
-            class="btn btn-primary"
-            (click)="abrirModal(pedido)"
-          >
+          <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn btn-primary" (click)="abrirModal(pedido)">
             Ver Voucher
+          </button>
+          <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn btn-info"
+            (click)="cambiarEstado(pedido, 'EMPAQUETADO')">
+            Empaquetar
+          </button>
+          <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn btn-info"
+            (click)="cambiarEstado(pedido, 'ENVIADO')">
+            Enviar
+          </button>
+          <button *ngIf="pedido.estado === 'ENVIADO'" class="btn btn-success"
+            (click)="cambiarEstado(pedido, 'ENTREGADO')">
+            Entregar
           </button>
         </td>
       </tr>
@@ -45,11 +54,8 @@
 
   <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
     <div class="pedido-cards">
-      <div
-        class="pedido-card"
-        *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
-        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'"
-      >
+      <div class="pedido-card" *ngFor="let pedido of pedidos; trackBy: trackByPedidoId"
+        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
         <div><strong>ID:</strong> {{ pedido.Id || pedido.id }}</div>
         <div><strong>Fecha/Hora:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
         <div><strong>Nombre:</strong> {{ pedido.nombre }}</div>
@@ -60,12 +66,20 @@
         <div><strong>Tipo Pago:</strong> {{ pedido.tipoPago || 'N/A' }}</div>
         <div><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</div>
         <div class="acciones">
-          <button
-            *ngIf="pedido.estado === 'PAGO_ENVIADO'"
-            class="btn btn-primary"
-            (click)="abrirModal(pedido)"
-          >
+          <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn btn-primary" (click)="abrirModal(pedido)">
             Ver Voucher
+          </button>
+          <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn btn-info"
+            (click)="cambiarEstado(pedido, 'EMPAQUETADO')">
+            Empaquetar
+          </button>
+          <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn btn-info"
+            (click)="cambiarEstado(pedido, 'ENVIADO')">
+            Enviar
+          </button>
+          <button *ngIf="pedido.estado === 'ENVIADO'" class="btn btn-success"
+            (click)="cambiarEstado(pedido, 'ENTREGADO')">
+            Entregar
           </button>
         </div>
       </div>
@@ -82,7 +96,8 @@
   </ng-container>
 </ng-template>
 
-<app-modal *ngIf="selectedPedido && !isMobile" [title]="'Voucher Pedido #' + (selectedPedido!.Id || selectedPedido!.id)" (close)="cerrarModal()">
+<app-modal *ngIf="selectedPedido && !isMobile" [title]="'Voucher Pedido #' + (selectedPedido!.Id || selectedPedido!.id)"
+  (close)="cerrarModal()">
   <ng-container *ngTemplateOutlet="voucherContent"></ng-container>
   <div modal-footer>
     <button class="btn btn-primary" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
@@ -107,9 +122,6 @@
   <button class="drawer-backdrop show" (click)="cerrarModal()" aria-label="Cerrar modal"></button>
 </div>
 
-<app-input-dialog
-  *ngIf="showReasonDialog"
-  [message]="'Motivo de rechazo (opcional)'"
-  (confirm)="confirmarRechazo($event)"
-  (cancel)="cancelarRechazo()">
+<app-input-dialog *ngIf="showReasonDialog" [message]="'Motivo de rechazo (opcional)'"
+  (confirm)="confirmarRechazo($event)" (cancel)="cancelarRechazo()">
 </app-input-dialog>

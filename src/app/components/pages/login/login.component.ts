@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
+import { ToastService } from '../../../services/toast.service';
 import { FormErrorComponent } from '../../shared/form-error.component';
 
 @Component({
@@ -24,8 +25,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
-
+    private authService: AuthService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -52,6 +53,8 @@ export class LoginComponent implements OnInit {
         console.log('Login exitoso', usuario.role || usuario.nombre || usuario.email || usuario.documento);
         this.authService.guardarToken(res.token);
         this.authService.guardarUsuario(usuario); // o res.user, según tu backend
+
+        this.toastService.show(`¡Hola de nuevo, ${usuario.nombre}!`);
 
         const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
         // Redirección dinámica según el rol        

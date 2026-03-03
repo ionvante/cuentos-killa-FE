@@ -30,12 +30,21 @@
         <span class="count" *ngIf="cuento?.ratingCount as rc">({{ rc }})</span>
       </div>
       <div class="autor-precio">
-        <h3>Autor: {{ cuento?.autor }}</h3>
-        <div class="precio">
-          <span class="original" *ngIf="hasDiscount">{{ cuento?.precio | currency:'PEN':'symbol':'1.2-2' }}</span>
-          <span class="final">{{ precioFinal | currency:'PEN':'symbol':'1.2-2' }}</span>
+        <div class="grupo-precio">
+          <div class="info-precio">
+            <h3>Autor: {{ cuento?.autor }}</h3>
+            <div class="precio">
+              <span class="original" *ngIf="hasDiscount">{{ cuento?.precio | currency:'PEN':'symbol':'1.2-2' }}</span>
+              <span class="final">{{ precioFinal | currency:'PEN':'symbol':'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="selector-cantidad">
+            <button type="button" class="btn-qty" (click)="decrementarCantidad()" [disabled]="cantidad <= 1">-</button>
+            <span class="num-qty">{{ cantidad }}</span>
+            <button type="button" class="btn-qty" (click)="incrementarCantidad()"
+              [disabled]="cuento && cantidad >= cuento.stock">+</button>
+          </div>
         </div>
-        <input type="number" min="1" [(ngModel)]="quantity" class="cantidad-input" />
       </div>
       <div class="meta">
         <span class="edad" *ngIf="cuento?.edadRecomendada">Edad: {{ cuento?.edadRecomendada }}+</span>
