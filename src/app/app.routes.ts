@@ -55,6 +55,12 @@ export const routes: Routes = [
           import('./components/pages/register/register.component').then(m => m.RegisterComponent)
       },
       {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./components/pages/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [authGuard]
+      },
+      {
         path: 'pedidos',
         loadComponent: () =>
           import('./components/pages/order-list/order-list.component').then(m => m.OrderListComponent),

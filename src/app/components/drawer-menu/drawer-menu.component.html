@@ -76,22 +76,6 @@
         </svg>
         <span>Mi Perfil</span>
       </a>
-      <a routerLink="/direcciones" (click)="close()" class="nav-item secondary" *ngIf="user">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-          <circle cx="12" cy="10" r="3" />
-        </svg>
-        <span>Direcciones</span>
-      </a>
-      <a routerLink="/pagos" (click)="close()" class="nav-item secondary" *ngIf="user">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-          stroke-linecap="round" stroke-linejoin="round">
-          <rect width="20" height="14" x="2" y="5" rx="2" />
-          <line x1="2" y1="10" x2="22" y2="10" />
-        </svg>
-        <span>Historial de pagos</span>
-      </a>
       <a routerLink="/admin/dashboard" (click)="close()" class="nav-item secondary" *ngIf="user?.role === 'ADMIN'">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
           stroke-linecap="round" stroke-linejoin="round">
