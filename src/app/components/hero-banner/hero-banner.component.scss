@@ -6,44 +6,10 @@
 
 .hero-container {
   position: relative;
-  background: #FDF6EC;
+  background: #fdf5eb; // color fondo del diseño
   overflow: hidden;
-  padding: 2.5rem 1.25rem 3rem;
-}
-
-/* Decorative animated blobs */
-.hero-blob {
-  position: absolute;
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.blob-1 {
-  width: 280px;
-  height: 280px;
-  background: rgba($secondary, 0.10);
-  top: -100px;
-  right: -60px;
-  filter: blur(60px);
-}
-
-.blob-2 {
-  width: 120px;
-  height: 120px;
-  background: rgba($accent, 0.15);
-  bottom: 20px;
-  left: -30px;
-  filter: blur(40px);
-}
-
-.blob-3 {
-  width: 80px;
-  height: 80px;
-  background: rgba($primary, 0.10);
-  top: 40%;
-  right: 10%;
-  filter: blur(30px);
+  padding: 3rem 1.5rem 4rem;
+  // Borde recto según la UI
 }
 
 /* Content */
@@ -54,32 +20,44 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  max-width: 420px;
+  max-width: 1000px;
   margin: 0 auto;
+  gap: 3rem;
+}
+
+/* Text section */
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Illustrated book visual */
 .hero-visual {
   position: relative;
-  margin-bottom: 1.5rem;
-}
-
-.book-card {
-  width: 180px;
-  height: 120px;
-  background: linear-gradient(135deg, $primary, $secondary);
-  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 32px rgba($primary, 0.25);
-  transform: rotate(3deg);
+  width: 100%;
+  max-width: 380px;
+}
+
+.book-card {
+  width: 220px;
+  height: 150px;
+  background: #cca77b; // color de la tarjeta libro de la imagen
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 16px 32px rgba(204, 167, 123, 0.3);
+  transform: rotate(-5deg);
   position: relative;
   z-index: 2;
 
   .book-icon {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     color: #fff;
   }
 }
@@ -91,23 +69,23 @@
 }
 
 .circle-accent {
-  width: 56px;
-  height: 56px;
-  background: $accent;
-  opacity: 0.8;
-  top: 12px;
-  right: -40px;
-  animation: floatBounce 2s ease-in-out infinite;
+  width: 70px;
+  height: 70px;
+  background: #f4cba0; // circulo naranja intermedio
+  opacity: 0.9;
+  bottom: -20px;
+  left: -20px;
+  animation: floatBounce 2.5s ease-in-out infinite;
 }
 
 .circle-secondary {
-  width: 42px;
-  height: 42px;
-  background: $secondary;
-  opacity: 0.8;
-  bottom: -10px;
-  left: -24px;
-  animation: floatPulse 2.5s ease-in-out infinite;
+  width: 60px;
+  height: 60px;
+  background: #d4e0c4; // circulo verde de la esquina superior derecha de la imagen
+  opacity: 0.9;
+  top: -10px;
+  right: -10px;
+  animation: floatPulse 3s ease-in-out infinite;
 }
 
 @keyframes floatBounce {
@@ -127,34 +105,34 @@
   0%,
   100% {
     transform: scale(1);
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   50% {
-    transform: scale(1.15);
-    opacity: 0.6;
+    transform: scale(1.1);
+    opacity: 0.7;
   }
 }
 
 /* Typography */
 .hero-title {
-  font-size: 1.75rem;
+  font-size: 2.2rem;
   font-weight: 800;
-  color: #3B2A1A;
-  line-height: 1.25;
-  margin: 0 0 0.75rem;
+  color: #a47653; // color marron titulo
+  line-height: 1.15;
+  margin: 0 0 1rem;
   letter-spacing: -0.02em;
 }
 
 .hero-subtitle {
-  font-size: 0.95rem;
-  color: #7a5c3a;
-  line-height: 1.6;
-  margin: 0 0 1.5rem;
-  max-width: 320px;
+  font-size: 1rem;
+  color: #8c8279;
+  line-height: 1.5;
+  margin: 0 0 2rem;
+  max-width: 420px;
 
   strong {
-    color: $primary;
+    color: #a47653;
     font-weight: 700;
   }
 }
@@ -162,7 +140,7 @@
 /* Email subscription field */
 .subscribe-wrapper {
   width: 100%;
-  max-width: 380px;
+  max-width: 440px;
 }
 
 .subscribe-field {
@@ -170,15 +148,15 @@
   align-items: center;
   gap: 0.5rem;
   background: #fff;
-  padding: 5px;
+  padding: 6px 6px 6px 20px;
   border-radius: 50px;
-  box-shadow: 0 4px 16px rgba($primary, 0.08);
-  border: 1px solid rgba($primary, 0.10);
-  transition: box-shadow 0.3s ease;
+  box-shadow: 0 8px 24px rgba(164, 118, 83, 0.1);
+  border: 1px solid rgba(164, 118, 83, 0.1);
+  transition: box-shadow 0.3s ease, border-color 0.3s;
 
   &:focus-within {
-    box-shadow: 0 4px 20px rgba($primary, 0.16);
-    border-color: rgba($secondary, 0.3);
+    box-shadow: 0 8px 32px rgba(164, 118, 83, 0.2);
+    border-color: rgba(164, 118, 83, 0.4);
   }
 }
 
@@ -186,8 +164,7 @@
   flex: 1;
   border: none;
   background: transparent;
-  font-size: 0.9rem;
-  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
   color: #3B2A1A;
   outline: none;
   min-width: 0;
@@ -199,19 +176,19 @@
 
 .subscribe-btn {
   flex-shrink: 0;
-  background: $primary;
+  background: #a47653; // color boton suscribir
   color: #fff;
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  padding: 0.6rem 1.25rem;
+  padding: 0.8rem 1.5rem;
   border-radius: 50px;
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.15s ease;
   white-space: nowrap;
 
   &:hover {
-    background: darken($primary, 8%);
+    background: darken(#a47653, 8%);
   }
 
   &:active {
@@ -219,33 +196,63 @@
   }
 }
 
-/* Responsive */
-@media (min-width: 600px) {
+/* Responsive Desktop Layout */
+@media (min-width: 860px) {
   .hero-container {
-    padding: 3.5rem 2rem 4rem;
+    padding: 5rem 3rem 6rem;
+  }
+
+  .hero-content {
+    flex-direction: row;
+    text-align: left;
+    gap: 4rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .hero-text {
+    align-items: flex-start;
+    flex: 1;
+    max-width: 500px;
   }
 
   .hero-title {
-    font-size: 2.2rem;
+    font-size: 3.2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.1rem;
+    margin: 0 0 2.5rem;
+  }
+
+  .hero-visual {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .book-card {
-    width: 220px;
-    height: 150px;
+    width: 280px;
+    height: 200px;
+    transform: rotate(6deg); // rotacion hacia el otro lado segun la imagen
 
     .book-icon {
-      width: 72px;
-      height: 72px;
+      width: 90px;
+      height: 90px;
     }
   }
 
   .circle-accent {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
+    bottom: -30px;
+    left: 40px;
   }
 
   .circle-secondary {
-    width: 52px;
-    height: 52px;
+    width: 80px;
+    height: 80px;
+    top: -20px;
+    right: -20px;
   }
 }

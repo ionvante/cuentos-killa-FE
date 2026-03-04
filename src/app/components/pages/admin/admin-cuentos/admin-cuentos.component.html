@@ -10,10 +10,11 @@
   <div *ngIf="isLoading">Cargando cuentos...</div>
   <div class="error-mensaje" *ngIf="errorMensaje">{{ errorMensaje }}</div>
   <div class="grid-cuentos" *ngIf="!isLoading && !errorMensaje">
-    <app-cuento-card *ngFor="let cuento of cuentos" [cuento]="cuento" [isAdmin]="true" (detalle)="verDetalle(cuento.id)"
-      (editar)="editarCuento($event)" (deshabilitar)="deshabilitarCuento($event)"
-      class="admin-cuento-card"></app-cuento-card>
-    <!-- (agregar) ya no se maneja aquí, sino dentro de la tarjeta si es necesario -->
+    <ng-container *ngFor="let cuento of cuentos">
+      <app-cuento-card *ngIf="cuento" [cuento]="cuento" [isAdmin]="true" (detalle)="verDetalle(cuento.id)"
+        (editar)="editarCuento($event)" (deshabilitar)="deshabilitarCuento($event)"
+        class="admin-cuento-card"></app-cuento-card>
+    </ng-container>
   </div>
 
   <div class="pagination-controls" *ngIf="totalPages > 1 && !isLoading">

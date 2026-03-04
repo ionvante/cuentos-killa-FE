@@ -16,70 +16,102 @@
   </div>
 
   <div *ngIf="pedido && !isLoading" class="pedido-content">
-    <h2>Detalle del Pedido #{{ pedido.Id }}</h2>
 
-    <section class="pedido-info-general">
-      <h3>Información General</h3>
-      <div class="info-grid">
-        <p><strong>ID del Pedido:</strong> {{ pedido.Id }}</p>
-        <p><strong>Fecha:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</p>
-        <p><strong>Estado:</strong> <span class="status" [ngClass]="'status-' + pedido.estado.toLowerCase().replace(' ', '-')">{{ pedido.estado }}</span></p>
-        <p><strong>Nombre:</strong> {{ pedido.nombre }}</p>
-        <p><strong>Correo:</strong> {{ pedido.correo }}</p>
-        <p><strong>Dirección:</strong> {{ pedido.direccion }}</p>
-        <p><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
-        <p><strong>Total del Pedido:</strong> <span class="total-amount">{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</span></p>
+    <div class="detail-header">
+      <div class="left-col">
+        <div class="icon-box" [ngClass]="getEstadoTheme(pedido.estado)">
+          <span class="material-icons">{{ getEstadoIcon(pedido.estado) }}</span>
+        </div>
+        <div>
+          <h2>Pedido #{{ getPedidoId() }}</h2>
+          <span class="date"><span class="material-icons text-sm">calendar_today</span> {{ (pedido.fecha ||
+            pedido.Fecha) | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+      <div class="right-col">
+        <div class="status-pill" [ngClass]="getEstadoTheme(pedido.estado)">
+          <span class="dot"></span>
+          <span class="text">{{ getEstadoVisible(pedido.estado) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="info-card">
+      <h3><span class="material-icons">person</span> Información de Contacto</h3>
+      <div class="info-grid user-info">
+        <div class="info-group">
+          <label>Nombre</label>
+          <p>{{ pedido.nombre || pedido.Nombre || pedido.usuario?.nombre || 'No registrado' }}</p>
+        </div>
+        <div class="info-group">
+          <label>Correo Electrónico</label>
+          <p>{{ pedido.correo || pedido.Correo || pedido.usuario?.email || 'No registrado' }}</p>
+        </div>
+        <div class="info-group">
+          <label>Teléfono</label>
+          <p>{{ pedido.telefono || pedido.Telefono || pedido.usuario?.telefono || 'No registrado' }}</p>
+        </div>
+        <div class="info-group full-width">
+          <label>Dirección de Envío</label>
+          <p>{{ pedido.direccion || pedido.Direccion || 'No registrado' }}</p>
+        </div>
       </div>
     </section>
 
-    <section class="pedido-items">
-      <h3>Items del Pedido</h3>
-      <div *ngIf="pedido?.items && pedido.items.length > 0; else noItems">
-        <div *ngFor="let item of pedido?.items" class="item-card">
+    <section class="info-card items-section">
+      <h3><span class="material-icons">shopping_bag</span> Artículos del Pedido</h3>
+      <div *ngIf="pedido.items && pedido.items.length > 0; else noItems" class="items-list">
+        <div *ngFor="let item of pedido.items" class="item-row">
           <div class="item-imagen">
-            <img [appLazyLoad]="item?.imagenUrl || 'assets/images/placeholder-cuento.png'" [alt]="item?.nombreCuento" class="img-fluid">
+            <img [src]="item.imagenUrl || item.ImagenUrl || 'assets/placeholder-cuento.jpg'" [alt]="item.nombreCuento"
+              onerror="this.src='assets/placeholder-cuento.jpg'">
           </div>
           <div class="item-detalles">
-            <h4>{{ item.nombreCuento }}</h4>
-            <p><strong>Precio Unitario:</strong> {{ item.precioUnitario | currency:'USD':'symbol':'1.2-2' }}</p>
-            <p><strong>Cantidad:</strong> {{ item.cantidad }}</p>
-            <p><strong>Subtotal:</strong> {{ item.subtotal | currency:'USD':'symbol':'1.2-2' }}</p>
+            <h4>{{ item.cuento?.titulo || item.nombreCuento || item.NombreCuento || item.cuento?.nombre || 'Producto sin
+              nombre' }}</h4>
+            <div class="item-meta">
+              <span class="qty">x{{ item.cantidad || item.Cantidad || 1 }} unidad<span
+                  *ngIf="(item.cantidad || item.Cantidad || 1) > 1">es</span></span>
+              <span class="unit-price">{{ (item.precioUnitario || item.PrecioUnitario || ((item.subtotal ||
+                item.Subtotal || 0) / (item.cantidad || item.Cantidad || 1))) | currency:'PEN':'symbol':'1.2-2' }}
+                c/u</span>
+            </div>
+          </div>
+          <div class="item-subtotal">
+            {{ (item.subtotal || item.Subtotal || 0) | currency:'PEN':'symbol':'1.2-2' }}
           </div>
         </div>
       </div>
+
+      <div class="order-summary">
+        <div class="summary-row total">
+          <span>Total del Pedido</span>
+          <span class="amount">{{ (pedido.total || pedido.Total || 0) | currency:'PEN':'symbol':'1.2-2' }}</span>
+        </div>
+      </div>
+
       <ng-template #noItems>
-        <p>No hay items en este pedido.</p>
+        <p class="empty-state">No hay artículos registrados en este pedido.</p>
       </ng-template>
     </section>
-      <section class="acciones-pedido" *ngIf="!isLoading">
-        <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn btn-success btn-pagar">
-          <i class="fas fa-credit-card"></i> Pagar ahora
-        </button>
-        <button *ngIf="pedido?.estado === 'PAGO_ENVIADO'" (click)="confirmReplaceVoucher()" class="btn btn-primary">
-          Reemplazar voucher
-        </button>
-        <!-- Otros botones de acción podrían ir aquí, ej. "Cancelar Pedido" si el estado lo permite -->
-      </section>
+
+    <div class="acciones-pedido" *ngIf="!isLoading">
+      <button *ngIf="isPagoPendiente()" (click)="pagarAhora()" class="btn-action primary">
+        <span class="material-icons">payment</span> Proceder al Pago
+      </button>
+      <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" (click)="confirmReplaceVoucher()"
+        class="btn-action outline warning">
+        <span class="material-icons">receipt_long</span> Reemplazar voucher
+      </button>
+    </div>
 
   </div>
 </div>
-<app-modal
-  *ngIf="showVoucherModal"
-  title="Reemplazar voucher"
-  (close)="showVoucherModal = false"
->
+<app-modal *ngIf="showVoucherModal" title="Reemplazar voucher" (close)="showVoucherModal = false">
   <div class="replace-voucher-modal">
-    <input
-      type="file"
-      accept="application/pdf,image/jpeg,image/png"
-      (change)="onVoucherSelected($event)"
-    />
+    <input type="file" accept="application/pdf,image/jpeg,image/png" (change)="onVoucherSelected($event)" />
     <p>{{ voucherNombre || 'Sin archivo seleccionado' }}</p>
-    <button
-      class="btn btn-primary"
-      (click)="enviarNuevoVoucher()"
-      [disabled]="!voucherFile || uploading"
-    >
+    <button class="btn btn-primary" (click)="enviarNuevoVoucher()" [disabled]="!voucherFile || uploading">
       Enviar
     </button>
   </div>

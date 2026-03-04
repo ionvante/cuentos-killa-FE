@@ -1,11 +1,17 @@
-<nav class="admin-navbar" aria-label="Menú de administración">
-  <button class="hamburger" aria-label="Menú" (click)="toggleMenu()" [hidden]="isDesktop">☰</button>
-  <a class="navbar-brand">
-    <img appLazyLoad="assets/killa.bmp" alt="Cuentos de Killa" class="logo-img" />
-    <span class="brand-text">Cuentos de Killa</span>
-  </a>
-</nav>
-<app-admin-drawer [isOpen]="menuAbierto || isDesktop" (closed)="toggleMenu(false)"></app-admin-drawer>
-<main class="admin-content" role="main">
-  <router-outlet></router-outlet>
-</main>
+<div class="admin-wrapper">
+  <!-- Mobile: hamburger floats top-left -->
+  <button class="admin-hamburger" aria-label="Menú" (click)="toggleMenu()" *ngIf="!isDesktop">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="12" x2="21" y2="12" />
+      <line x1="3" y1="6" x2="21" y2="6" />
+      <line x1="3" y1="18" x2="21" y2="18" />
+    </svg>
+  </button>
+
+  <app-admin-drawer [isOpen]="menuAbierto || isDesktop" (closed)="toggleMenu(false)"></app-admin-drawer>
+
+  <main class="admin-content" role="main">
+    <router-outlet></router-outlet>
+  </main>
+</div>

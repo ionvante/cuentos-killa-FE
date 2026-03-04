@@ -11,7 +11,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 @Component({
   selector: 'app-order-list',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, RouterModule, FormsModule, BadgeComponent],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -36,12 +36,12 @@ export class OrderListComponent implements OnInit {
   itemsPerPage: number = 5;
   itemsExpanded: { [id: number]: boolean } = {};
 
-  estadoMap: Record<string, { texto: string; emoji: string }> = {
-    'PAGO_PENDIENTE': { texto: 'Pago pendiente', emoji: '🔶' },
-    'PAGO_ENVIADO': { texto: 'Pago enviado', emoji: '📤' },
-    'PAGO_VERIFICADO': { texto: 'Pago verificado', emoji: '✅' },
-    'ENVIADO': { texto: 'Enviado', emoji: '📦' },
-    'ENTREGADO': { texto: 'Entregado', emoji: '📬' },
+  estadoMap: Record<string, { texto: string; icon: string; theme: string; cornerIcon: string }> = {
+    'PAGO_PENDIENTE': { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente', cornerIcon: 'menu_book' },
+    'PAGO_ENVIADO': { texto: 'Pago enviado', icon: 'sync', theme: 'enviado', cornerIcon: 'pending_actions' },
+    'PAGO_VERIFICADO': { texto: 'Pago verificado', icon: 'verified', theme: 'verificado', cornerIcon: 'check_circle' },
+    'ENVIADO': { texto: 'En camino', icon: 'category', theme: 'encamino', cornerIcon: 'toys' },
+    'ENTREGADO': { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado', cornerIcon: 'auto_stories' },
   };
 
   constructor(
@@ -49,7 +49,7 @@ export class OrderListComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadOrders();
@@ -91,11 +91,22 @@ export class OrderListComponent implements OnInit {
 
   getEstadoVisible(estado: string): string {
     const info = this.estadoMap[estado];
-    return info ? `${info.emoji} ${info.texto}` : estado;
+    return info ? info.texto : estado;
   }
 
-  getEstadoClass(estado: string): string {
-    return 'status-' + estado.toLowerCase().replace('_', '-');
+  getEstadoIcon(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.icon : 'info';
+  }
+
+  getEstadoTheme(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.theme : 'default';
+  }
+
+  getCornerIcon(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.cornerIcon : 'star';
   }
 
   toggleItems(id: number): void {

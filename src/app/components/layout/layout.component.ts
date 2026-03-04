@@ -3,6 +3,7 @@ import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { DrawerMenuComponent } from '../drawer-menu/drawer-menu.component';
+import { FooterComponent } from './footer/footer.component';
 import { DrawerService } from '../../services/drawer.service';
 import { AuthService } from '../../services/auth.service';
 import { User } from '../../model/user.model';
@@ -10,7 +11,7 @@ import { User } from '../../model/user.model';
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavbarComponent, DrawerMenuComponent],
+  imports: [CommonModule, RouterOutlet, NavbarComponent, DrawerMenuComponent, FooterComponent],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss']
 })
@@ -21,3 +22,4 @@ export class LayoutComponent {
     this.auth.usuarioLogueado$.subscribe((u: User | null) => this.user = u);
   }
 }
+

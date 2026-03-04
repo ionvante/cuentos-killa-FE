@@ -1,59 +1,200 @@
+@import '../../../../../styles/variables';
+
 .dashboard-content {
-  padding: 1.5rem;
-  background-color: #FEF6E8;
-  color: #4E3B15;
+  padding: 0;
+  color: $text-dark;
+
+  h2 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: $background-dark;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    &::before {
+      content: '👋';
+      font-size: 1.4rem;
+    }
+  }
 }
 
+/* ── Stat Cards Grid ── */
 .summary-row {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
+/* ── Charts ── */
 .charts-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 .chart-container {
   background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  position: relative;
+
+  label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #8C7B70;
+    margin-right: 0.5rem;
+  }
+
+  select {
+    appearance: none;
+    background: rgba($brand-secondary, 0.12);
+    border: 1px solid rgba($brand-primary, 0.15);
+    border-radius: 8px;
+    padding: 0.4rem 2rem 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: $text-dark;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23A66E38' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center;
+    transition: border-color 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: $brand-primary;
+      box-shadow: 0 0 0 3px rgba($brand-primary, 0.15);
+    }
+  }
+
+  canvas {
+    margin-top: 0.75rem;
+  }
 }
 
+/* ── Status Section ── */
 .status-row {
   background: #fff;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $background-dark;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+    .btn-link {
+      background: rgba($brand-secondary, 0.15);
+      border: none;
+      color: $brand-primary;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+
+      &:hover {
+        background: rgba($brand-secondary, 0.3);
+      }
+    }
+  }
 }
 
 .status-bar {
   display: flex;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding: 0.3rem 0;
+
   .label {
-    width: 120px;
+    width: 160px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-dark;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
+
   .bar {
     flex: 1;
-    background: #eee;
-    height: 12px;
-    margin: 0 0.5rem;
-    border-radius: 6px;
+    background: rgba($brand-secondary, 0.12);
+    height: 10px;
+    margin: 0 0.75rem;
+    border-radius: 5px;
     overflow: hidden;
+
     span {
       display: block;
       height: 100%;
-      background: #FFAD60;
+      background: linear-gradient(90deg, $brand-primary, $brand-secondary);
+      border-radius: 5px;
+      transition: width 0.6s cubic-bezier(.4, 0, .2, 1);
     }
   }
+
   .count {
-    width: 30px;
+    min-width: 36px;
     text-align: right;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: $brand-primary;
+  }
+}
+
+/* ── Error ── */
+.error-mensaje {
+  background: #FFF3CD;
+  color: #856404;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid #FFE69C;
+  margin-bottom: 1rem;
+  font-weight: 500;
+
+  button {
+    margin-top: 0.5rem;
+    background: $brand-primary;
+    color: #fff;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+
+    &:hover {
+      background: darken($brand-primary, 8%);
+    }
+  }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-row {
+    grid-template-columns: 1fr;
   }
 }

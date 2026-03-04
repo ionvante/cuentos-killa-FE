@@ -1,33 +1,40 @@
 <div class="cuentos-container">
   <app-breadcrumb></app-breadcrumb>
-  <h2>Últimos cuentos</h2>
-  <div class="filter-bar">
-    <div class="input-wrapper search">
-      <svg viewBox="0 0 24 24" class="icon">
-        <circle cx="11" cy="11" r="7" stroke="#555" stroke-width="2" fill="none" />
-        <line x1="16" y1="16" x2="22" y2="22" stroke="#555" stroke-width="2" />
-      </svg>
-      <input type="text" placeholder="¿Qué cuento te apetece hoy?" [(ngModel)]="searchTerm" />
+
+  <div class="catalog-header">
+    <div class="header-titles">
+      <h2>Últimos cuentos</h2>
+      <p class="subtitle">Historias recién llegadas a nuestra biblioteca mágica.</p>
     </div>
-    <div class="select-wrapper">
-      <svg viewBox="0 0 24 24" class="icon">
-        <rect x="3" y="4" width="18" height="18" stroke="#555" stroke-width="2" fill="none" />
-        <line x1="3" y1="10" x2="21" y2="10" stroke="#555" stroke-width="2" />
+    <a class="cta-link" href="#">¿No sabes dónde empezar? <span>→ Ver los 5 más leídos</span></a>
+  </div>
+
+  <div class="filter-bar">
+    <button class="btn-filtrar" type="button">
+      <svg viewBox="0 0 24 24" class="icon-filter" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
       </svg>
-      <select [(ngModel)]="fechaFilter">
-        <option value="">Fecha</option>
-        <option value="semana">Última semana</option>
-        <option value="mes">Último mes</option>
-        <option value="ano">Último año</option>
+      Filtrar
+    </button>
+
+    <div class="select-wrapper">
+      <select [(ngModel)]="categoriaFilter">
+        <option value="">Categoría</option>
+        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
       </select>
     </div>
+
     <div class="select-wrapper">
-      <svg viewBox="0 0 24 24" class="icon">
-        <circle cx="12" cy="12" r="10" stroke="#555" stroke-width="2" fill="none" />
-        <line x1="12" y1="6" x2="12" y2="18" stroke="#555" stroke-width="2" />
-        <path d="M8 9h8" stroke="#555" stroke-width="2" />
-        <path d="M8 15h8" stroke="#555" stroke-width="2" />
-      </svg>
+      <select [(ngModel)]="edadFilter">
+        <option value="">Edad</option>
+        <option value="0-3">0-3 años</option>
+        <option value="4-6">4-6 años</option>
+        <option value="7-10">7-10 años</option>
+      </select>
+    </div>
+
+    <div class="select-wrapper">
       <select [(ngModel)]="precioFilter">
         <option value="">Precio</option>
         <option value="lt10">Menos de S/10</option>
@@ -35,34 +42,16 @@
         <option value="gt20">Más de S/20</option>
       </select>
     </div>
-    <div class="select-wrapper">
-      <svg viewBox="0 0 24 24" class="icon">
-        <path d="M3 12l9 9 9-9V3H12L3 12z" stroke="#555" stroke-width="2" fill="none" />
-      </svg>
-      <select [(ngModel)]="categoriaFilter">
-        <option value="">Categoría</option>
-        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
-      </select>
-    </div>
-    <div class="select-wrapper">
-      <svg viewBox="0 0 24 24" class="icon">
-        <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" stroke="#555" stroke-width="2"
-          fill="none" />
-      </svg>
-      <select [(ngModel)]="ratingFilter">
-        <option value="">Valoración</option>
-        <option value="1">1⭐ o más</option>
-        <option value="2">2⭐ o más</option>
-        <option value="3">3⭐ o más</option>
-        <option value="4">4⭐ o más</option>
-      </select>
-    </div>
-    <button class="btn btn-secondary" type="button">Filtrar</button>
-    <button class="btn btn-ghost" type="button" (click)="limpiarFiltros()">Limpiar</button>
+
+    <button *ngIf="categoriaFilter || edadFilter || precioFilter" class="btn-limpiar" type="button"
+      (click)="limpiarFiltros()">Limpiar</button>
+
+    <div class="filter-spacer"></div>
+    <a class="ver-todo-link" href="#">Ver todo</a>
   </div>
-  <a class="cta-link" href="#">¿No sabes dónde empezar? → Ver los 5 más leídos</a>
+
   <div class="grid-cuentos" *ngIf="isLoading">
-    <!-- Repetir 8 esqueletos mientras se cargan los datos reales -->
+    <!-- Repetir esqueletos mientras se cargan los datos -->
     <app-skeleton *ngFor="let i of [1,2,3,4,5,6,7,8]"></app-skeleton>
   </div>
 
@@ -70,8 +59,9 @@
     <app-cuento-card *ngFor="let cuento of filteredCuentos" [cuento]="cuento"
       (agregar)="agregarAlCarrito($event)"></app-cuento-card>
   </div>
+
   <div class="no-results" *ngIf="filteredCuentos.length === 0">
     <span class="icon">⚠</span>
-    <span>¡Uy! No encontramos ese cuento. Prueba con otra palabra clave.</span>
+    <span>¡Uy! No encontramos historias con esos filtros. Intenta con otros.</span>
   </div>
 </div>

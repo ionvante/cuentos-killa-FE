@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CartService } from '../../services/carrito.service';
@@ -22,7 +22,8 @@ export class MiniCartComponent implements OnInit {
     private cart: CartService,
     private router: Router,
     public drawer: DrawerService,
-    private miniCart: MiniCartService
+    private miniCart: MiniCartService,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
@@ -31,9 +32,11 @@ export class MiniCartComponent implements OnInit {
 
     this.cart.itemAdded$.subscribe(() => {
       this.isAnimating = true;
-      setTimeout(() => {
-        this.isAnimating = false;
-      }, 600); // 600ms duración de la animación bounce
+      this.ngZone.runOutsideAngular(() => {
+        setTimeout(() => {
+          this.ngZone.run(() => { this.isAnimating = false; });
+        }, 600);
+      });
     });
   }
 

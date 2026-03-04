@@ -7,16 +7,17 @@ import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.dire
 import { ModalComponent } from '../../app-modal/modal.component';
 import { ToastService } from '../../../services/toast.service';
 import { VoucherComponent } from '../voucher/voucher.component';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, LazyLoadImageDirective, ModalComponent], // Add CommonModule here
+  imports: [CommonModule, ModalComponent], // Add CommonModule here
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })
 export class OrderDetailComponent implements OnInit {
-  pedido: Pedido|null =null;
+  pedido: Pedido | null = null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
 
@@ -30,20 +31,36 @@ export class OrderDetailComponent implements OnInit {
     private router: Router,
     private pedidoService: PedidoService,
     private toast: ToastService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const pedidoId = +idParam; // Convert string to number
-      this.pedidoService.getOrderById(pedidoId).subscribe({
-        next: (data) => {
-          // this.pedido = data;
-          this.pedido = { ...data, items: data.items ?? [] };
-          console.log('Detalle del pedido:', this.pedido);
+      forkJoin({
+        detail: this.pedidoService.getOrderById(pedidoId),
+        list: this.pedidoService.getOrders()
+      }).subscribe({
+        next: ({ detail, list }) => {
+          const listMatch = list.find((o: Pedido) => o.Id === pedidoId || o.id === pedidoId);
+
+          let mergedPedido = { ...detail, items: detail.items ?? [] };
+
+          if (listMatch) {
+            // Fusionar propiedades faltantes que el endpoint /orders/:id omitió pero /orders sí incluyó
+            mergedPedido.fecha = mergedPedido.fecha || listMatch.fecha || listMatch.Fecha || '';
+            mergedPedido.nombre = mergedPedido.nombre || listMatch.nombre || listMatch.Nombre || listMatch.usuario?.nombre || '';
+            mergedPedido.correo = mergedPedido.correo || listMatch.correo || listMatch.Correo || listMatch.usuario?.email || '';
+            mergedPedido.telefono = mergedPedido.telefono || listMatch.telefono || listMatch.Telefono || listMatch.usuario?.telefono || '';
+            mergedPedido.direccion = mergedPedido.direccion || listMatch.direccion || listMatch.Direccion || '';
+            mergedPedido.total = mergedPedido.total || listMatch.total || listMatch.Total || 0;
+          }
+
+          this.pedido = mergedPedido;
+          console.log('Detalle del pedido (fusionado):', this.pedido);
           this.isLoading = false;
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error('Error fetching order details:', err);
           this.errorMensaje = 'No se pudo cargar el detalle del pedido. Verifique el ID o intente más tarde.';
           this.isLoading = false;
@@ -73,7 +90,7 @@ export class OrderDetailComponent implements OnInit {
 
   // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
-    return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE' ;
+    return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE';
   }
 
   confirmReplaceVoucher(): void {
@@ -110,5 +127,33 @@ export class OrderDetailComponent implements OnInit {
         this.uploading = false;
       }
     });
+  }
+  // Helpers visuales para el diseño
+  estadoMap: Record<string, { texto: string; icon: string; theme: string }> = {
+    'PAGO_PENDIENTE': { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente' },
+    'PAGO_ENVIADO': { texto: 'Pago enviado', icon: 'sync', theme: 'enviado' },
+    'PAGO_VERIFICADO': { texto: 'Pago verificado', icon: 'verified', theme: 'verificado' },
+    'ENVIADO': { texto: 'En camino', icon: 'category', theme: 'encamino' },
+    'ENTREGADO': { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado' },
+  };
+
+  getEstadoVisible(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.texto : estado;
+  }
+
+  getEstadoIcon(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.icon : 'info';
+  }
+
+  getEstadoTheme(estado: string): string {
+    const info = this.estadoMap[estado];
+    return info ? info.theme : 'default';
+  }
+
+  getPedidoId(): number | string {
+    if (!this.pedido) return '';
+    return (this.pedido.Id ?? (this.pedido as any).id) || '';
   }
 }

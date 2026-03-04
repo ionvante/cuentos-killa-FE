@@ -27,10 +27,10 @@ export class AdminDrawerComponent {
     { label: 'Usuarios', route: '/admin/usuarios', icon: 'usuarios' },
     { label: 'Config', route: '/admin/config', icon: 'config' }
   ];
-  constructor(private router: Router, private sanitizer: DomSanitizer) {}
+  constructor(private router: Router, private sanitizer: DomSanitizer) { }
 
   iconUrl(icon: string): SafeResourceUrl {
-    return this.sanitizer.bypassSecurityTrustResourceUrl(`assets/icons/${icon}.svg`);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(`assets/${icon}.svg`);
   }
 
   navigate(item: MenuItem) {

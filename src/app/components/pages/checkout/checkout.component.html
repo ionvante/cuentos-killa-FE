@@ -77,7 +77,10 @@
         <div class="form-group" style="flex: 2;">
           <label class="form-label">Número de doc.:</label>
           <div class="input-wrapper">
-            <input id="docNumeroInput" formControlName="documentoNumero" type="text" required class="form-input" />
+            <input id="docNumeroInput" formControlName="documentoNumero" type="text" required class="form-input"
+              inputmode="numeric" [attr.maxlength]="docMaxLength"
+              [placeholder]="checkoutForm.get('documentoTipo')?.value === 'DNI' ? '12345678' : checkoutForm.get('documentoTipo')?.value === 'CE' ? '123456789' : 'Número'"
+              (input)="soloNumeros($event)" />
             <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect>
@@ -96,6 +99,9 @@
             <span
               *ngIf="checkoutForm.get('documentoNumero')?.errors?.['pattern'] && checkoutForm.get('documentoTipo')?.value === 'CE'">El
               CE debe tener 9 dígitos numéricos</span>
+            <span
+              *ngIf="checkoutForm.get('documentoNumero')?.errors?.['minlength'] && checkoutForm.get('documentoTipo')?.value === 'Pasaporte'">El
+              pasaporte debe tener al menos 5 caracteres</span>
           </div>
         </div>
       </div>

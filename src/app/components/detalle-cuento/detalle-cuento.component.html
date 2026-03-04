@@ -17,8 +17,8 @@
             <span class="badge oferta" *ngIf="hasDiscount">-{{ cuento?.descuento }}% OFF</span>
           </div>
           <div class="imagen-skeleton" *ngIf="cargandoImagen"></div>
-          <img [appLazyLoad]="mainImage" alt="Imagen del cuento" (error)="cargarImagenPlaceholder($event)"
-            (load)="imagenCargada()" [class.loaded]="!cargandoImagen" />
+          <img *ngIf="cuento" [src]="mainImage" alt="Imagen del cuento" (error)="cargarImagenPlaceholder($event)"
+            (load)="imagenCargada()" [class.loaded]="!cargandoImagen" fetchpriority="high" />
         </div>
       </figure>
     </div>

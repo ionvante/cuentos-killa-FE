@@ -29,6 +29,7 @@ export class CheckoutComponent implements OnInit {
   gpsLoading = false;
   loadingProvincias = false;
   loadingDistritos = false;
+  docMaxLength = 8;  // DNI=8, CE=9, Pasaporte=12
 
   departamentos: Departamento[] = UBIGEO_PERU;
   provincias: Provincia[] = [];
@@ -59,7 +60,7 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm = this.fb.group({
       nombre: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
       documentoTipo: ['DNI', Validators.required],
-      documentoNumero: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\\d{8}$/)], updateOn: 'blur' }),
+      documentoNumero: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{8}$/)], updateOn: 'blur' }),
       correo: this.fb.control('', { validators: [Validators.required, Validators.email], updateOn: 'blur' }),
       telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)], updateOn: 'blur' }),
 
@@ -136,13 +137,17 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe(tipo => {
       const docInput = this.checkoutForm.get('documentoNumero');
       if (docInput) {
+        docInput.setValue(''); // Limpiar al cambiar tipo
         docInput.clearValidators();
         if (tipo === 'DNI') {
-          docInput.setValidators([Validators.required, Validators.pattern(/^\\d{8}$/)]);
+          this.docMaxLength = 8;
+          docInput.setValidators([Validators.required, Validators.pattern(/^\d{8}$/)]);
         } else if (tipo === 'CE') {
-          docInput.setValidators([Validators.required, Validators.pattern(/^\\d{9}$/)]);
+          this.docMaxLength = 9;
+          docInput.setValidators([Validators.required, Validators.pattern(/^\d{9}$/)]);
         } else {
-          docInput.setValidators([Validators.required]);
+          this.docMaxLength = 12;
+          docInput.setValidators([Validators.required, Validators.minLength(5)]);
         }
         docInput.updateValueAndValidity();
       }
@@ -243,6 +248,13 @@ export class CheckoutComponent implements OnInit {
     }, 50);
   }
 
+  /** Filtra cualquier caracter no numérico del campo de documento */
+  soloNumeros(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.replace(/[^0-9]/g, '').slice(0, this.docMaxLength);
+    this.checkoutForm.get('documentoNumero')?.setValue(input.value);
+  }
+
   /** Compose full direccion string before submit */
   private composeDireccion(): void {
     const f = this.checkoutForm.value;
@@ -291,7 +303,7 @@ export class CheckoutComponent implements OnInit {
       telefono: formData.telefono,
       items: this.itemsCarrito.map(item => ({
         cuentoId: item.cuento.id,
-        nombreCuento: item.cuento.nombre,
+        nombreCuento: item.cuento.titulo,
         imagenUrl: item.cuento.imagenUrl,
         precioUnitario: item.cuento.precio,
         cantidad: item.cantidad,

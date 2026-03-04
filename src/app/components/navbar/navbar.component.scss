@@ -424,3 +424,48 @@
     display: none;
   }
 }
+
+/* ===============================
+   ADMIN NAVBAR — Dark theme
+   =============================== */
+.navbar-admin {
+  background: $background-dark;
+  box-shadow: 0 4px 24px rgba($background-dark, 0.4);
+
+  .nav-links li a {
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover,
+    &.active {
+      color: $secondary;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active svg {
+      stroke: $secondary;
+    }
+  }
+
+  .search-form input {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    box-shadow: none;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:focus {
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 0 2px rgba($secondary, 0.4);
+    }
+  }
+
+  .search-icon {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .btn-login {
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+}

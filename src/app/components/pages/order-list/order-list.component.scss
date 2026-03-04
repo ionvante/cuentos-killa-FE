@@ -136,173 +136,392 @@
 
 /* Order card */
 .order-card {
-  display: block;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 2rem;
   padding: 1.25rem;
-  box-shadow: 0 4px 16px rgba($primary, 0.06);
+  box-shadow: 0 8px 24px rgba(166, 110, 56, 0.08);
+  /* shadow-soft from tailwind config */
   position: relative;
   overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
   border: 1px solid transparent;
-  transition: box-shadow 0.3s, transform 0.3s;
 
   &:hover,
   &:focus {
-    box-shadow: 0 8px 24px rgba($primary, 0.12);
     transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(166, 110, 56, 0.12);
     outline: none;
   }
 
-  /* Decorative book icon in corner */
-  &::after {
-    content: '📖';
-    position: absolute;
-    bottom: -4px;
-    right: 8px;
-    font-size: 3.5rem;
-    opacity: 0.06;
-    pointer-events: none;
-  }
+  .card-header-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
 
-  .detail-column {
-    .card-header {
+    .title-group {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      gap: 0.5rem;
 
-      h3 {
+      .icon-box {
+        width: 32px;
+        height: 32px;
+        border-radius: 0.5rem;
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 1.15rem;
-        font-weight: 800;
-        color: #3B2A1A;
-        margin: 0;
-      }
+        justify-content: center;
 
-      .date {
-        font-size: 0.75rem;
-        color: #b8a08a;
-        font-weight: 600;
-        background: #f9f5f0;
-        padding: 0.25rem 0.5rem;
-        border-radius: 6px;
-      }
-    }
+        span {
+          font-size: 1.125rem;
+        }
 
-    .estado {
-      margin-bottom: 0.75rem;
-      display: inline-block;
-    }
+        &.pendiente {
+          background: #fee2e2;
+          color: #ef4444;
+        }
 
-    .total {
-      margin: 0 0 0.75rem;
-      font-size: 1rem;
-      color: #3B2A1A;
+        &.entregado {
+          background: #dbeafe;
+          color: #3b82f6;
+        }
 
-      strong {
-        color: #7a5c3a;
-        font-weight: 600;
-      }
-    }
+        &.encamino {
+          background: #ffedd5;
+          color: #f97316;
+        }
 
-    .productos {
-      margin-bottom: 0.75rem;
+        &.verificado {
+          background: #d1fae5;
+          color: #10b981;
+        }
 
-      ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.25rem;
-
-        li {
-          font-size: 0.85rem;
-          color: #7a5c3a;
-          display: flex;
-          align-items: center;
-
-          &::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: $primary;
-            margin-right: 0.5rem;
-            flex-shrink: 0;
-          }
+        &.enviado {
+          background: #e0e7ff;
+          color: #6366f1;
         }
       }
 
-      .ver-mas {
-        background: none;
-        border: none;
-        color: $primary;
-        font-size: 0.8rem;
+      h2 {
+        font-family: "Fredoka", sans-serif;
+        font-size: 1.25rem;
         font-weight: 700;
-        cursor: pointer;
-        padding: 0.25rem 0;
-        text-decoration: underline;
+        color: #3b2a1a;
+        margin: 0;
       }
     }
 
-    .acciones {
-      margin-top: 0.5rem;
+    .meta-group {
       display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      .btn-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f3f4f6;
+        color: #6b7280;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: color 0.2s;
+
+        &:hover {
+          color: $primary;
+        }
+
+        span {
+          font-size: 1.125rem;
+        }
+      }
+
+      .date-badge {
+        display: flex;
+        align-items: center;
+        font-size: 0.75rem;
+        color: #6b7280;
+        font-weight: 600;
+        background: #f3f4f6;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+
+        span {
+          font-size: 0.875rem;
+          margin-right: 0.25rem;
+        }
+      }
+    }
+  }
+
+  .card-sub-new {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 0.5rem;
+      }
+
+      .text {
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      &.pendiente {
+        background: rgba(253, 230, 138, 0.8);
+
+        .dot {
+          background: #d97706;
+          animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .text {
+          color: #92400e;
+        }
+      }
+
+      &.entregado {
+        background: rgba(150, 206, 180, 0.2);
+
+        .dot {
+          background: #96ceb4;
+        }
+
+        .text {
+          color: #3b2a1a;
+        }
+      }
+
+      &.encamino {
+        background: #d4e2ff;
+
+        .dot {
+          background: #4a90e2;
+          animation: bounce 1s infinite;
+        }
+
+        .text {
+          color: #3b2a1a;
+        }
+      }
+
+      &.verificado {
+        background: #ecfdf5;
+
+        .dot {
+          background: #10b981;
+        }
+
+        .text {
+          color: #065f46;
+        }
+      }
+
+      &.enviado {
+        background: #e0e7ff;
+
+        .dot {
+          background: #6366f1;
+        }
+
+        .text {
+          color: #3730a3;
+        }
+      }
+    }
+
+    .total-new {
+      font-size: 0.875rem;
+      font-weight: 700;
+      color: #3b2a1a;
+      margin: 0;
+
+      span {
+        font-size: 1.125rem;
+      }
+    }
+  }
+
+  .items-list-new {
+    margin-bottom: 1rem;
+    padding-right: 4rem;
+
+    .item-block {
+      margin-bottom: 0.5rem;
+      margin-left: 0.25rem;
+
+      .name {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: #3b2a1a;
+        line-height: 1.25;
+        margin: 0;
+      }
+
+      .qty {
+        font-size: 0.75rem;
+        color: #6b7280;
+        padding-left: 0.5rem;
+        margin: 0.125rem 0 0 0;
+      }
+    }
+
+    .ver-mas-new {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #7a5c3a;
+      background: none;
+      border: none;
+      padding: 0;
+      margin-top: 1rem;
+      text-decoration: underline;
+      text-decoration-color: #b8a08a;
+      cursor: pointer;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $primary;
+      }
+    }
+  }
+
+  .actions-new {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    position: relative;
+    z-index: 10;
+    padding-right: 4rem;
+
+    .btn-action {
+      flex: 1;
+      padding: 0.625rem 1rem;
+      border-radius: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       gap: 0.5rem;
-      flex-wrap: wrap;
+      border: 2px solid transparent;
+
+      &:active {
+        transform: scale(0.95);
+      }
+
+      &.primary {
+        background: #A66E38;
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+        &:hover {
+          background: darken(#A66E38, 5%);
+        }
+      }
+
+      &.outline {
+        background: #fff;
+        color: #A66E38;
+        border-color: #A66E38;
+
+        &:hover {
+          background: rgba(166, 110, 56, 0.05);
+        }
+
+        &.warning {
+          color: #FFB300;
+          border-color: #FFB300;
+
+          &:hover {
+            background: rgba(255, 179, 0, 0.05);
+          }
+        }
+      }
+    }
+  }
+
+  .corner-decor {
+    position: absolute;
+    bottom: -0.5rem;
+    right: -0.5rem;
+    width: 4rem;
+    height: 4rem;
+    border-top-left-radius: 1.5rem;
+    border-bottom-right-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.9;
+    pointer-events: none;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+    span {
+      color: #fff;
+      font-size: 1.875rem;
+      filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.07));
+    }
+
+    &.pendiente {
+      background: linear-gradient(to bottom right, #fef08a, #fdba74);
+    }
+
+    &.entregado {
+      background: linear-gradient(to bottom right, #bbf7d0, #5eead4);
+    }
+
+    &.encamino {
+      background: linear-gradient(to bottom right, #fbcfe8, #fda4af);
+    }
+
+    /* teal -> but encamino was toys */
+    &.verificado {
+      background: linear-gradient(to bottom right, #a7f3d0, #34d399);
+    }
+
+    &.enviado {
+      background: linear-gradient(to bottom right, #c7d2fe, #818cf8);
     }
   }
 }
 
-/* Buttons */
-.btn {
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 0.85rem;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
+@keyframes pulse {
 
-  &:active {
-    transform: scale(0.97);
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
   }
 }
 
-.btn-primary {
-  background: $primary;
-  color: #fff;
-  padding: 0.6rem 1.25rem;
-  font-weight: 700;
-  font-size: 0.85rem;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba($primary, 0.2);
-  transition: background 0.2s;
+@keyframes bounce {
 
-  &:hover {
-    background: darken($primary, 8%);
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
-}
 
-.btn-secondary {
-  background: #fff;
-  color: $primary;
-  padding: 0.6rem 1.25rem;
-  font-weight: 700;
-  font-size: 0.85rem;
-  border: 2px solid $primary;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: rgba($primary, 0.05);
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
 

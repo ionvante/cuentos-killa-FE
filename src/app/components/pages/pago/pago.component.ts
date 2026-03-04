@@ -56,7 +56,7 @@ export class PagoComponent implements OnInit {
       error: (err) => console.error('Error cargando total del pedido:', err)
     });
 
-    // Procesar callback de Mercado Pago cuando redirige de vuelta al FE
+    // Procesar callback de Mercado Pago
     this.route.queryParamMap.subscribe(params => {
       const mpStatus = params.get('status');            // 'approved', 'pending', 'failure'
       const collectionStatus = params.get('collection_status'); // más específico: 'approved'

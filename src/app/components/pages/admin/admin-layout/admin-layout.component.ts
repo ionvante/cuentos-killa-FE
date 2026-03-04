@@ -1,13 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { LazyLoadImageDirective } from '../../../../directives/lazy-load-image.directive';
 import { AdminDrawerComponent } from '../../../admin-drawer/admin-drawer.component';
 
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [RouterModule, CommonModule, LazyLoadImageDirective, AdminDrawerComponent],
+  imports: [RouterModule, CommonModule, AdminDrawerComponent],
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss']
 })

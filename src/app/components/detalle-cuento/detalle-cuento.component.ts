@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, Inject, PLATFORM_ID, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CuentoService } from './../../services/cuento.service';
 import { Cuento } from './../../model/cuento.model';
@@ -38,13 +38,18 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
     private carritoService: CartService,
     private location: Location,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
+        if (isPlatformBrowser(this.platformId)) {
+          window.scrollTo({ top: 0 });
+        }
+        this.cuento = undefined;
         this.cargandoImagen = true;
         this.cantidad = 1;
         this.selectedTab = 'description';
@@ -76,17 +81,19 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngAfterViewInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.carouselInterval = setInterval(() => {
-        const container = this.carousel?.nativeElement;
-        if (container) {
-          const atEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth;
-          if (atEnd) {
-            container.scrollTo({ left: 0, behavior: 'smooth' });
-          } else {
-            this.scrollCarousel(1);
+      this.ngZone.runOutsideAngular(() => {
+        this.carouselInterval = setInterval(() => {
+          const container = this.carousel?.nativeElement;
+          if (container) {
+            const atEnd = container.scrollLeft >= container.scrollWidth - container.clientWidth;
+            if (atEnd) {
+              container.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+              this.scrollCarousel(1);
+            }
           }
-        }
-      }, 4000);
+        }, 4000);
+      });
     }
   }
 
@@ -159,12 +166,15 @@ export class DetalleCuentoComponent implements OnInit, AfterViewInit, OnDestroy 
 
   verDetalleCuento(id: number): void {
     this.router.navigate(['/cuento', id]).then(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (isPlatformBrowser(this.platformId)) {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     });
   }
 
   compartir(red: 'whatsapp' | 'tiktok') {
-    const url = window.location.href; // no encodeURIComponent for the full concatenation yet or let's encode the whole text
+    if (!isPlatformBrowser(this.platformId)) return;
+    const url = window.location.href;
     if (red === 'whatsapp') {
       const text = encodeURIComponent(`Hola , estoy interesado en : ${url}`);
       window.open(`https://wa.me/51914279693?text=${text}`, '_blank');

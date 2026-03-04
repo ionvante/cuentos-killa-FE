@@ -1,4 +1,4 @@
-<nav class="navbar" role="navigation" aria-label="Navegación principal">
+<nav class="navbar" [class.navbar-admin]="user?.role === 'ADMIN'" role="navigation" aria-label="Navegación principal">
   <!-- Brand -->
   <a class="navbar-brand" routerLink="/home">
     <svg class="brand-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"

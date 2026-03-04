@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { Cuento } from '../../../model/cuento.model';
 import { CuentoService } from '../../../services/cuento.service';
 import { CartService } from '../../../services/carrito.service';
@@ -13,10 +13,9 @@ export class CuentosComponent implements OnInit {
   cuentos: Cuento[] = [];
   searchTerm = '';
   sortOption: 'fecha' | 'alfabetico' | 'precio' = 'fecha';
-  fechaFilter = '';
-  precioFilter = '';
   categoriaFilter = '';
-  ratingFilter = '';
+  edadFilter = '';
+  precioFilter = '';
   isLoading = true;
 
   categorias = ['Aventura', 'Didáctico', 'Clásico'];
@@ -25,7 +24,8 @@ export class CuentosComponent implements OnInit {
     private cuentoService: CuentoService,
     private cartService: CartService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
@@ -34,19 +34,22 @@ export class CuentosComponent implements OnInit {
     });
 
     this.cuentoService.obtenerCuentos().subscribe(data => {
-      // Retrasado artificialmente para visualizar los Skeleton Loaders de la Fase UX 2
-      setTimeout(() => {
-        this.cuentos = data
-          .map((c, idx) => ({
-            ...c,
-            categoria: this.categorias[Math.floor(Math.random() * this.categorias.length)],
-            rating: Math.floor(Math.random() * 5) + 1,
-            badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
-          }))
-          .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
-          .slice(0, 20);
-        this.isLoading = false;
-      }, 1000);
+      this.ngZone.runOutsideAngular(() => {
+        setTimeout(() => {
+          this.ngZone.run(() => {
+            this.cuentos = data
+              .map((c, idx) => ({
+                ...c,
+                categoria: this.categorias[Math.floor(Math.random() * this.categorias.length)],
+                rating: Math.floor(Math.random() * 5) + 1,
+                badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
+              }))
+              .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
+              .slice(0, 20);
+            this.isLoading = false;
+          });
+        }, 1000);
+      });
     });
   }
 
@@ -60,24 +63,12 @@ export class CuentosComponent implements OnInit {
       filtered = filtered.filter(c => c.categoria === this.categoriaFilter);
     }
 
-    if (this.ratingFilter) {
-      filtered = filtered.filter(c => (c.rating || 0) >= +this.ratingFilter);
-    }
-
-    if (this.fechaFilter) {
-      const now = Date.now();
+    if (this.edadFilter) {
       filtered = filtered.filter(c => {
-        const diffDays = (now - new Date(c.fechaIngreso).getTime()) / (1000 * 3600 * 24);
-        switch (this.fechaFilter) {
-          case 'semana':
-            return diffDays <= 7;
-          case 'mes':
-            return diffDays <= 30;
-          case 'ano':
-            return diffDays <= 365;
-          default:
-            return true;
-        }
+        if (!c.edadRecomendada) return false;
+        // La Base de Datos de prueba podría tener "0-3 años" o "0 - 3 años"
+        const prefix = this.edadFilter.split('-')[0].trim();
+        return c.edadRecomendada.includes(prefix);
       });
     }
 
@@ -118,9 +109,8 @@ export class CuentosComponent implements OnInit {
 
   limpiarFiltros(): void {
     this.searchTerm = '';
-    this.fechaFilter = '';
-    this.precioFilter = '';
     this.categoriaFilter = '';
-    this.ratingFilter = '';
+    this.edadFilter = '';
+    this.precioFilter = '';
   }
 }

@@ -34,36 +34,68 @@
   </p>
 
   <div *ngIf="!isLoading && !errorMensaje && filteredPedidos.length > 0" class="orders-grid" role="region">
-    <article *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-row order-card"
-      role="region" tabindex="0" [attr.aria-labelledby]="'order-' + getPedidoId(pedido)" [@fadeSlideIn]>
-      <div class="detail-column">
-        <div class="card-header">
-          <h3 id="order-{{getPedidoId(pedido)}}">📚 Pedido #{{ getPedidoId(pedido) }}</h3>
-          <span class="date">🗓️ {{ pedido.fecha | date:'dd/MM/yyyy' }}</span>
+    <article *ngFor="let pedido of paginatedPedidos; trackBy: trackByPedidoId" class="order-card" role="region"
+      tabindex="0" [attr.aria-labelledby]="'order-' + getPedidoId(pedido)" [@fadeSlideIn]>
+
+      <div class="card-header-new">
+        <div class="title-group">
+          <div class="icon-box" [ngClass]="getEstadoTheme(pedido.estado)">
+            <span class="material-icons">{{ getEstadoIcon(pedido.estado) }}</span>
+          </div>
+          <h2 id="order-{{getPedidoId(pedido)}}">Pedido #{{ getPedidoId(pedido) }}</h2>
         </div>
-        <app-badge [status]="pedido.estado" class="estado"></app-badge>
-        <p class="total"><strong>Total:</strong> {{ pedido.total | currency:'PEN':'symbol':'1.2-2' }}</p>
-        <div class="productos">
-          <ul>
-            <li
-              *ngFor="let item of pedido.items.slice(0, itemsExpanded[getPedidoId(pedido)] ? pedido.items.length : 2)">
-              {{ item.nombreCuento }} x{{ item.cantidad }}
-            </li>
-          </ul>
-          <button *ngIf="pedido.items.length > 2 && !itemsExpanded[getPedidoId(pedido)]" class="ver-mas"
-            (click)="toggleItems(getPedidoId(pedido))">Ver más</button>
+        <div class="meta-group">
+          <button class="btn-icon" (click)="descargarPDF(getPedidoId(pedido))" aria-label="Descargar PDF"
+            title="Descargar PDF">
+            <span class="material-icons">picture_as_pdf</span>
+          </button>
+          <div class="date-badge">
+            <span class="material-icons text-sm">calendar_today</span>
+            {{ pedido.fecha | date:'dd/MM/yyyy' }}
+          </div>
         </div>
-        <div class="acciones">
-          <ng-container *ngIf="pedido.estado === 'PAGADO'; else pagarAhora">
-            <button class="btn-primary" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+      </div>
+
+      <div class="card-sub-new">
+        <div class="status-pill" [ngClass]="getEstadoTheme(pedido.estado)">
+          <span class="dot"></span>
+          <span class="text">{{ getEstadoVisible(pedido.estado) }}</span>
+        </div>
+        <p class="total-new">Total: <span>{{ pedido.total | currency:'PEN':'symbol':'1.2-2' }}</span></p>
+      </div>
+
+      <div class="items-list-new">
+        <div class="item-block"
+          *ngFor="let item of pedido.items.slice(0, itemsExpanded[getPedidoId(pedido)] ? pedido.items.length : 2)">
+          <p class="name">{{ item.nombreCuento }}</p>
+          <p class="qty">x{{ item.cantidad }} unidad<span *ngIf="item.cantidad > 1">es</span></p>
+        </div>
+
+        <button *ngIf="pedido.items.length > 2" class="ver-mas-new" (click)="toggleItems(getPedidoId(pedido))">
+          {{ itemsExpanded[getPedidoId(pedido)] ? 'Ver menos productos' : 'Ver más productos' }}
+        </button>
+      </div>
+
+      <div class="actions-new">
+        <ng-container *ngIf="pedido.estado === 'PAGADO'; else checkEntregado">
+          <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+        </ng-container>
+        <ng-template #checkEntregado>
+          <ng-container *ngIf="pedido.estado === 'ENTREGADO'; else checkPendiente">
+            <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+            <button class="btn-action outline warning" (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
           </ng-container>
-          <ng-template #pagarAhora>
-            <button class="btn-primary" (click)="irAPago(getPedidoId(pedido))">Pagar ahora</button>
-          </ng-template>
-          <button class="btn-secondary" (click)="descargarPDF(getPedidoId(pedido))">Descargar PDF</button>
-          <button *ngIf="pedido.estado === 'ENTREGADO'" class="btn-secondary"
-            (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
-        </div>
+        </ng-template>
+        <ng-template #checkPendiente>
+          <button class="btn-action primary" (click)="irAPago(getPedidoId(pedido))">
+            <span class="material-icons text-sm">payment</span> Pagar ahora
+          </button>
+          <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+        </ng-template>
+      </div>
+
+      <div class="corner-decor" [ngClass]="getEstadoTheme(pedido.estado)">
+        <span class="material-icons">{{ getCornerIcon(pedido.estado) }}</span>
       </div>
     </article>
     <div class="pagination" *ngIf="totalPages > 1">
