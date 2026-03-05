@@ -10,59 +10,81 @@ import { ConfigItem } from '../model/config-item.model';
 export class ConfigService {
   private apiUrl = `${environment.apiBaseUrl}/config/category`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getCategories(): Observable<ConfigCategory[]> {
-    return this.http.get<ConfigCategory[]>(this.apiUrl);
+    return this.http.get<any>(this.apiUrl).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   getCategory(id: number): Observable<ConfigCategory> {
-    return this.http.get<ConfigCategory>(`${this.apiUrl}/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   createCategory(data: Partial<ConfigCategory>): Observable<ConfigCategory> {
-    return this.http.post<ConfigCategory>(this.apiUrl, data);
+    return this.http.post<any>(this.apiUrl, data).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   updateCategory(id: number, data: Partial<ConfigCategory>): Observable<ConfigCategory> {
-    return this.http.put<ConfigCategory>(`${this.apiUrl}/${id}`, data);
+    return this.http.put<any>(`${this.apiUrl}/${id}`, data).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   deleteCategory(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   getItems(categoryId: number): Observable<ConfigItem[]> {
-    return this.http.get<ConfigItem[]>(`${this.apiUrl}/${categoryId}/item`);
+    return this.http.get<any>(`${this.apiUrl}/${categoryId}/item`).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   getItem(categoryId: number, id: number): Observable<ConfigItem> {
-    return this.http.get<ConfigItem>(`${this.apiUrl}/${categoryId}/item/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/${categoryId}/item/${id}`).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   createItem(categoryId: number, data: Partial<ConfigItem>): Observable<ConfigItem> {
-    return this.http.post<ConfigItem>(`${this.apiUrl}/${categoryId}/item`, data);
+    return this.http.post<any>(`${this.apiUrl}/${categoryId}/item`, data).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   updateItem(categoryId: number, id: number, data: Partial<ConfigItem>): Observable<ConfigItem> {
-    return this.http.put<ConfigItem>(`${this.apiUrl}/${categoryId}/item/${id}`, data);
+    return this.http.put<any>(`${this.apiUrl}/${categoryId}/item/${id}`, data).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   deleteItem(categoryId: number, id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${categoryId}/item/${id}`);
-  }
-  getItemConfig<T>(cat: number, id2: number): Observable<ConfigItem<T>> {
-  return this.http
-    .get<ConfigItem<any>>(`${this.apiUrl}/category/${cat}/item/${id2}`)
-    .pipe(
-      map((item: ConfigItem<any>) => {
-        // Normalizamos item.data
-        const parsed = typeof item.data === 'string'
-          ? JSON.parse(item.data)  // ↩️
-          : item.data;
-
-        return { ...item, data: parsed } as ConfigItem<T>;
-      })
+    return this.http.delete<any>(`${this.apiUrl}/${categoryId}/item/${id}`).pipe(
+      map(res => res.data ?? res)
     );
-}
+  }
+
+  getItemConfig<T>(cat: number, id2: number): Observable<ConfigItem<T>> {
+    return this.http
+      .get<any>(`${this.apiUrl}/${cat}/item/${id2}`)
+      .pipe(
+        map((res: any) => {
+          const item = res.data ?? res;
+          // Normalizamos item.data
+          const parsed = typeof item.data === 'string'
+            ? JSON.parse(item.data)
+            : (item.data ?? {});
+
+          return { ...item, data: parsed } as ConfigItem<T>;
+        })
+      );
+  }
 }

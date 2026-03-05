@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { ClienteService } from '../../../services/cliente.service';
+import { MaestrosService } from '../../../services/maestros.service';
 import { User } from '../../../model/user.model';
 import { Address } from '../../../model/address.model';
 import { trigger, transition, style, animate } from '@angular/animations';
@@ -58,9 +59,17 @@ export class ProfileComponent implements OnInit {
     toastType: 'success' | 'error' = 'success';
     toastVisible = false;
 
+    // Ubigeo data
+    departamentos: any[] = [];
+    provincias: any[] = [];
+    distritos: any[] = [];
+    loadingProvincias = false;
+    loadingDistritos = false;
+
     constructor(
         private authService: AuthService,
         private clienteService: ClienteService,
+        private maestrosService: MaestrosService,
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -69,6 +78,7 @@ export class ProfileComponent implements OnInit {
         if (this.user?.id) {
             this.loadProfile();
             this.loadAddresses();
+            this.loadDepartamentos();
         } else {
             this.isLoading = false;
             this.isLoadingAddresses = false;
@@ -144,6 +154,8 @@ export class ProfileComponent implements OnInit {
     openNewAddress(): void {
         this.editingAddress = null;
         this.addressForm = this.emptyAddress();
+        this.provincias = [];
+        this.distritos = [];
         this.showAddressModal = true;
     }
 
@@ -151,6 +163,11 @@ export class ProfileComponent implements OnInit {
         this.editingAddress = addr;
         this.addressForm = { ...addr };
         this.showAddressModal = true;
+
+        // Cargar cascadas si hay valores
+        if (this.addressForm.departamento) {
+            this.onDepartamentoChange(this.addressForm.departamento, true);
+        }
     }
 
     closeAddressModal(): void {
@@ -207,6 +224,68 @@ export class ProfileComponent implements OnInit {
                 this.cdr.markForCheck();
             }
         });
+    }
+
+    // ── Ubigeo Helpers ──────────────────────────────
+
+    loadDepartamentos(): void {
+        this.maestrosService.obtenerDepartamentos().subscribe({
+            next: (data) => {
+                this.departamentos = data;
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
+    onDepartamentoChange(nombre: string, isInitial = false): void {
+        if (!isInitial) {
+            this.addressForm.provincia = '';
+            this.addressForm.distrito = '';
+        }
+        this.provincias = [];
+        this.distritos = [];
+
+        const depto = this.departamentos.find(d => d.nombre === nombre);
+        if (depto) {
+            this.loadingProvincias = true;
+            this.maestrosService.obtenerProvincias(depto.id).subscribe({
+                next: (data) => {
+                    this.provincias = data;
+                    this.loadingProvincias = false;
+                    if (isInitial && this.addressForm.provincia) {
+                        this.onProvinciaChange(this.addressForm.provincia, true);
+                    }
+                    this.cdr.markForCheck();
+                },
+                error: () => {
+                    this.loadingProvincias = false;
+                    this.cdr.markForCheck();
+                }
+            });
+        }
+    }
+
+    onProvinciaChange(nombre: string, isInitial = false): void {
+        if (!isInitial) {
+            this.addressForm.distrito = '';
+        }
+        this.distritos = [];
+
+        const prov = this.provincias.find(p => p.nombre === nombre);
+        if (prov) {
+            this.loadingDistritos = true;
+            this.maestrosService.obtenerDistritos(prov.id).subscribe({
+                next: (data) => {
+                    this.distritos = data;
+                    this.loadingDistritos = false;
+                    this.cdr.markForCheck();
+                },
+                error: () => {
+                    this.loadingDistritos = false;
+                    this.cdr.markForCheck();
+                }
+            });
+        }
     }
 
     // ── Helpers ──────────────────────────────────────

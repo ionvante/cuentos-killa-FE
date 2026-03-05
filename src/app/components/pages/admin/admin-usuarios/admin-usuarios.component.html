@@ -1,59 +1,95 @@
-<div class="admin-usuarios-container">
-  <h2>Usuarios</h2>
+<div class="admin-section">
+  <div class="admin-header">
+    <div>
+      <h2>👥 Usuarios</h2>
+      <p class="admin-subtitle">Gestiona los usuarios registrados en la plataforma</p>
+    </div>
+  </div>
 
-  <div *ngIf="isLoading">Cargando usuarios...</div>
-  <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
+  <!-- Loading / Error -->
+  <div class="admin-loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Cargando usuarios...</span>
+  </div>
+  <div class="admin-error" *ngIf="errorMensaje">
+    <span>⚠️</span> {{ errorMensaje }}
+  </div>
 
-  <table *ngIf="!isLoading && !errorMensaje && !isMobile">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Teléfono</th>
-        <th>Rol</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let u of usuarios; trackBy: trackById">
-        <td>{{ u.id }}</td>
-        <td>{{ u.nombre }} {{ u.apellido }}</td>
-        <td>{{ u.email }}</td>
-        <td>{{ u.telefono }}</td>
-        <td>{{ u.role }}</td>
-        <td>{{ u.habilitado ? 'Habilitado' : 'Deshabilitado' }}</td>
-        <td class="acciones">
-          <button class="btn btn-success" (click)="toggleHabilitar(u)">
-            {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
-          </button>
-          <button class="btn btn-secondary" (click)="enviarCorreo(u)">Correo</button>
-          <button class="btn btn-secondary" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">Hacer admin</button>
-          <button class="btn btn-primary" (click)="verPedidos(u)">Pedidos</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Tabla Desktop -->
+  <div class="admin-table-wrapper" *ngIf="!isLoading && !errorMensaje && !isMobile">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th class="col-id">ID</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th class="col-role">Rol</th>
+          <th class="col-status">Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of usuarios; trackBy: trackById" class="table-row">
+          <td class="col-id">{{ u.id }}</td>
+          <td><strong>{{ u.nombre }} {{ u.apellido }}</strong></td>
+          <td class="text-muted">{{ u.email }}</td>
+          <td>{{ u.telefono }}</td>
+          <td class="col-role">
+            <span class="tag" [class.tag-admin]="u.role === 'ADMIN'" [class.tag-user]="u.role !== 'ADMIN'">
+              {{ u.role }}
+            </span>
+          </td>
+          <td class="col-status">
+            <span class="status-dot" [class.active]="u.habilitado" [class.inactive]="!u.habilitado"></span>
+            {{ u.habilitado ? 'Activo' : 'Inactivo' }}
+          </td>
+          <td>
+            <div class="action-group">
+              <button class="btn-sm" [class.btn-sm-success]="!u.habilitado" [class.btn-sm-warn]="u.habilitado"
+                (click)="toggleHabilitar(u)">
+                {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+              </button>
+              <button class="btn-sm btn-sm-outline" (click)="enviarCorreo(u)">✉️ Correo</button>
+              <button class="btn-sm btn-sm-outline" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">⬆️ Admin</button>
+              <button class="btn-sm btn-sm-primary" (click)="verPedidos(u)">📦 Pedidos</button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="usuarios.length === 0">
+          <td colspan="7" class="empty-state">
+            <div class="empty-icon">👤</div>
+            <p>No hay usuarios registrados</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-  <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
-    <div class="usuario-cards">
-      <div class="usuario-card" *ngFor="let u of usuarios; trackBy: trackById">
-        <div><strong>ID:</strong> {{ u.id }}</div>
-        <div><strong>Nombre:</strong> {{ u.nombre }} {{ u.apellido }}</div>
-        <div><strong>Email:</strong> {{ u.email }}</div>
-        <div><strong>Teléfono:</strong> {{ u.telefono }}</div>
-        <div><strong>Rol:</strong> {{ u.role }}</div>
-        <div><strong>Estado:</strong> {{ u.habilitado ? 'Habilitado' : 'Deshabilitado' }}</div>
-        <div class="acciones">
-          <button class="btn btn-success" (click)="toggleHabilitar(u)">
-            {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
-          </button>
-          <button class="btn btn-secondary" (click)="enviarCorreo(u)">Correo</button>
-          <button class="btn btn-secondary" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">Hacer admin</button>
-          <button class="btn btn-primary" (click)="verPedidos(u)">Pedidos</button>
-        </div>
+  <!-- Cards Mobile -->
+  <div class="card-list" *ngIf="!isLoading && !errorMensaje && isMobile">
+    <div class="user-card" *ngFor="let u of usuarios; trackBy: trackById">
+      <div class="card-header-row">
+        <strong>{{ u.nombre }} {{ u.apellido }}</strong>
+        <span class="tag" [class.tag-admin]="u.role === 'ADMIN'" [class.tag-user]="u.role !== 'ADMIN'">
+          {{ u.role }}
+        </span>
+      </div>
+      <div class="card-detail">📧 {{ u.email }}</div>
+      <div class="card-detail">📱 {{ u.telefono }}</div>
+      <div class="card-detail">
+        <span class="status-dot" [class.active]="u.habilitado" [class.inactive]="!u.habilitado"></span>
+        {{ u.habilitado ? 'Activo' : 'Inactivo' }}
+      </div>
+      <div class="action-group">
+        <button class="btn-sm" [class.btn-sm-success]="!u.habilitado" [class.btn-sm-warn]="u.habilitado"
+          (click)="toggleHabilitar(u)">
+          {{ u.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+        </button>
+        <button class="btn-sm btn-sm-outline" (click)="enviarCorreo(u)">✉️</button>
+        <button class="btn-sm btn-sm-outline" *ngIf="u.role !== 'ADMIN'" (click)="hacerAdmin(u)">⬆️</button>
+        <button class="btn-sm btn-sm-primary" (click)="verPedidos(u)">📦</button>
       </div>
     </div>
-  </ng-container>
+  </div>
 </div>

@@ -8,7 +8,7 @@ import { ToastService } from '../../../services/toast.service';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
-import { UBIGEO_PERU, Departamento, Provincia, Distrito } from '../../../data/ubigeo';
+import { MaestrosService } from '../../../services/maestros.service';
 
 
 @Component({
@@ -31,9 +31,11 @@ export class CheckoutComponent implements OnInit {
   loadingDistritos = false;
   docMaxLength = 8;  // DNI=8, CE=9, Pasaporte=12
 
-  departamentos: Departamento[] = UBIGEO_PERU;
-  provincias: Provincia[] = [];
-  distritos: Distrito[] = [];
+  // Arrays asincrónicos desde la BD (tabla general / maestros)
+  departamentos: any[] = [];
+  provincias: any[] = [];
+  distritos: any[] = [];
+  tiposDocumento: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +44,7 @@ export class CheckoutComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private toast: ToastService,
+    private maestrosService: MaestrosService,
 
   ) {
     this.user = this.authService.getUser();
@@ -76,61 +79,103 @@ export class CheckoutComponent implements OnInit {
     // 2. Obtiene usuario logueado
     const user = this.authService.getUser();
 
-    // 3. Si existe, autocompleta
+    // 3. Si existe, autocompleta datos básicos y documento
     if (user) {
       this.checkoutForm.patchValue({
-        nombre: user.nombre + ' ' + user.apellido || '',
+        nombre: (user.nombre + ' ' + (user.apellido || '')).trim(),
         correo: user.email || '',
-        // direccion: user.direccion || '',
-        telefono: user.telefono || ''
+        telefono: user.telefono || '',
+        documentoTipo: user.documentoTipo || 'DNI',
+        documentoNumero: user.documentoNumero || ''
       });
+
+      // Si el usuario tiene direcciones registradas, autocompletar la primera (o principal)
+      if (user.direcciones && user.direcciones.length > 0) {
+        const dir = user.direcciones.find(d => d.esPrincipal) || user.direcciones[0];
+        this.checkoutForm.patchValue({
+          departamento: dir.departamento,
+          calle: dir.calle,
+          referencia: dir.referencia
+        });
+
+        // IMPORTANTE: Disparar manualmente la carga de provincias para que se autoseleccione el valor
+        if (dir.departamento) {
+          this.cargarProvinciasYAutoSeleccionar(dir.departamento, dir.provincia, dir.distrito);
+        }
+      }
     }
 
     // 4. Carga el carrito
     this.itemsCarrito = this.cartService.obtenerItems();
 
-    // 5. Recuperar estado del stepper
+    // 5. Recuperar estado del stepper desde session storage (sobrescribe autocompletado si hay algo previo)
     const savedForm = sessionStorage.getItem('checkoutForm');
     if (savedForm) {
       const parsedForm = JSON.parse(savedForm);
-      // Restore ubigeo cascades manually before patching
-      if (parsedForm.departamento) {
-        const d = this.departamentos.find(dept => dept.nombre === parsedForm.departamento);
-        this.provincias = d ? d.provincias : [];
-      }
-      if (parsedForm.provincia) {
-        const p = this.provincias.find(prov => prov.nombre === parsedForm.provincia);
-        this.distritos = p ? p.distritos : [];
-      }
       this.checkoutForm.patchValue(parsedForm);
     }
 
-    // Gestionar dependencias de UBIGEO
-    this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
-      this.loadingProvincias = true;
-      this.checkoutForm.get('provincia')?.disable({ emitEvent: false });
-
-      setTimeout(() => {
-        const depto = this.departamentos.find(d => d.nombre === deptoNombre);
-        this.provincias = depto ? depto.provincias : [];
-        this.distritos = [];
-        this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
-        this.checkoutForm.get('provincia')?.enable({ emitEvent: false });
-        this.loadingProvincias = false;
-      }, 400);
+    // 6. Carga inicial de Datos Maestros (Departamentos, Tipos Doc)
+    this.maestrosService.obtenerDepartamentos().subscribe({
+      next: (data) => {
+        this.departamentos = data;
+        // Si ya hay un departamento seleccionado por autocompletado o cache, cargar provincias
+        const currentDepto = this.checkoutForm.get('departamento')?.value;
+        if (currentDepto && this.provincias.length === 0) {
+          this.checkoutForm.get('departamento')?.setValue(currentDepto); // Re-dispara el valueChanges
+        }
+      },
+      error: (err) => console.error('Error cargando departamentos:', err)
     });
 
-    this.checkoutForm.get('provincia')?.valueChanges.subscribe(provId => {
-      this.loadingDistritos = true;
-      this.checkoutForm.get('distrito')?.disable({ emitEvent: false });
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
+      next: (data) => this.tiposDocumento = data,
+      error: (err) => console.error('Error cargando tipos de documento:', err)
+    });
 
-      setTimeout(() => {
-        const prov = this.provincias.find(p => p.nombre === provId);
-        this.distritos = prov ? prov.distritos : [];
-        this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
-        this.checkoutForm.get('distrito')?.enable({ emitEvent: false });
-        this.loadingDistritos = false;
-      }, 400);
+    // Gestionar dependencias de UBIGEO (Cascada Departamentos -> Provincias)
+    this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
+      if (!deptoNombre) return;
+
+      this.loadingProvincias = true;
+      const depto = this.departamentos.find(d => d.nombre === deptoNombre);
+
+      if (depto) {
+        this.maestrosService.obtenerProvincias(depto.id).subscribe({
+          next: (provs) => {
+            this.provincias = provs;
+            this.loadingProvincias = false;
+            // Si el valor actual de provincia no está en la nueva lista, resetear
+            const currentProv = this.checkoutForm.get('provincia')?.value;
+            if (!this.provincias.some(p => p.nombre === currentProv)) {
+              this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
+            }
+          },
+          error: () => this.loadingProvincias = false
+        });
+      }
+    });
+
+    // Gestionar dependencias de UBIGEO (Cascada Provincias -> Distritos)
+    this.checkoutForm.get('provincia')?.valueChanges.subscribe(provNombre => {
+      if (!provNombre) return;
+
+      this.loadingDistritos = true;
+      const prov = this.provincias.find(p => p.nombre === provNombre);
+
+      if (prov) {
+        this.maestrosService.obtenerDistritos(prov.id).subscribe({
+          next: (dists) => {
+            this.distritos = dists;
+            this.loadingDistritos = false;
+            const currentDist = this.checkoutForm.get('distrito')?.value;
+            if (!this.distritos.some(d => d.nombre === currentDist)) {
+              this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
+            }
+          },
+          error: () => this.loadingDistritos = false
+        });
+      }
     });
 
     // Validaciones dinámicas según tipo de documento
@@ -156,6 +201,31 @@ export class CheckoutComponent implements OnInit {
     // Guardar en session storage en cada cambio
     this.checkoutForm.valueChanges.subscribe(val => {
       sessionStorage.setItem('checkoutForm', JSON.stringify(val));
+    });
+  }
+
+  private cargarProvinciasYAutoSeleccionar(deptoNombre: string, provNombre: string, distNombre: string) {
+    this.loadingProvincias = true;
+    // Intentar buscar el ID del depto
+    this.maestrosService.obtenerDepartamentos().subscribe(deptos => {
+      this.departamentos = deptos;
+      const depto = deptos.find(d => d.nombre === deptoNombre);
+      if (depto) {
+        this.maestrosService.obtenerProvincias(depto.id).subscribe(provs => {
+          this.provincias = provs;
+          this.loadingProvincias = false;
+          const prov = provs.find(p => p.nombre === provNombre);
+          if (prov) {
+            this.checkoutForm.patchValue({ provincia: provNombre }, { emitEvent: false });
+            this.loadingDistritos = true;
+            this.maestrosService.obtenerDistritos(prov.id).subscribe(dists => {
+              this.distritos = dists;
+              this.loadingDistritos = false;
+              this.checkoutForm.patchValue({ distrito: distNombre }, { emitEvent: false });
+            });
+          }
+        });
+      }
     });
   }
 

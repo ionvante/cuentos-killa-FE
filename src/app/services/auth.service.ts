@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { User } from '../model/user.model';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../model/auth-response.model';
 import { StorageService, TOKEN_KEY, USER_KEY } from '../services/storage.service';
@@ -31,11 +32,15 @@ export class AuthService {
   }
 
   login(email: string, password: string): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password });
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   register(data: any): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/register`, data);
+    return this.http.post<any>(`${this.apiUrl}/register`, data).pipe(
+      map(res => res.data ?? res)
+    );
   }
 
   guardarToken(token: string) {
@@ -64,6 +69,13 @@ export class AuthService {
 
   getUser(): User | null {
     const data = this.storageService.getItem(this.userKey);
-    return data ? JSON.parse(data) : null;
+    if (!data) return null;
+    try {
+      return JSON.parse(data);
+    } catch {
+      // Datos corruptos en localStorage, limpiar
+      this.storageService.removeItem(this.userKey);
+      return null;
+    }
   }
 }

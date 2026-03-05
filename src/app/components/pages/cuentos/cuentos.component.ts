@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit } from '@angular/core';
 import { Cuento } from '../../../model/cuento.model';
 import { CuentoService } from '../../../services/cuento.service';
 import { CartService } from '../../../services/carrito.service';
+import { MaestrosService } from '../../../services/maestros.service';
 import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -18,19 +19,30 @@ export class CuentosComponent implements OnInit {
   precioFilter = '';
   isLoading = true;
 
-  categorias = ['Aventura', 'Didáctico', 'Clásico'];
+  categorias: any[] = [];
+  edades: any[] = [];
 
   constructor(
     private cuentoService: CuentoService,
     private cartService: CartService,
     private router: Router,
     private route: ActivatedRoute,
+    private maestrosService: MaestrosService,
     private ngZone: NgZone
   ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       this.searchTerm = params.get('q') || '';
+    });
+
+    this.maestrosService.obtenerMaestrosPorGrupo('CATEGORIA_CUENTO').subscribe({
+      next: c => this.categorias = c,
+      error: err => console.warn('Error cargando categorías:', err?.status)
+    });
+    this.maestrosService.obtenerMaestrosPorGrupo('RANGO_EDAD').subscribe({
+      next: e => this.edades = e,
+      error: err => console.warn('Error cargando edades:', err?.status)
     });
 
     this.cuentoService.obtenerCuentos().subscribe(data => {
@@ -40,7 +52,7 @@ export class CuentosComponent implements OnInit {
             this.cuentos = data
               .map((c, idx) => ({
                 ...c,
-                categoria: this.categorias[Math.floor(Math.random() * this.categorias.length)],
+                categoria: this.categorias.length > 0 ? this.categorias[Math.floor(Math.random() * this.categorias.length)].codigo : 'CAT_1',
                 rating: Math.floor(Math.random() * 5) + 1,
                 badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
               }))

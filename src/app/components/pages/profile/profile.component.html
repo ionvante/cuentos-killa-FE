@@ -184,17 +184,35 @@
                         placeholder="Av. Los Álamos 123" />
                 </div>
                 <div class="form-group">
-                    <label for="distrito">Distrito</label>
-                    <input id="distrito" type="text" [(ngModel)]="addressForm.distrito" name="distrito" required />
-                </div>
-                <div class="form-group">
-                    <label for="provincia">Provincia</label>
-                    <input id="provincia" type="text" [(ngModel)]="addressForm.provincia" name="provincia" required />
-                </div>
-                <div class="form-group">
                     <label for="departamento">Departamento</label>
-                    <input id="departamento" type="text" [(ngModel)]="addressForm.departamento" name="departamento"
-                        required />
+                    <select id="departamento" [(ngModel)]="addressForm.departamento" name="departamento" required
+                        (ngModelChange)="onDepartamentoChange($event)">
+                        <option value="">Seleccione...</option>
+                        <option *ngFor="let d of departamentos" [value]="d.nombre">{{ d.nombre }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="provincia">
+                        Provincia
+                        <span *ngIf="loadingProvincias" class="spinner-small"></span>
+                    </label>
+                    <select id="provincia" [(ngModel)]="addressForm.provincia" name="provincia" required
+                        [disabled]="provincias.length === 0 || loadingProvincias"
+                        (ngModelChange)="onProvinciaChange($event)">
+                        <option value="">Seleccione...</option>
+                        <option *ngFor="let p of provincias" [value]="p.nombre">{{ p.nombre }}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="distrito">
+                        Distrito
+                        <span *ngIf="loadingDistritos" class="spinner-small"></span>
+                    </label>
+                    <select id="distrito" [(ngModel)]="addressForm.distrito" name="distrito" required
+                        [disabled]="distritos.length === 0 || loadingDistritos">
+                        <option value="">Seleccione...</option>
+                        <option *ngFor="let d of distritos" [value]="d.nombre">{{ d.nombre }}</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="ciudad">Ciudad</label>

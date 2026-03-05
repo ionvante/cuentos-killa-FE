@@ -1,113 +1,124 @@
-<div class="admin-pedidos-container">
-  <h2>Listado de Pedidos</h2>
-
-  <div *ngIf="isLoading">Cargando pedidos...</div>
-  <div *ngIf="errorMensaje">{{ errorMensaje }}</div>
-
-  <div class="admin-toolbar" *ngIf="!isLoading && !errorMensaje">
-    <div class="filtro-estado">
-      <label for="filtroEstado">Filtrar por Etapa:</label>
-      <select id="filtroEstado" (change)="filtrarPorEstado($event)" [value]="estadoFiltro">
-        <option value="">Todos (Predeterminado)</option>
-        <option value="GENERADO">Generados (Espera a Pagar)</option>
-        <option value="PAGO_ENVIADO">Voucher Enviado (Validar Pago)</option>
-        <option value="PAGO_VERIFICADO">Pago Verificado (Falta Empaquetar)</option>
-        <option value="EMPAQUETADO">Empaquetado (Falta Enviar)</option>
-        <option value="ENVIADO">Enviado (Falta Entregar)</option>
-        <option value="ENTREGADO">Entregados (Completados)</option>
-        <option value="PAGO_RECHAZADO">Rechazados</option>
-      </select>
+<div class="admin-section">
+  <div class="admin-header">
+    <div>
+      <h2>📦 Pedidos</h2>
+      <p class="admin-subtitle">Administra y gestiona los pedidos de clientes</p>
     </div>
   </div>
 
-  <table *ngIf="!isLoading && !errorMensaje && !isMobile">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Fecha/Hora</th>
-        <th>Nombre</th>
-        <th>Correo</th>
-        <th>Dirección</th>
-        <th>Teléfono</th>
-        <th>Estado Pago</th>
-        <th>Tipo Pago</th>
-        <th>Total</th>
-        <th>Acción</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId"
-        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
-        <td>{{ pedido.Id || pedido.id }}</td>
-        <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
-        <td>{{ pedido.nombre }}</td>
-        <td>{{ pedido.correo }}</td>
-        <td>{{ pedido.direccion }}</td>
-        <td>{{ pedido.telefono }}</td>
-        <td><app-badge [status]="pedido.estado"></app-badge></td>
-        <td>{{ pedido.tipoPago || 'N/A' }}</td>
-        <td>{{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</td>
-        <td>
-          <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn btn-primary" (click)="abrirModal(pedido)">
-            Ver Voucher
-          </button>
-          <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn btn-info"
-            (click)="cambiarEstado(pedido, 'EMPAQUETADO')">
-            Empaquetar
-          </button>
-          <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn btn-info"
-            (click)="cambiarEstado(pedido, 'ENVIADO')">
-            Enviar
-          </button>
-          <button *ngIf="pedido.estado === 'ENVIADO'" class="btn btn-success"
-            (click)="cambiarEstado(pedido, 'ENTREGADO')">
-            Entregar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <!-- Loading / Error -->
+  <div class="admin-loading" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <span>Cargando pedidos...</span>
+  </div>
+  <div class="admin-error" *ngIf="errorMensaje">
+    <span>⚠️</span> {{ errorMensaje }}
+  </div>
 
-  <ng-container *ngIf="!isLoading && !errorMensaje && isMobile">
-    <div class="pedido-cards">
-      <div class="pedido-card" *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId"
-        [class.pendiente]="pedido.estado === 'PAGO_PENDIENTE'">
-        <div><strong>ID:</strong> {{ pedido.Id || pedido.id }}</div>
-        <div><strong>Fecha/Hora:</strong> {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
-        <div><strong>Nombre:</strong> {{ pedido.nombre }}</div>
-        <div><strong>Correo:</strong> {{ pedido.correo }}</div>
-        <div><strong>Dirección:</strong> {{ pedido.direccion }}</div>
-        <div><strong>Teléfono:</strong> {{ pedido.telefono }}</div>
-        <div><strong>Estado Pago:</strong> <app-badge [status]="pedido.estado"></app-badge></div>
-        <div><strong>Tipo Pago:</strong> {{ pedido.tipoPago || 'N/A' }}</div>
-        <div><strong>Total:</strong> {{ pedido.total | currency:'USD':'symbol':'1.2-2' }}</div>
-        <div class="acciones">
-          <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn btn-primary" (click)="abrirModal(pedido)">
-            Ver Voucher
-          </button>
-          <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn btn-info"
-            (click)="cambiarEstado(pedido, 'EMPAQUETADO')">
-            Empaquetar
-          </button>
-          <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn btn-info"
-            (click)="cambiarEstado(pedido, 'ENVIADO')">
-            Enviar
-          </button>
-          <button *ngIf="pedido.estado === 'ENVIADO'" class="btn btn-success"
-            (click)="cambiarEstado(pedido, 'ENTREGADO')">
-            Entregar
-          </button>
-        </div>
+  <!-- Filtros -->
+  <div class="admin-filters" *ngIf="!isLoading && !errorMensaje">
+    <div class="filter-group">
+      <label for="filtroEstado">Filtrar por etapa:</label>
+      <select id="filtroEstado" class="filter-select" (change)="filtrarPorEstado($event)" [value]="estadoFiltro">
+        <option value="">Todos los pedidos</option>
+        <option *ngFor="let estado of estadosPedido" [value]="estado.codigo">{{ estado.valor }}</option>
+      </select>
+    </div>
+    <div class="filter-info">
+      <span class="count-badge">{{ pedidosMostrar.length }} pedidos</span>
+    </div>
+  </div>
+
+  <!-- Tabla Desktop -->
+  <div class="admin-table-wrapper" *ngIf="!isLoading && !errorMensaje && !isMobile">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th class="col-id">ID</th>
+          <th>Fecha</th>
+          <th>Cliente</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th class="col-total">Total</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId" class="table-row"
+          [class.row-pending]="pedido.estado === 'PAGO_PENDIENTE'">
+          <td class="col-id">{{ pedido.Id || pedido.id }}</td>
+          <td>{{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td><strong>{{ pedido.nombre }}</strong></td>
+          <td class="text-muted">{{ pedido.correo }}</td>
+          <td>{{ pedido.telefono }}</td>
+          <td><app-badge [status]="pedido.estado"></app-badge></td>
+          <td class="col-total"><strong>S/ {{ pedido.total | number:'1.2-2' }}</strong></td>
+          <td>
+            <div class="action-group">
+              <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn-sm btn-sm-primary"
+                (click)="abrirModal(pedido)">
+                🧾 Voucher
+              </button>
+              <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn-sm btn-sm-info"
+                (click)="cambiarEstado(pedido, 'EMPAQUETADO')">
+                📦 Empaquetar
+              </button>
+              <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn-sm btn-sm-info"
+                (click)="cambiarEstado(pedido, 'ENVIADO')">
+                🚚 Enviar
+              </button>
+              <button *ngIf="pedido.estado === 'ENVIADO'" class="btn-sm btn-sm-success"
+                (click)="cambiarEstado(pedido, 'ENTREGADO')">
+                ✅ Entregar
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="pedidosMostrar.length === 0">
+          <td colspan="8" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No hay pedidos para el filtro seleccionado</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Cards Mobile -->
+  <div class="card-list" *ngIf="!isLoading && !errorMensaje && isMobile">
+    <div class="pedido-card" *ngFor="let pedido of pedidosMostrar; trackBy: trackByPedidoId"
+      [class.card-pending]="pedido.estado === 'PAGO_PENDIENTE'">
+      <div class="card-header-row">
+        <strong>#{{ pedido.Id || pedido.id }} — {{ pedido.nombre }}</strong>
+        <app-badge [status]="pedido.estado"></app-badge>
+      </div>
+      <div class="card-detail">📧 {{ pedido.correo }}</div>
+      <div class="card-detail">📱 {{ pedido.telefono }}</div>
+      <div class="card-detail">📅 {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
+      <div class="card-total">S/ {{ pedido.total | number:'1.2-2' }}</div>
+      <div class="action-group"
+        *ngIf="pedido.estado === 'PAGO_ENVIADO' || pedido.estado === 'PAGO_VERIFICADO' || pedido.estado === 'EMPAQUETADO' || pedido.estado === 'ENVIADO'">
+        <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn-sm btn-sm-primary" (click)="abrirModal(pedido)">🧾
+          Voucher</button>
+        <button *ngIf="pedido.estado === 'PAGO_VERIFICADO'" class="btn-sm btn-sm-info"
+          (click)="cambiarEstado(pedido, 'EMPAQUETADO')">📦 Empaquetar</button>
+        <button *ngIf="pedido.estado === 'EMPAQUETADO'" class="btn-sm btn-sm-info"
+          (click)="cambiarEstado(pedido, 'ENVIADO')">🚚 Enviar</button>
+        <button *ngIf="pedido.estado === 'ENVIADO'" class="btn-sm btn-sm-success"
+          (click)="cambiarEstado(pedido, 'ENTREGADO')">✅ Entregar</button>
       </div>
     </div>
-  </ng-container>
+  </div>
 </div>
+
+<!-- Voucher Modal Desktop -->
 <ng-template #voucherContent>
   <ng-container *ngIf="voucherUrl">
     <img *ngIf="!voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" alt="Voucher" />
     <iframe *ngIf="voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" width="100%" height="500px"></iframe>
     <div class="descargar">
-      <button class="btn btn-primary" (click)="descargarVoucher()">Descargar</button>
+      <button class="btn-sm btn-sm-primary" (click)="descargarVoucher()">Descargar</button>
     </div>
   </ng-container>
 </ng-template>
@@ -116,8 +127,8 @@
   (close)="cerrarModal()">
   <ng-container *ngTemplateOutlet="voucherContent"></ng-container>
   <div modal-footer>
-    <button class="btn btn-primary" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
-    <button class="btn btn-warn" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
+    <button class="btn-sm btn-sm-success" (click)="validarPago()" [disabled]="processing">✅ Validar Pago</button>
+    <button class="btn-sm btn-sm-warn" (click)="rechazarPago()" [disabled]="processing">❌ Rechazar Pago</button>
   </div>
 </app-modal>
 
@@ -131,8 +142,8 @@
       <ng-container *ngTemplateOutlet="voucherContent"></ng-container>
     </div>
     <div class="drawer-footer">
-      <button class="btn btn-primary" (click)="validarPago()" [disabled]="processing">Validar Pago</button>
-      <button class="btn btn-warn" (click)="rechazarPago()" [disabled]="processing">Rechazar Pago</button>
+      <button class="btn-sm btn-sm-success" (click)="validarPago()" [disabled]="processing">✅ Validar Pago</button>
+      <button class="btn-sm btn-sm-warn" (click)="rechazarPago()" [disabled]="processing">❌ Rechazar Pago</button>
     </div>
   </div>
   <button class="drawer-backdrop show" (click)="cerrarModal()" aria-label="Cerrar modal"></button>

@@ -50,24 +50,29 @@ export class LoginComponent implements OnInit {
     this.authService.login(correo, password).subscribe({
       next: (res) => {
         const usuario = res.user;
-        console.log('Login exitoso', usuario.role || usuario.nombre || usuario.email || usuario.documento);
+        console.log('Login exitoso', usuario?.role || usuario?.nombre || usuario?.email);
         this.authService.guardarToken(res.token);
-        this.authService.guardarUsuario(usuario); // o res.user, según tu backend
+        this.authService.guardarUsuario(usuario);
 
-        this.toastService.show(`¡Hola de nuevo, ${usuario.nombre}!`);
+        this.toastService.show(`¡Hola de nuevo, ${usuario?.nombre || 'usuario'}!`);
 
         const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
-        // Redirección dinámica según el rol        
         if (returnTo) {
           this.router.navigateByUrl(returnTo);
-        } else if (usuario.role === 'ADMIN') {
+        } else if (usuario?.role === 'ADMIN') {
           this.router.navigate(['/admin/dashboard']);
         } else {
           this.router.navigate(['/home']);
         }
       },
       error: (err) => {
-        this.error = err;
+        if (err?.status === 429) {
+          this.error = 'Demasiados intentos. Espera 1 minuto antes de intentar de nuevo.';
+        } else if (err?.status === 401) {
+          this.error = 'Correo o contraseña incorrectos.';
+        } else {
+          this.error = err?.error?.message || err?.message || 'Error al iniciar sesión. Intenta más tarde.';
+        }
         console.error('Error al iniciar sesión', err);
       }
     });

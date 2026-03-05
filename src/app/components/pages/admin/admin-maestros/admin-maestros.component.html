@@ -1,0 +1,139 @@
+<div class="admin-section">
+  <!-- Header -->
+  <div class="admin-header">
+    <div>
+      <h2>📋 Catálogo General (Maestros)</h2>
+      <p class="admin-subtitle">Administra las tablas maestras del sistema</p>
+    </div>
+    <button class="btn-add" (click)="abrirModal()">
+      <span>+</span> Nuevo Registro
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="admin-filters">
+    <div class="filter-group">
+      <label for="filtroGrupo">Filtrar por grupo:</label>
+      <select id="filtroGrupo" [(ngModel)]="filtroGrupo" class="filter-select">
+        <option value="">Todos los grupos</option>
+        <option *ngFor="let grupo of gruposConocidos" [value]="grupo">{{ grupo }}</option>
+      </select>
+    </div>
+    <div class="filter-info">
+      <span class="count-badge">{{ filteredMaestros.length }} registros</span>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="admin-table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th class="col-id">ID</th>
+          <th>Grupo</th>
+          <th>Código</th>
+          <th>Valor</th>
+          <th class="col-desc">Descripción</th>
+          <th class="col-status">Estado</th>
+          <th class="col-actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let maestro of filteredMaestros" class="table-row">
+          <td class="col-id">{{ maestro.id }}</td>
+          <td><span class="tag tag-grupo">{{ maestro.grupo }}</span></td>
+          <td><code class="code-badge">{{ maestro.codigo }}</code></td>
+          <td>{{ maestro.valor }}</td>
+          <td class="col-desc text-muted">{{ maestro.descripcion || '—' }}</td>
+          <td class="col-status">
+            <span class="status-dot" [class.active]="maestro.estado" [class.inactive]="!maestro.estado"></span>
+            {{ maestro.estado ? 'Activo' : 'Inactivo' }}
+          </td>
+          <td class="col-actions">
+            <button class="btn-icon btn-edit" (click)="editar(maestro)" title="Editar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+            </button>
+            <button class="btn-icon btn-delete" (click)="eliminar(maestro.id!)" title="Eliminar">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6" />
+                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredMaestros.length === 0">
+          <td colspan="7" class="empty-state">
+            <div class="empty-icon">📭</div>
+            <p>No se encontraron registros para el grupo seleccionado</p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal CRUD Maestros -->
+<div class="modal-overlay" *ngIf="showModal" (click)="cerrarModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ editando ? '✏️ Editar Registro' : '➕ Nuevo Registro Maestro' }}</h3>
+      <button class="btn-close" (click)="cerrarModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="maestroForm" (ngSubmit)="guardar()">
+        <div class="form-group">
+          <label>Grupo / Categoría</label>
+          <input type="text" formControlName="grupo" class="form-control" placeholder="Ej. TIPO_DOC, MONEDA, RANGO_EDAD"
+            list="gruposData" />
+          <datalist id="gruposData">
+            <option *ngFor="let g of gruposConocidos" [value]="g"></option>
+          </datalist>
+          <small class="error-msg" *ngIf="maestroForm.get('grupo')?.invalid && maestroForm.get('grupo')?.touched">
+            El grupo es requerido.
+          </small>
+        </div>
+
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label>Código (Clave única)</label>
+            <input type="text" formControlName="codigo" class="form-control" placeholder="Ej. DNI, PEN, 0-3" />
+            <small class="error-msg" *ngIf="maestroForm.get('codigo')?.invalid && maestroForm.get('codigo')?.touched">
+              El código es requerido.
+            </small>
+          </div>
+          <div class="form-group col-md-6">
+            <label>Valor (Nombre visual)</label>
+            <input type="text" formControlName="valor" class="form-control" placeholder="Ej. Sol Peruano, 0 a 3 años" />
+            <small class="error-msg" *ngIf="maestroForm.get('valor')?.invalid && maestroForm.get('valor')?.touched">
+              El valor es requerido.
+            </small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Descripción / Observaciones (Opcional)</label>
+          <textarea formControlName="descripcion" class="form-control" rows="2"
+            placeholder="Detalles adicionales sobre este registro..."></textarea>
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label class="switch">
+            <input type="checkbox" formControlName="estado">
+            <span class="slider round"></span>
+          </label>
+          <span>{{ maestroForm.get('estado')?.value ? 'Activo (Visible en UI)' : 'Inactivo (Oculto)' }}</span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-primary" [disabled]="maestroForm.invalid">
+            {{ editando ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

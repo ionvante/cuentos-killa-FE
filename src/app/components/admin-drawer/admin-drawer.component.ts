@@ -25,6 +25,7 @@ export class AdminDrawerComponent {
     { label: 'Cuentos', route: '/admin/cuentos', icon: 'cuentos' },
     { label: 'Pedidos', route: '/admin/pedidos', icon: 'pedidos' },
     { label: 'Usuarios', route: '/admin/usuarios', icon: 'usuarios' },
+    { label: 'Maestros', route: '/admin/maestros', icon: 'config' },
     { label: 'Config', route: '/admin/config', icon: 'config' }
   ];
   constructor(private router: Router, private sanitizer: DomSanitizer) { }

@@ -16,6 +16,7 @@ import { ConfigCategoriesComponent } from './admin-config/config-categories.comp
 import { ConfigCategoryFormComponent } from './admin-config/config-category-form.component';
 import { ConfigItemsComponent } from './admin-config/config-items.component';
 import { ConfigItemFormComponent } from './admin-config/config-item-form.component';
+import { AdminMaestrosComponent } from './admin-maestros/admin-maestros.component';
 import { SharedModule } from "../../shared.module";
 import { ModalComponent } from '../../app-modal/modal.component';
 import { BadgeComponent } from '../../badge/badge.component';
@@ -36,6 +37,7 @@ const routes: Routes = [
       { path: 'cuentos/editar/:id', component: CuentoFormComponent },
       { path: 'pedidos', component: AdminPedidosComponent },
       { path: 'usuarios', component: AdminUsuariosComponent },
+      { path: 'maestros', component: AdminMaestrosComponent },
       { path: 'config', component: ConfigCategoriesComponent },
       { path: 'config/nueva', component: ConfigCategoryFormComponent },
       { path: 'config/editar/:id', component: ConfigCategoryFormComponent },
@@ -73,4 +75,4 @@ const routes: Routes = [
     SafePipe
   ]
 })
-export class AdminModule {}
+export class AdminModule { }

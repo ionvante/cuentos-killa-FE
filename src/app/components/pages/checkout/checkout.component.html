@@ -67,9 +67,7 @@
           <label class="form-label">Tipo de doc.:</label>
           <div class="input-wrapper">
             <select formControlName="documentoTipo" class="form-input form-select" (change)="enfocarDocumento()">
-              <option value="DNI">DNI</option>
-              <option value="CE">CE</option>
-              <option value="Pasaporte">Pasaporte</option>
+              <option *ngFor="let tipo of tiposDocumento" [value]="tipo.codigo">{{ tipo.valor }}</option>
             </select>
           </div>
         </div>

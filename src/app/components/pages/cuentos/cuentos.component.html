@@ -21,16 +21,14 @@
     <div class="select-wrapper">
       <select [(ngModel)]="categoriaFilter">
         <option value="">Categoría</option>
-        <option *ngFor="let c of categorias" [value]="c">{{ c }}</option>
+        <option *ngFor="let c of categorias" [value]="c.codigo">{{ c.valor }}</option>
       </select>
     </div>
 
     <div class="select-wrapper">
       <select [(ngModel)]="edadFilter">
         <option value="">Edad</option>
-        <option value="0-3">0-3 años</option>
-        <option value="4-6">4-6 años</option>
-        <option value="7-10">7-10 años</option>
+        <option *ngFor="let e of edades" [value]="e.codigo">{{ e.valor }}</option>
       </select>
     </div>
 

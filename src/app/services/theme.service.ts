@@ -57,7 +57,7 @@ export class ThemeService {
     private configservice: ConfigService,
     @Inject(DOCUMENT) private document: Document,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   loadTheme(): Promise<void> {
     if (!isPlatformBrowser(this.platformId)) {
@@ -67,8 +67,14 @@ export class ThemeService {
     return firstValueFrom(
       this.configservice.getItem(1, 1)
     ).then((item: ConfigItem) => {
-      const data = item && item.data ? JSON.parse(item.data) : { opcion: '1' };
-      this.apply(data.opcion);
+      let data: any = { opcion: '1' };
+      if (item && item.data) {
+        data = typeof item.data === 'string' ? JSON.parse(item.data) : item.data;
+      }
+      this.apply(data.opcion || '1');
+    }).catch(() => {
+      // Si falla la carga de configuración, usar tema por defecto
+      this.apply('1');
     });
 
   }

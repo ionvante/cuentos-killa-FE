@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
 import { ActivatedRoute } from '@angular/router';
+import { MaestrosService } from '../../../../services/maestros.service';
 
 @Component({
   selector: 'app-admin-pedidos',
@@ -12,6 +13,7 @@ export class AdminPedidosComponent implements OnInit {
   pedidos: Pedido[] = [];
   pedidosMostrar: Pedido[] = []; // Array filtrado para la vista
   estadoFiltro: string = ''; // Estado seleccionado
+  estadosPedido: any[] = []; // Traídos de la BD
   isLoading = true;
   errorMensaje: string | null = null;
   selectedPedido: Pedido | null = null;
@@ -22,7 +24,11 @@ export class AdminPedidosComponent implements OnInit {
   showReasonDialog = false;
   private userIdFilter: string | null = null;
 
-  constructor(private pedidoService: PedidoService, private route: ActivatedRoute) { }
+  constructor(
+    private pedidoService: PedidoService,
+    private route: ActivatedRoute,
+    private maestrosService: MaestrosService
+  ) { }
 
   @HostListener('window:resize')
   onResize() {
@@ -35,6 +41,8 @@ export class AdminPedidosComponent implements OnInit {
       this.userIdFilter = params.get('userId');
       this.cargarPedidos();
     });
+
+    this.maestrosService.obtenerMaestrosPorGrupo('ESTADO_PEDIDO').subscribe(data => this.estadosPedido = data);
   }
 
   private cargarPedidos(): void {

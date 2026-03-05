@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { PagoResponse } from '../model/pago-response.model';
 
@@ -20,26 +21,25 @@ export class PagoService {
 
   /**
    * Llama al BE para crear la preferencia de pago en Mercado Pago.
-   * El BE guarda el pedido en BD y devuelve el initPoint (URL de checkout de MP).
-   * El pedidoDTO debe contener los items y el userId del usuario autenticado.
    */
   crearPreferenciaMercadoPago(pedidoDTO: any): Observable<MercadoPagoPreferenceResponse> {
-    return this.http.post<MercadoPagoPreferenceResponse>(
+    return this.http.post<any>(
       `${this.apiUrl}/mercadopago/create-preference`,
       pedidoDTO
+    ).pipe(
+      map(res => res.data ?? res)
     );
   }
 
   /**
    * Confirma el estado del pago tras el redirect de Mercado Pago.
-   * El BE consulta el estado actual del pedido en BD.
-   * Si el webhook de MP ya se procesó → status: 'success'
-   * Si el webhook aún no llegó → status: 'pending'
    */
   confirmarPagoMercadoPago(pedidoId: number): Observable<PagoResponse> {
-    return this.http.post<PagoResponse>(
+    return this.http.post<any>(
       `${this.apiUrl}/${pedidoId}/confirmar-pago-mercadopago`,
       {}
+    ).pipe(
+      map(res => res.data ?? res)
     );
   }
 }
