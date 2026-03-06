@@ -12,7 +12,7 @@ const appDir = path.join(__dirname, 'dist', 'cuentos-killa-fe', 'browser');
 app.use(express.static(appDir));
 
 // Redirigir todas las demás rutas a index.html (esencial para Angular Routing)
-app.get('/(.*)', function (req, res) {
+app.use(function (req, res) {
     res.sendFile(path.join(appDir, 'index.html'));
 });
 
