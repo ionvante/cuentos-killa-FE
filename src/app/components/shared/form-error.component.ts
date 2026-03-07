@@ -7,11 +7,8 @@ import { AbstractControl } from '@angular/forms';
     selector: 'app-form-error',
     imports: [CommonModule],
     template: `
-    <div class="form-error-container" aria-live="polite" *ngIf="shouldShowErrors()">
-      <span class="error-msg" *ngIf="control?.hasError('required')">Este campo es requerido.</span>
-      <span class="error-msg" *ngIf="control?.hasError('email')">Formato de correo inválido.</span>
-      <span class="error-msg" *ngIf="control?.hasError('minlength')">Debe tener al menos {{control?.errors?.['minlength']?.requiredLength}} caracteres.</span>
-      <span class="error-msg" *ngIf="control?.hasError('maxlength')">No puede pasar de {{control?.errors?.['maxlength']?.requiredLength}} caracteres.</span>
+    <div class="form-error-container" [attr.id]="errorId || null" aria-live="polite" *ngIf="shouldShowErrors()">
+      <span class="error-msg">{{ getErrorMessage() }}</span>
     </div>
   `,
     styles: [`
@@ -29,8 +26,38 @@ import { AbstractControl } from '@angular/forms';
 export class FormErrorComponent {
     @Input() control!: AbstractControl | null;
     @Input() isSubmitted: boolean = false;
+    @Input() fieldLabel: string = 'Este campo';
+    @Input() errorId?: string;
 
     shouldShowErrors(): boolean {
         return !!this.control && this.control.invalid && (this.control.touched || this.control.dirty || this.isSubmitted);
+    }
+
+    getErrorMessage(): string {
+        if (!this.control?.errors) {
+            return '';
+        }
+
+        if (this.control.hasError('required')) {
+            return `Completa ${this.fieldLabel.toLowerCase()} para continuar.`;
+        }
+
+        if (this.control.hasError('email')) {
+            return 'Ingresa un correo válido, por ejemplo nombre@correo.com.';
+        }
+
+        if (this.control.hasError('minlength')) {
+            return `Escribe al menos ${this.control.errors['minlength']?.requiredLength} caracteres.`;
+        }
+
+        if (this.control.hasError('maxlength')) {
+            return `Reduce el texto a máximo ${this.control.errors['maxlength']?.requiredLength} caracteres.`;
+        }
+
+        if (this.control.hasError('pattern')) {
+            return 'Revisa el formato e intenta nuevamente.';
+        }
+
+        return 'Revisa este campo para continuar.';
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MaestrosService } from '../../../../services/maestros.service';
@@ -21,10 +21,14 @@ export class AdminMaestrosComponent implements OnInit {
   gruposConocidos: string[] = [];
 
   filtroGrupo: string = '';
+  loadingMaestros = false;
+  guardando = false;
+  formSubmitAttempted = false;
 
   constructor(
     private maestrosService: MaestrosService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private elementRef: ElementRef<HTMLElement>
   ) { }
 
   ngOnInit(): void {
@@ -51,14 +55,17 @@ export class AdminMaestrosComponent implements OnInit {
 
   cargarMaestros(): void {
     // Al no tener el backend de momento, inicializamos el array o mostramos loader.
+    this.loadingMaestros = true;
     this.maestrosService.obtenerTodosMaestros().subscribe({
       next: (data: Maestro[]) => {
+        this.loadingMaestros = false;
         this.maestros = data;
         // Extraer dinámicamente los grupos únicos y ordenarlos alfabéticamente
         const gruposUnicos = new Set(data.map(m => m.grupo));
         this.gruposConocidos = Array.from(gruposUnicos).sort();
       },
       error: (err: any) => {
+        this.loadingMaestros = false;
         console.error('Error cargando maestros', err);
         // Fallback temporal si el api no existe
         this.maestros = [];
@@ -68,14 +75,18 @@ export class AdminMaestrosComponent implements OnInit {
   }
 
   abrirModal(): void {
+    this.formSubmitAttempted = false;
     this.editando = false;
     this.idEditando = undefined;
     this.maestroForm.reset({ estado: true });
     this.showModal = true;
+    setTimeout(() => this.focusField('grupo'));
   }
 
   cerrarModal(): void {
     this.showModal = false;
+    this.formSubmitAttempted = false;
+    this.guardando = false;
   }
 
   editar(maestro: Maestro): void {
@@ -83,28 +94,44 @@ export class AdminMaestrosComponent implements OnInit {
     this.idEditando = maestro.id;
     this.maestroForm.patchValue(maestro);
     this.showModal = true;
+    setTimeout(() => this.focusField('grupo'));
   }
 
   guardar(): void {
-    if (this.maestroForm.invalid) return;
+    this.formSubmitAttempted = true;
+    if (this.maestroForm.invalid) {
+      this.maestroForm.markAllAsTouched();
+      this.focusFirstInvalidControl();
+      return;
+    }
+
+    this.guardando = true;
 
     const maestroData: Maestro = this.maestroForm.value;
 
     if (this.editando && this.idEditando) {
       this.maestrosService.actualizarMaestro(this.idEditando, maestroData).subscribe({
         next: () => {
+          this.guardando = false;
           this.cargarMaestros();
           this.cerrarModal();
         },
-        error: (err: any) => console.error(err)
+        error: (err: any) => {
+          this.guardando = false;
+          console.error(err);
+        }
       });
     } else {
       this.maestrosService.crearMaestro(maestroData).subscribe({
         next: () => {
+          this.guardando = false;
           this.cargarMaestros();
           this.cerrarModal();
         },
-        error: (err: any) => console.error(err)
+        error: (err: any) => {
+          this.guardando = false;
+          console.error(err);
+        }
       });
     }
   }
@@ -117,4 +144,24 @@ export class AdminMaestrosComponent implements OnInit {
       });
     }
   }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.showModal) {
+      this.cerrarModal();
+    }
+  }
+
+  private focusFirstInvalidControl(): void {
+    const firstInvalid = Object.keys(this.maestroForm.controls).find((name) => this.maestroForm.get(name)?.invalid);
+    if (firstInvalid) {
+      this.focusField(firstInvalid);
+    }
+  }
+
+  private focusField(controlName: string): void {
+    const target = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${controlName}"]`);
+    target?.focus();
+  }
+
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -63,14 +63,17 @@ export class ProfileComponent implements OnInit {
     departamentos: any[] = [];
     provincias: any[] = [];
     distritos: any[] = [];
+    loadingDepartamentos = false;
     loadingProvincias = false;
     loadingDistritos = false;
+    addressErrors: Partial<Record<'calle' | 'departamento' | 'provincia' | 'distrito', string>> = {};
 
     constructor(
         private authService: AuthService,
         private clienteService: ClienteService,
         private maestrosService: MaestrosService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private elementRef: ElementRef<HTMLElement>
     ) { }
 
     ngOnInit(): void {
@@ -84,8 +87,6 @@ export class ProfileComponent implements OnInit {
             this.isLoadingAddresses = false;
         }
     }
-
-    // ── Profile ──────────────────────────────────────
 
     loadProfile(): void {
         this.clienteService.getProfile(this.user!.id!).subscribe({
@@ -129,13 +130,11 @@ export class ProfileComponent implements OnInit {
             },
             error: () => {
                 this.savingProfile = false;
-                this.showToast('Error al actualizar el perfil', 'error');
+                this.showToast('No pudimos actualizar tu perfil. Inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
     }
-
-    // ── Addresses ────────────────────────────────────
 
     loadAddresses(): void {
         this.clienteService.getAddresses(this.user!.id!).subscribe({
@@ -156,15 +155,18 @@ export class ProfileComponent implements OnInit {
         this.addressForm = this.emptyAddress();
         this.provincias = [];
         this.distritos = [];
+        this.addressErrors = {};
         this.showAddressModal = true;
+        setTimeout(() => this.focusAddressField('calle'));
     }
 
     openEditAddress(addr: Address): void {
         this.editingAddress = addr;
         this.addressForm = { ...addr };
+        this.addressErrors = {};
         this.showAddressModal = true;
+        setTimeout(() => this.focusAddressField('calle'));
 
-        // Cargar cascadas si hay valores
         if (this.addressForm.departamento) {
             this.onDepartamentoChange(this.addressForm.departamento, true);
         }
@@ -173,10 +175,17 @@ export class ProfileComponent implements OnInit {
     closeAddressModal(): void {
         this.showAddressModal = false;
         this.editingAddress = null;
+        this.addressErrors = {};
     }
 
     saveAddress(): void {
         if (!this.user?.id) return;
+
+        if (!this.validateAddressForm()) {
+            this.showToast('Revisa el formulario y completa los campos obligatorios para guardar la dirección.', 'error');
+            return;
+        }
+
         this.savingAddress = true;
         this.addressForm.usuarioId = this.user.id;
 
@@ -188,15 +197,12 @@ export class ProfileComponent implements OnInit {
             next: () => {
                 this.savingAddress = false;
                 this.showAddressModal = false;
-                this.showToast(
-                    this.editingAddress ? 'Dirección actualizada' : 'Dirección agregada',
-                    'success'
-                );
+                this.showToast(this.editingAddress ? 'Dirección actualizada' : 'Dirección agregada', 'success');
                 this.loadAddresses();
             },
             error: () => {
                 this.savingAddress = false;
-                this.showToast('Error al guardar la dirección', 'error');
+                this.showToast('No pudimos guardar la dirección. Verifica los datos e inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
@@ -220,18 +226,22 @@ export class ProfileComponent implements OnInit {
             },
             error: () => {
                 this.addressToDelete = null;
-                this.showToast('Error al eliminar la dirección', 'error');
+                this.showToast('No pudimos eliminar la dirección. Inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
     }
 
-    // ── Ubigeo Helpers ──────────────────────────────
-
     loadDepartamentos(): void {
+        this.loadingDepartamentos = true;
         this.maestrosService.obtenerDepartamentos().subscribe({
             next: (data) => {
                 this.departamentos = data;
+                this.loadingDepartamentos = false;
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.loadingDepartamentos = false;
                 this.cdr.markForCheck();
             }
         });
@@ -288,7 +298,41 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    // ── Helpers ──────────────────────────────────────
+    @HostListener('document:keydown.escape')
+    onEscapeKey(): void {
+        if (this.showAddressModal) {
+            this.closeAddressModal();
+        }
+    }
+
+    private validateAddressForm(): boolean {
+        this.addressErrors = {
+            calle: this.addressForm.calle ? '' : 'Completa la calle o dirección para continuar.',
+            departamento: this.addressForm.departamento ? '' : 'Selecciona un departamento para continuar.',
+            provincia: this.addressForm.provincia ? '' : 'Selecciona una provincia para continuar.',
+            distrito: this.addressForm.distrito ? '' : 'Selecciona un distrito para continuar.'
+        };
+
+        const firstInvalid = (['calle', 'departamento', 'provincia', 'distrito'] as const)
+            .find((field) => !!this.addressErrors[field]);
+
+        if (firstInvalid) {
+            this.focusAddressField(firstInvalid);
+            this.cdr.markForCheck();
+            return false;
+        }
+
+        return true;
+    }
+
+    private focusAddressField(field: 'calle' | 'departamento' | 'provincia' | 'distrito'): void {
+        const el = this.elementRef.nativeElement.querySelector<HTMLElement>(`#address-${field}`);
+        el?.focus();
+    }
+
+    getAddressDescribedBy(field: 'calle' | 'departamento' | 'provincia' | 'distrito', helpId: string): string {
+        return this.addressErrors[field] ? `${helpId} ${field}-error` : helpId;
+    }
 
     private emptyAddress(): Address {
         return {

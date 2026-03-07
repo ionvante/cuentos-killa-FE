@@ -14,7 +14,7 @@
   <div class="admin-filters">
     <div class="filter-group">
       <label for="filtroGrupo">Filtrar por grupo:</label>
-      <select id="filtroGrupo" [(ngModel)]="filtroGrupo" class="filter-select">
+      <select id="filtroGrupo" [(ngModel)]="filtroGrupo" class="filter-select" [disabled]="loadingMaestros">
         <option value="">Todos los grupos</option>
         <option *ngFor="let grupo of gruposConocidos" [value]="grupo">{{ grupo }}</option>
       </select>
@@ -38,7 +38,8 @@
           <th class="col-actions">Acciones</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody [attr.aria-busy]="loadingMaestros">
+        <tr *ngIf="loadingMaestros"><td colspan="7" class="empty-state">Cargando maestros...</td></tr>
         <tr *ngFor="let maestro of filteredMaestros" class="table-row">
           <td class="col-id">{{ maestro.id }}</td>
           <td><span class="tag tag-grupo">{{ maestro.grupo }}</span></td>
@@ -77,21 +78,22 @@
 
 <!-- Modal CRUD Maestros -->
 <div class="modal-overlay" *ngIf="showModal" (click)="cerrarModal()">
-  <div class="modal-content" (click)="$event.stopPropagation()">
+  <div class="modal-content" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="maestros-modal-title">
     <div class="modal-header">
-      <h3>{{ editando ? '✏️ Editar Registro' : '➕ Nuevo Registro Maestro' }}</h3>
+      <h3 id="maestros-modal-title">{{ editando ? '✏️ Editar Registro' : '➕ Nuevo Registro Maestro' }}</h3>
       <button class="btn-close" (click)="cerrarModal()">✕</button>
     </div>
     <div class="modal-body">
       <form [formGroup]="maestroForm" (ngSubmit)="guardar()">
         <div class="form-group">
-          <label>Grupo / Categoría</label>
-          <input type="text" formControlName="grupo" class="form-control" placeholder="Ej. TIPO_DOC, MONEDA, RANGO_EDAD"
+          <label for="maestro-grupo">Grupo / Categoría</label>
+          <input id="maestro-grupo" type="text" formControlName="grupo" class="form-control" placeholder="Ej. TIPO_DOC, MONEDA, RANGO_EDAD" aria-describedby="maestro-grupo-help maestro-grupo-error"
             list="gruposData" />
           <datalist id="gruposData">
             <option *ngFor="let g of gruposConocidos" [value]="g"></option>
           </datalist>
-          <small class="error-msg" *ngIf="maestroForm.get('grupo')?.invalid && maestroForm.get('grupo')?.touched">
+          <small id="maestro-grupo-help">Usa un grupo existente o crea uno nuevo para organizar el maestro.</small>
+          <small class="error-msg" id="maestro-grupo-error" *ngIf="maestroForm.get('grupo')?.invalid && (maestroForm.get('grupo')?.touched || formSubmitAttempted)">
             El grupo es requerido.
           </small>
         </div>
@@ -100,14 +102,14 @@
           <div class="form-group col-md-6">
             <label>Código (Clave única)</label>
             <input type="text" formControlName="codigo" class="form-control" placeholder="Ej. DNI, PEN, 0-3" />
-            <small class="error-msg" *ngIf="maestroForm.get('codigo')?.invalid && maestroForm.get('codigo')?.touched">
+            <small class="error-msg" *ngIf="maestroForm.get('codigo')?.invalid && (maestroForm.get('codigo')?.touched || formSubmitAttempted)">
               El código es requerido.
             </small>
           </div>
           <div class="form-group col-md-6">
             <label>Valor (Nombre visual)</label>
             <input type="text" formControlName="valor" class="form-control" placeholder="Ej. Sol Peruano, 0 a 3 años" />
-            <small class="error-msg" *ngIf="maestroForm.get('valor')?.invalid && maestroForm.get('valor')?.touched">
+            <small class="error-msg" *ngIf="maestroForm.get('valor')?.invalid && (maestroForm.get('valor')?.touched || formSubmitAttempted)">
               El valor es requerido.
             </small>
           </div>
@@ -129,8 +131,8 @@
 
         <div class="modal-footer">
           <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
-          <button type="submit" class="btn-primary" [disabled]="maestroForm.invalid">
-            {{ editando ? 'Actualizar' : 'Guardar' }}
+          <button type="submit" class="btn-primary" [disabled]="maestroForm.invalid || guardando">
+            {{ guardando ? 'Guardando...' : (editando ? 'Actualizar' : 'Guardar') }}
           </button>
         </div>
       </form>
