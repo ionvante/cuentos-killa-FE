@@ -4,17 +4,20 @@ export interface Cuento {
   autor: string;
   descripcionCorta: string;
   editorial: string;
+  /** Código de maestro TIPO_EDICION */
   tipoEdicion: string;
   nroPaginas: number;
   fechaPublicacion: string;
   fechaIngreso: string;
+  /** Código de maestro RANGO_EDAD */
   edadRecomendada: string;
   stock: number;
   precio: number;
   imagenUrl: string;
   isbn?: string;
   habilitado?: boolean; // Nuevo campo para estado de habilitación
-  categoria?: string;  // Etiqueta emocional (Aventura, Didáctico, Clásico)
+  /** Código de maestro CUENTO_CATEGORIA */
+  categoria?: string;
   rating?: number;     // Valoración de 1 a 5
   badge?: string;      // Promoción: Nuevo, Top Ventas, Recomendado
   /** Cantidad de reseñas que respaldan el rating */
