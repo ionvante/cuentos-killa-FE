@@ -86,7 +86,7 @@ export class CheckoutComponent implements OnInit {
         correo: user.email || '',
         telefono: user.telefono || '',
         documentoTipo: user.documentoTipo || 'DNI',
-        documentoNumero: user.documentoNumero || ''
+        documentoNumero: user.documentoNumero || user.documento || ''
       });
 
       // Si el usuario tiene direcciones registradas, autocompletar la primera (o principal)
@@ -129,8 +129,25 @@ export class CheckoutComponent implements OnInit {
     });
 
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
-      next: (data) => this.tiposDocumento = data,
-      error: (err) => console.error('Error cargando tipos de documento:', err)
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.tiposDocumento = data;
+        } else {
+          this.tiposDocumento = [
+            { codigo: 'DNI', valor: 'DNI' },
+            { codigo: 'CE', valor: 'Carné de Extranjería' },
+            { codigo: 'PASAPORTE', valor: 'Pasaporte' }
+          ];
+        }
+      },
+      error: (err) => {
+        console.error('Error cargando tipos de documento:', err);
+        this.tiposDocumento = [
+          { codigo: 'DNI', valor: 'DNI' },
+          { codigo: 'CE', valor: 'Carné de Extranjería' },
+          { codigo: 'PASAPORTE', valor: 'Pasaporte' }
+        ];
+      }
     });
 
     // Gestionar dependencias de UBIGEO (Cascada Departamentos -> Provincias)
