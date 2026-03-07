@@ -109,9 +109,9 @@ export class CheckoutComponent implements OnInit {
         documentoNumero: user.documentoNumero || user.documento || ''
       });
 
-      // Si el usuario tiene direcciones registradas, autocompletar la primera (o principal)
+      // Si el usuario tiene direcciones registradas, autocompletar usando selección inteligente
       if (user.direcciones && user.direcciones.length > 0) {
-        const dir = user.direcciones.find(d => d.esPrincipal) || user.direcciones[0];
+        const dir = this.getBestAddressForCheckout(user.direcciones);
         this.checkoutForm.patchValue({
           departamento: dir.departamento,
           calle: dir.calle,
@@ -160,6 +160,8 @@ export class CheckoutComponent implements OnInit {
         if (this.tiposDocumento.length > 0 && !this.tiposDocumento.some(t => t.codigo === actual)) {
           this.checkoutForm.get('documentoTipo')?.setValue(this.tiposDocumento[0].codigo);
         }
+
+        this.loadTiposDocumentoLegacy();
       },
       error: (err) => {
         console.error('Error cargando tipos de documento:', err);

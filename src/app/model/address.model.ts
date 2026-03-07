@@ -1,5 +1,6 @@
 export interface Address {
     id?: number;
+    tipoDireccion?: string;
     calle: string;
     ciudad: string;
     departamento: string;

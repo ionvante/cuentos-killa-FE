@@ -52,30 +52,35 @@
             </div>
             <div class="info-item">
                 <label>Documento</label>
-                <span>{{ user?.documento || '—' }}</span>
+                <span>{{ (user?.documentoTipo || 'DNI') + ' · ' + (user?.documento || user?.documentoNumero || '—') }}</span>
             </div>
         </div>
 
         <!-- Edit form -->
         <form *ngIf="editingProfile" class="edit-form" (ngSubmit)="saveProfile()">
             <div class="form-grid">
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowProfileError('nombre')">
                     <label for="nombre">Nombre</label>
                     <input id="nombre" type="text" [(ngModel)]="profileForm.nombre" name="nombre" required />
+                    <span class="hint error-hint" *ngIf="shouldShowProfileError('nombre')">Este campo es requerido.</span>
                 </div>
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowProfileError('apellido')">
                     <label for="apellido">Apellido</label>
                     <input id="apellido" type="text" [(ngModel)]="profileForm.apellido" name="apellido" required />
+                    <span class="hint error-hint" *ngIf="shouldShowProfileError('apellido')">Este campo es requerido.</span>
                 </div>
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowProfileError('telefono')">
                     <label for="telefono">Teléfono</label>
                     <input id="telefono" type="tel" [(ngModel)]="profileForm.telefono" name="telefono"
-                        placeholder="987654321" />
+                        placeholder="987654321" maxlength="9" />
+                    <span class="hint">Ingresa 9 dígitos (opcional).</span>
+                    <span class="hint error-hint" *ngIf="shouldShowProfileError('telefono')">Ingresa un teléfono válido de 9 dígitos.</span>
                 </div>
                 <div class="form-group">
                     <label for="documento">Documento</label>
                     <input id="documento" type="text" [(ngModel)]="profileForm.documento" name="documento"
                         placeholder="12345678" />
+                    <span class="hint error-hint" *ngIf="shouldShowProfileError('documento')">Debe contener entre 8 y 12 dígitos.</span>
                 </div>
             </div>
             <div class="form-actions">
@@ -133,6 +138,7 @@
         <div *ngIf="!isLoadingAddresses && addresses.length > 0" class="address-grid">
             <div class="address-card" *ngFor="let addr of addresses" @fadeSlideIn>
                 <div class="address-badges">
+                    <span class="badge tipo">{{ getDireccionTipoLabel(addr.tipoDireccion) }}</span>
                     <span class="badge principal" *ngIf="addr.esPrincipal">Principal</span>
                     <span class="badge facturacion" *ngIf="addr.esFacturacion">Facturación</span>
                 </div>
@@ -178,14 +184,22 @@
         </div>
         <form class="address-form" (ngSubmit)="saveAddress()">
             <div class="form-grid">
-                <div class="form-group full">
+                <div class="form-group" [class.error-field]="shouldShowAddressError('tipoDireccion')">
+                    <label for="tipoDireccion">Tipo de dirección</label>
+                    <select id="tipoDireccion" [(ngModel)]="addressForm.tipoDireccion" name="tipoDireccion" required>
+                        <option value="">Seleccione...</option>
+                        <option *ngFor="let tipo of tiposDireccion" [value]="tipo.codigo">{{ tipo.descripcion }}</option>
+                    </select>
+                    <span class="hint error-hint" *ngIf="shouldShowAddressError('tipoDireccion')">Selecciona un tipo de dirección.</span>
+                </div>
+                <div class="form-group full" [class.error-field]="shouldShowAddressError('calle')">
                     <label for="calle">Calle / Dirección</label>
                     <input id="address-calle" type="text" [(ngModel)]="addressForm.calle" name="calle" required
                         placeholder="Av. Los Álamos 123" [attr.aria-describedby]="getAddressDescribedBy('calle', 'calle-help')" />
                     <small id="calle-help" class="field-help">Ingresa la calle y número para identificar tu dirección.</small>
                     <small class="error-msg" id="calle-error" *ngIf="addressErrors.calle">{{ addressErrors.calle }}</small>
                 </div>
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowAddressError('departamento')">
                     <label for="departamento">Departamento</label>
                     <select id="address-departamento" [(ngModel)]="addressForm.departamento" name="departamento" required
                         [disabled]="loadingDepartamentos" (ngModelChange)="onDepartamentoChange($event)"
@@ -196,7 +210,7 @@
                     <small id="departamento-help" class="field-help">Elige un departamento para habilitar provincias.</small>
                     <small class="error-msg" id="departamento-error" *ngIf="addressErrors.departamento">{{ addressErrors.departamento }}</small>
                 </div>
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowAddressError('provincia')">
                     <label for="provincia">
                         Provincia
                         <span *ngIf="loadingProvincias" class="spinner-small"></span>
@@ -211,7 +225,7 @@
                     <small id="provincia-help" class="field-help">Selecciona la provincia según tu departamento.</small>
                     <small class="error-msg" id="provincia-error" *ngIf="addressErrors.provincia">{{ addressErrors.provincia }}</small>
                 </div>
-                <div class="form-group">
+                <div class="form-group" [class.error-field]="shouldShowAddressError('distrito')">
                     <label for="distrito">
                         Distrito
                         <span *ngIf="loadingDistritos" class="spinner-small"></span>

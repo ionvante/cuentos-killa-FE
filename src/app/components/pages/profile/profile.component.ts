@@ -44,12 +44,22 @@ export class ProfileComponent implements OnInit {
     editingProfile = false;
     profileForm: Partial<User> = {};
     savingProfile = false;
+    profileSubmitted = false;
+
+    tiposDocumento: any[] = [];
+    tiposDireccion = [
+        { codigo: 'CASA', descripcion: 'Casa' },
+        { codigo: 'TRABAJO', descripcion: 'Trabajo' },
+        { codigo: 'FAMILIAR', descripcion: 'Familiar' },
+        { codigo: 'OTRO', descripcion: 'Otro' }
+    ];
 
     // Address modal
     showAddressModal = false;
     editingAddress: Address | null = null;
     addressForm: Address = this.emptyAddress();
     savingAddress = false;
+    addressSubmitted = false;
 
     // Delete confirmation
     addressToDelete: Address | null = null;
@@ -82,6 +92,7 @@ export class ProfileComponent implements OnInit {
             this.loadProfile();
             this.loadAddresses();
             this.loadDepartamentos();
+            this.loadTiposDocumento();
         } else {
             this.isLoading = false;
             this.isLoadingAddresses = false;
@@ -107,22 +118,32 @@ export class ProfileComponent implements OnInit {
             nombre: this.user?.nombre || '',
             apellido: this.user?.apellido || '',
             telefono: this.user?.telefono || '',
-            documento: this.user?.documento || ''
+            documentoTipo: this.user?.documentoTipo || 'DNI',
+            documento: this.user?.documento || this.user?.documentoNumero || ''
         };
+        this.profileSubmitted = false;
         this.editingProfile = true;
     }
 
     cancelEditProfile(): void {
+        this.profileSubmitted = false;
         this.editingProfile = false;
     }
 
     saveProfile(): void {
         if (!this.user?.id) return;
+        this.profileSubmitted = true;
+
+        if (this.isProfileInvalid()) {
+            return;
+        }
+
         this.savingProfile = true;
         this.clienteService.updateProfile(this.user.id, this.profileForm).subscribe({
             next: (updated) => {
                 this.user = updated;
                 this.authService.guardarUsuario(updated);
+                this.profileSubmitted = false;
                 this.editingProfile = false;
                 this.savingProfile = false;
                 this.showToast('Perfil actualizado correctamente', 'success');
@@ -336,6 +357,7 @@ export class ProfileComponent implements OnInit {
 
     private emptyAddress(): Address {
         return {
+            tipoDireccion: 'CASA',
             calle: '', ciudad: '', departamento: '', provincia: '',
             distrito: '', referencia: '', codigoPostal: '',
             esPrincipal: false, esFacturacion: false
