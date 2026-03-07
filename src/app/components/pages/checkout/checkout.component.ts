@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CartService } from '../../../services/carrito.service';
@@ -14,7 +14,7 @@ import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } fro
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormErrorComponent, FormHelpComponent],
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
@@ -28,6 +28,7 @@ export class CheckoutComponent implements OnInit {
   pasoActual: number = 1;
   isLoading = false;
   gpsLoading = false;
+  loadingDepartamentos = false;
   loadingProvincias = false;
   loadingDistritos = false;
   docMaxLength = 8;
@@ -59,6 +60,7 @@ export class CheckoutComponent implements OnInit {
     private router: Router,
     private toast: ToastService,
     private maestrosService: MaestrosService,
+    private elementRef: ElementRef<HTMLElement>
 
   ) {
     this.user = this.authService.getUser();
@@ -134,16 +136,21 @@ export class CheckoutComponent implements OnInit {
     }
 
     // 6. Carga inicial de Datos Maestros (Departamentos, Tipos Doc)
+    this.loadingDepartamentos = true;
     this.maestrosService.obtenerDepartamentos().subscribe({
       next: (data) => {
         this.departamentos = data;
+        this.loadingDepartamentos = false;
         // Si ya hay un departamento seleccionado por autocompletado o cache, cargar provincias
         const currentDepto = this.checkoutForm.get('departamento')?.value;
         if (currentDepto && this.provincias.length === 0) {
           this.checkoutForm.get('departamento')?.setValue(currentDepto); // Re-dispara el valueChanges
         }
       },
-      error: (err) => console.error('Error cargando departamentos:', err)
+      error: (err) => {
+        this.loadingDepartamentos = false;
+        console.error('Error cargando departamentos:', err);
+      }
     });
 
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
@@ -362,6 +369,7 @@ export class CheckoutComponent implements OnInit {
       this.pasoActual++;
     } else {
       this.marcarPasoComoTocado(this.pasoActual);
+      this.focusFirstInvalidInCurrentStep();
     }
   }
 
@@ -503,6 +511,34 @@ export class CheckoutComponent implements OnInit {
     return this.itemsCarrito.reduce((acc, item) => acc + item.cuento.precio * item.cantidad, 0);
   }
 
+  private focusFirstInvalidInCurrentStep(): void {
+    const stepFields: Record<number, string[]> = {
+      1: ['nombre', 'documentoTipo', 'documentoNumero', 'correo', 'telefono'],
+      2: ['departamento', 'provincia', 'distrito', 'calle'],
+      3: ['nombre', 'documentoNumero', 'correo', 'telefono', 'direccion']
+    };
+
+    const firstInvalid = (stepFields[this.pasoActual] || [])
+      .find((name) => this.checkoutForm.get(name)?.invalid);
+
+    if (!firstInvalid) {
+      return;
+    }
+
+    const element = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${firstInvalid}"]`);
+    element?.focus();
+  }
+
+  getControlAriaDescribedBy(controlName: string, helpId?: string): string {
+    const ctrl = this.checkoutForm.get(controlName);
+    const errorId = `${controlName}-error`;
+    if (ctrl && ctrl.invalid && ctrl.touched) {
+      return helpId ? `${helpId} ${errorId}` : errorId;
+    }
+    return helpId || '';
+  }
+
+
   registrarPedido(): void {
     this.composeDireccion();
 
@@ -514,6 +550,8 @@ export class CheckoutComponent implements OnInit {
     const direccion = this.checkoutForm.get('direccion');
 
     if (!nombre?.value || !docNum?.value || !correo?.valid || !telefono?.valid || !direccion?.value) {
+      this.checkoutForm.markAllAsTouched();
+      this.focusFirstInvalidInCurrentStep();
       return;
     }
 

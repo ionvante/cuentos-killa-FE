@@ -1,18 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { FormErrorComponent } from '../../shared/form-error.component';
+import { FormHelpComponent } from '../../shared/form-help.component';
 import { ToastService } from '../../../services/toast.service';
 import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
 
 @Component({
   standalone: true,
   selector: 'app-register',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent, FormHelpComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -33,7 +34,8 @@ export class RegisterComponent implements OnInit {
     private authService: AuthService,
     private maestrosService: MaestrosService,
     private router: Router,
-    private toast: ToastService
+    private toast: ToastService,
+    private elementRef: ElementRef<HTMLElement>
   ) { }
 
   ngOnInit(): void {
@@ -48,6 +50,7 @@ export class RegisterComponent implements OnInit {
       confirmarPassword: ['', Validators.required]
     });
 
+    this.loadingTiposDocumento = true;
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
       next: tipos => {
         this.tiposDocumento = tipos ?? [];
@@ -106,10 +109,14 @@ export class RegisterComponent implements OnInit {
     this.isSubmitted = true;
     this.error = '';
 
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.focusFirstInvalidControl();
+      return;
+    }
 
     if (this.passwordMismatch) {
-      this.error = 'Las contraseñas no coinciden';
+      this.error = 'Las contraseñas no coinciden. Verifica ambos campos para continuar.';
+      this.focusField('confirmarPassword');
       return;
     }
 
@@ -134,4 +141,17 @@ export class RegisterComponent implements OnInit {
       }
     });
   }
+
+  private focusFirstInvalidControl(): void {
+    const firstKey = Object.keys(this.registerForm.controls).find((key) => this.registerForm.get(key)?.invalid);
+    if (firstKey) {
+      this.focusField(firstKey);
+    }
+  }
+
+  private focusField(controlName: string): void {
+    const target = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${controlName}"]`);
+    target?.focus();
+  }
+
 }

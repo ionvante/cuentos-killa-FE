@@ -4,17 +4,17 @@
       <h2>Crear cuenta</h2>
       <p class="subtitle">Únete a la familia Killa y descubre cuentos mágicos</p>
 
-      <form [formGroup]="registerForm" (ngSubmit)="registrar()">
+      <form [formGroup]="registerForm" (ngSubmit)="registrar()" novalidate>
         <div class="row">
           <div class="field">
             <label for="nombre">Nombre</label>
-            <input id="nombre" formControlName="nombre" type="text" placeholder="Tu nombre" />
-            <app-form-error [control]="registerForm.get('nombre')" [isSubmitted]="isSubmitted"></app-form-error>
+            <input id="nombre" formControlName="nombre" type="text" placeholder="Tu nombre" aria-describedby="nombre-error" />
+            <app-form-error [control]="registerForm.get('nombre')" [isSubmitted]="isSubmitted" fieldLabel="el nombre" errorId="nombre-error"></app-form-error>
           </div>
           <div class="field">
             <label for="apellido">Apellido</label>
-            <input id="apellido" formControlName="apellido" type="text" placeholder="Tu apellido" />
-            <app-form-error [control]="registerForm.get('apellido')" [isSubmitted]="isSubmitted"></app-form-error>
+            <input id="apellido" formControlName="apellido" type="text" placeholder="Tu apellido" aria-describedby="apellido-error" />
+            <app-form-error [control]="registerForm.get('apellido')" [isSubmitted]="isSubmitted" fieldLabel="el apellido" errorId="apellido-error"></app-form-error>
           </div>
         </div>
 
@@ -22,18 +22,20 @@
           <label for="email">Correo electrónico</label>
           <div class="input-icon">
             <span class="icon">&#x1f4e7;</span>
-            <input id="email" formControlName="email" type="email" placeholder="correo&#64;ejemplo.com" />
+            <input id="email" formControlName="email" type="email" placeholder="correo&#64;ejemplo.com" aria-describedby="email-help email-error" />
           </div>
-          <app-form-error [control]="registerForm.get('email')" [isSubmitted]="isSubmitted"></app-form-error>
+          <app-form-help id="email-help" text="Usaremos este correo para confirmar tu cuenta y tus pedidos."></app-form-help>
+          <app-form-error [control]="registerForm.get('email')" [isSubmitted]="isSubmitted" fieldLabel="el correo electrónico" errorId="email-error"></app-form-error>
         </div>
 
         <div class="field">
           <label for="telefono">Teléfono</label>
           <div class="input-icon">
             <span class="icon">&#x1f4f1;</span>
-            <input id="telefono" formControlName="telefono" type="tel" placeholder="999 999 999" maxlength="9" />
+            <input id="telefono" formControlName="telefono" type="tel" placeholder="999 999 999" maxlength="9" aria-describedby="telefono-help telefono-error" />
           </div>
-          <app-form-error [control]="registerForm.get('telefono')" [isSubmitted]="isSubmitted"></app-form-error>
+          <app-form-help id="telefono-help" text="Incluye un número de 9 dígitos para coordinar la entrega."></app-form-help>
+          <app-form-error [control]="registerForm.get('telefono')" [isSubmitted]="isSubmitted" fieldLabel="el teléfono" errorId="telefono-error"></app-form-error>
           <span class="hint"
             *ngIf="registerForm.get('telefono')?.hasError('pattern') && registerForm.get('telefono')?.touched">
             Ingresa 9 dígitos
@@ -46,6 +48,7 @@
             <select id="documentoTipo" formControlName="documentoTipo">
               <option *ngFor="let t of tiposDocumento" [value]="t.codigo">{{ getTipoDocumentoLabel(t) }}</option>
             </select>
+            <app-form-help id="documento-tipo-help" text="Selecciona el tipo de documento para continuar con tu registro."></app-form-help>
           </div>
           <div class="field">
             <label for="documentoNumero">Nro. Documento <span class="optional">(opcional)</span></label>
@@ -63,12 +66,13 @@
           <div class="input-icon">
             <span class="icon">&#x1f512;</span>
             <input id="password" formControlName="password" [type]="showPassword ? 'text' : 'password'"
-              placeholder="Mínimo 6 caracteres" />
+              placeholder="Mínimo 6 caracteres" aria-describedby="password-help password-error" />
             <button type="button" class="toggle-pw" (click)="togglePassword()" tabindex="-1">
               {{ showPassword ? '&#x1f648;' : '&#x1f441;' }}
             </button>
           </div>
-          <app-form-error [control]="registerForm.get('password')" [isSubmitted]="isSubmitted"></app-form-error>
+          <app-form-help id="password-help" text="Usa al menos 6 caracteres para proteger tu cuenta."></app-form-help>
+          <app-form-error [control]="registerForm.get('password')" [isSubmitted]="isSubmitted" fieldLabel="la contraseña" errorId="password-error"></app-form-error>
         </div>
 
         <div class="field">
@@ -76,13 +80,13 @@
           <div class="input-icon">
             <span class="icon">&#x1f512;</span>
             <input id="confirmarPassword" formControlName="confirmarPassword"
-              [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Repite tu contraseña" />
+              [type]="showConfirmPassword ? 'text' : 'password'" placeholder="Repite tu contraseña" aria-describedby="confirm-password-error" />
             <button type="button" class="toggle-pw" (click)="toggleConfirmPassword()" tabindex="-1">
               {{ showConfirmPassword ? '&#x1f648;' : '&#x1f441;' }}
             </button>
           </div>
           <app-form-error [control]="registerForm.get('confirmarPassword')"
-            [isSubmitted]="isSubmitted"></app-form-error>
+            [isSubmitted]="isSubmitted" fieldLabel="la confirmación de contraseña" errorId="confirm-password-error"></app-form-error>
           <span class="hint error-hint" *ngIf="passwordMismatch && registerForm.get('confirmarPassword')?.touched">
             Las contraseñas no coinciden
           </span>

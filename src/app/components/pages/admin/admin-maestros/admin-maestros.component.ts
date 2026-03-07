@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
@@ -75,7 +75,8 @@ export class AdminMaestrosComponent implements OnInit {
 
   constructor(
     private maestrosService: MaestrosService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private elementRef: ElementRef<HTMLElement>
   ) { }
 
   ngOnInit(): void {
@@ -113,11 +114,13 @@ export class AdminMaestrosComponent implements OnInit {
   cargarMaestros(): void {
     this.maestrosService.obtenerTodosMaestros().subscribe({
       next: (data: Maestro[]) => {
+        this.loadingMaestros = false;
         this.maestros = data;
         this.actualizarGruposConocidos(data);
         this.maestroForm.updateValueAndValidity({ emitEvent: false });
       },
       error: (err: any) => {
+        this.loadingMaestros = false;
         console.error('Error cargando maestros', err);
         this.maestros = [];
         this.actualizarGruposConocidos([]);
@@ -136,15 +139,19 @@ export class AdminMaestrosComponent implements OnInit {
   }
 
   abrirModal(): void {
+    this.formSubmitAttempted = false;
     this.editando = false;
     this.idEditando = undefined;
     this.auditoriaSeleccionada = [];
     this.maestroForm.reset({ estado: true, enUso: false });
     this.showModal = true;
+    setTimeout(() => this.focusField('grupo'));
   }
 
   cerrarModal(): void {
     this.showModal = false;
+    this.formSubmitAttempted = false;
+    this.guardando = false;
   }
 
   editar(maestro: Maestro): void {
@@ -175,6 +182,7 @@ export class AdminMaestrosComponent implements OnInit {
     if (this.editando && this.idEditando) {
       this.maestrosService.actualizarMaestro(this.idEditando, maestroData).subscribe({
         next: () => {
+          this.guardando = false;
           this.cargarMaestros();
           this.cerrarModal();
         },
