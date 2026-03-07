@@ -10,6 +10,16 @@
     </button>
   </div>
 
+  <div class="seed-groups-panel">
+    <h4>Catálogo semilla recomendado</h4>
+    <p>Estos grupos cubren los formularios principales y ayudan a mantener consistencia.</p>
+    <div class="seed-chip-list">
+      <button type="button" class="seed-chip" *ngFor="let grupo of gruposSemillaRecomendados" (click)="aplicarGrupoSemilla(grupo)">
+        {{ grupo }}
+      </button>
+    </div>
+  </div>
+
   <!-- Filtros -->
   <div class="admin-filters">
     <div class="filter-group">
@@ -42,13 +52,18 @@
         <tr *ngIf="loadingMaestros"><td colspan="7" class="empty-state">Cargando maestros...</td></tr>
         <tr *ngFor="let maestro of filteredMaestros" class="table-row">
           <td class="col-id">{{ maestro.id }}</td>
-          <td><span class="tag tag-grupo">{{ maestro.grupo }}</span></td>
+          <td>
+            <span class="tag tag-grupo" [title]="(ayudasPorGrupo[maestro.grupo] && ayudasPorGrupo[maestro.grupo].uso) || 'Sin ayuda definida'">
+              {{ maestro.grupo }}
+            </span>
+          </td>
           <td><code class="code-badge">{{ maestro.codigo }}</code></td>
           <td>{{ maestro.valor }}</td>
           <td class="col-desc text-muted">{{ maestro.descripcion || '—' }}</td>
           <td class="col-status">
             <span class="status-dot" [class.active]="maestro.estado" [class.inactive]="!maestro.estado"></span>
             {{ maestro.estado ? 'Activo' : 'Inactivo' }}
+            <small *ngIf="maestro.enUso" class="usage-pill">En uso</small>
           </td>
           <td class="col-actions">
             <button class="btn-icon btn-edit" (click)="editar(maestro)" title="Editar">
@@ -57,7 +72,7 @@
                 <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
               </svg>
             </button>
-            <button class="btn-icon btn-delete" (click)="eliminar(maestro.id!)" title="Eliminar">
+            <button class="btn-icon btn-delete" (click)="eliminar(maestro)" [title]="maestro.enUso ? 'Inactivar' : 'Eliminar'">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="3 6 5 6 21 6" />
                 <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
@@ -86,8 +101,8 @@
     <div class="modal-body">
       <form [formGroup]="maestroForm" (ngSubmit)="guardar()">
         <div class="form-group">
-          <label for="maestro-grupo">Grupo / Categoría</label>
-          <input id="maestro-grupo" type="text" formControlName="grupo" class="form-control" placeholder="Ej. TIPO_DOC, MONEDA, RANGO_EDAD" aria-describedby="maestro-grupo-help maestro-grupo-error"
+          <label>Grupo / Categoría</label>
+          <input type="text" formControlName="grupo" class="form-control" placeholder="Ej. TIPO_DOCUMENTO, CUENTO_CATEGORIA"
             list="gruposData" />
           <datalist id="gruposData">
             <option *ngFor="let g of gruposConocidos" [value]="g"></option>
@@ -98,22 +113,30 @@
           </small>
         </div>
 
+        <div class="group-help" *ngIf="ayudaGrupoSeleccionado as ayuda">
+          <strong>{{ ayuda.titulo }}:</strong> {{ ayuda.uso }}
+        </div>
+
         <div class="row">
           <div class="form-group col-md-6">
-            <label>Código (Clave única)</label>
-            <input type="text" formControlName="codigo" class="form-control" placeholder="Ej. DNI, PEN, 0-3" />
-            <small class="error-msg" *ngIf="maestroForm.get('codigo')?.invalid && (maestroForm.get('codigo')?.touched || formSubmitAttempted)">
+            <label>Código (Clave única por grupo)</label>
+            <input type="text" formControlName="codigo" class="form-control" placeholder="Ej. DNI, INFANTIL, TAPA_DURA" />
+            <small class="error-msg" *ngIf="maestroForm.get('codigo')?.invalid && maestroForm.get('codigo')?.touched">
               El código es requerido.
             </small>
           </div>
           <div class="form-group col-md-6">
             <label>Valor (Nombre visual)</label>
-            <input type="text" formControlName="valor" class="form-control" placeholder="Ej. Sol Peruano, 0 a 3 años" />
-            <small class="error-msg" *ngIf="maestroForm.get('valor')?.invalid && (maestroForm.get('valor')?.touched || formSubmitAttempted)">
+            <input type="text" formControlName="valor" class="form-control" placeholder="Ej. Documento Nacional de Identidad" />
+            <small class="error-msg" *ngIf="maestroForm.get('valor')?.invalid && maestroForm.get('valor')?.touched">
               El valor es requerido.
             </small>
           </div>
         </div>
+
+        <small class="error-msg" *ngIf="maestroForm.errors?.['duplicadoGrupoCodigo']">
+          Ya existe un registro con la combinación grupo + código. Usa otro código o edita el existente.
+        </small>
 
         <div class="form-group">
           <label>Descripción / Observaciones (Opcional)</label>
@@ -121,12 +144,33 @@
             placeholder="Detalles adicionales sobre este registro..."></textarea>
         </div>
 
-        <div class="form-group checkbox-group">
-          <label class="switch">
-            <input type="checkbox" formControlName="estado">
-            <span class="slider round"></span>
-          </label>
-          <span>{{ maestroForm.get('estado')?.value ? 'Activo (Visible en UI)' : 'Inactivo (Oculto)' }}</span>
+        <div class="row">
+          <div class="form-group checkbox-group col-md-6">
+            <label class="switch">
+              <input type="checkbox" formControlName="estado">
+              <span class="slider round"></span>
+            </label>
+            <span>{{ maestroForm.get('estado')?.value ? 'Activo (Visible en UI)' : 'Inactivo (Oculto)' }}</span>
+          </div>
+          <div class="form-group checkbox-group col-md-6">
+            <label class="switch">
+              <input type="checkbox" formControlName="enUso">
+              <span class="slider round"></span>
+            </label>
+            <span>Elemento en uso (evita eliminación física)</span>
+          </div>
+        </div>
+
+        <div *ngIf="auditoriaDisponible && auditoriaSeleccionada.length" class="audit-section">
+          <h4>Trazabilidad de cambios</h4>
+          <ul>
+            <li *ngFor="let log of auditoriaSeleccionada">
+              <strong>{{ log.fecha | date:'short' }}</strong>
+              · {{ log.usuario }} · {{ log.operacion }}
+              <div class="audit-detail">Previo: {{ log.valorPrevio || '—' }}</div>
+              <div class="audit-detail">Nuevo: {{ log.valorNuevo || '—' }}</div>
+            </li>
+          </ul>
         </div>
 
         <div class="modal-footer">

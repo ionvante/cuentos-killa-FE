@@ -66,7 +66,7 @@
           <label class="form-label">Tipo de doc.:</label>
           <div class="input-wrapper">
             <select formControlName="documentoTipo" class="form-input form-select" (change)="enfocarDocumento()">
-              <option *ngFor="let tipo of tiposDocumento" [value]="tipo.codigo">{{ tipo.valor }}</option>
+              <option *ngFor="let tipo of tiposDocumento" [value]="tipo.codigo">{{ getTipoDocumentoLabel(tipo) }}</option>
             </select>
           </div>
         </div>
@@ -76,7 +76,7 @@
           <div class="input-wrapper">
             <input id="docNumeroInput" formControlName="documentoNumero" type="text" required class="form-input" [attr.aria-describedby]="getControlAriaDescribedBy('documentoNumero', 'doc-help')"
               inputmode="numeric" [attr.maxlength]="docMaxLength"
-              [placeholder]="checkoutForm.get('documentoTipo')?.value === 'DNI' ? '12345678' : checkoutForm.get('documentoTipo')?.value === 'CE' ? '123456789' : 'Número'"
+              [placeholder]="documentoPlaceholder"
               (input)="soloNumeros($event)" />
             <svg class="input-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -86,9 +86,13 @@
               <line x1="7" y1="16" x2="13" y2="16"></line>
             </svg>
           </div>
-          <app-form-help id="doc-help" text="Ingresa solo números. Ajustamos la validación según el tipo de documento."></app-form-help>
-          <app-form-error [control]="checkoutForm.get('documentoNumero')" fieldLabel="el número de documento"
-            errorId="documentoNumero-error"></app-form-error>
+          <span class="hint">{{ documentoHelpText }}</span>
+          <div class="error-mensaje"
+            *ngIf="checkoutForm.get('documentoNumero')?.touched && checkoutForm.get('documentoNumero')?.invalid">
+            <span *ngIf="checkoutForm.get('documentoNumero')?.errors?.['required']">El número de doc. es
+              obligatorio</span>
+            <span *ngIf="checkoutForm.get('documentoNumero')?.errors?.['pattern'] || checkoutForm.get('documentoNumero')?.errors?.['minlength'] || checkoutForm.get('documentoNumero')?.errors?.['maxlength']">{{ documentoErrorMessage }}</span>
+          </div>
         </div>
       </div>
 
@@ -210,6 +214,35 @@
         <app-form-error [control]="checkoutForm.get('calle')" fieldLabel="la calle" errorId="calle-error"></app-form-error>
       </div>
 
+
+      <!-- Tipo de envío -->
+      <div class="form-group">
+        <label class="form-label">Tipo de envío:</label>
+        <div class="input-wrapper">
+          <select formControlName="tipoEntrega" class="form-input form-select">
+            <option value="" disabled>Seleccionar</option>
+            <option *ngFor="let tipo of tiposEntrega" [value]="tipo.codigo">{{ tipo.valor }}</option>
+          </select>
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('tipoEntrega')?.touched && checkoutForm.get('tipoEntrega')?.invalid">
+          Selecciona un tipo de envío
+        </div>
+      </div>
+
+      <div class="coverage-info" *ngIf="mensajeCobertura">
+        {{ mensajeCobertura }}
+      </div>
+
+      <div class="form-group" *ngIf="mostrarCampoAgencia()">
+        <label class="form-label">Agencia de recojo Shalom:</label>
+        <div class="input-wrapper">
+          <input formControlName="agenciaRecojo" type="text" class="form-input" placeholder="Ej: Agencia Shalom - Centro" />
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('agenciaRecojo')?.touched && checkoutForm.get('agenciaRecojo')?.invalid">
+          Ingresa la agencia de recojo para envío Shalom
+        </div>
+      </div>
+
       <!-- Referencia -->
       <div class="form-group">
         <label class="form-label">Referencia (opcional):</label>
@@ -267,8 +300,16 @@
             </div>
           </div>
           <div class="resumen-total-row">
-            <span class="resumen-total-label">Total a Pagar</span>
+            <span class="resumen-total-label">Subtotal</span>
             <span class="resumen-total-value">{{ calcularSubtotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          </div>
+          <div class="resumen-total-row resumen-envio">
+            <span class="resumen-total-label">Envío (estimado)</span>
+            <span class="resumen-total-value">{{ obtenerEstimacionEnvioSeleccionado().costo | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          </div>
+          <div class="resumen-total-row">
+            <span class="resumen-total-label">Total a Pagar</span>
+            <span class="resumen-total-value">{{ calcularTotalConEnvio() | currency:'PEN':'S/ ':'1.2-2' }}</span>
           </div>
         </div>
       </div>
@@ -287,6 +328,10 @@
           <p><strong>{{ checkoutForm.get('nombre')?.value }}</strong></p>
           <p>{{ checkoutForm.get('direccion')?.value }}</p>
           <p>{{ checkoutForm.get('telefono')?.value }} · {{ checkoutForm.get('correo')?.value }}</p>
+          <p><strong>Tipo de envío:</strong> {{ obtenerEtiquetaTipoEntrega(checkoutForm.get('tipoEntrega')?.value) }}</p>
+          <p><strong>Tiempo estimado:</strong> {{ obtenerEstimacionEnvioSeleccionado().tiempo }}</p>
+          <p *ngIf="checkoutForm.get('fallbackMotivo')?.value"><strong>Motivo fallback:</strong> {{ checkoutForm.get('fallbackMotivo')?.value }}</p>
+          <p *ngIf="mostrarCampoAgencia()"><strong>Agencia Shalom:</strong> {{ checkoutForm.get('agenciaRecojo')?.value }}</p>
         </div>
       </div>
 

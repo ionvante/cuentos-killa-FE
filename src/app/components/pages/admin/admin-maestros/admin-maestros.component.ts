@@ -1,8 +1,21 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  FormsModule,
+  ValidationErrors,
+  Validators
+} from '@angular/forms';
 import { MaestrosService } from '../../../../services/maestros.service';
-import { Maestro } from '../../../../model/maestro.model';
+import { Maestro, MaestroAuditLog } from '../../../../model/maestro.model';
+
+interface GrupoAyuda {
+  titulo: string;
+  uso: string;
+}
 
 @Component({
   selector: 'app-admin-maestros',
@@ -17,13 +30,48 @@ export class AdminMaestrosComponent implements OnInit {
   showModal = false;
   editando = false;
   idEditando?: number;
+  auditoriaDisponible = false;
 
   gruposConocidos: string[] = [];
 
+  readonly gruposSemillaRecomendados = [
+    'TIPO_DOCUMENTO',
+    'CUENTO_CATEGORIA',
+    'RANGO_EDAD',
+    'TIPO_EDICION',
+    'TIPO_DIRECCION',
+    'TIPO_ENTREGA'
+  ];
+
+  readonly ayudasPorGrupo: Record<string, GrupoAyuda> = {
+    TIPO_DOCUMENTO: {
+      titulo: 'Dónde se usa',
+      uso: 'Registro de usuario, checkout y perfil para validar documento de identidad.'
+    },
+    CUENTO_CATEGORIA: {
+      titulo: 'Dónde se usa',
+      uso: 'Administración de cuentos y filtros del catálogo público.'
+    },
+    RANGO_EDAD: {
+      titulo: 'Dónde se usa',
+      uso: 'Formulario de cuentos para estandarizar edad recomendada y búsquedas.'
+    },
+    TIPO_EDICION: {
+      titulo: 'Dónde se usa',
+      uso: 'Formulario de cuentos para controlar el tipo de edición comercializada.'
+    },
+    TIPO_DIRECCION: {
+      titulo: 'Dónde se usa',
+      uso: 'Perfil de usuario y direcciones guardadas usadas en checkout.'
+    },
+    TIPO_ENTREGA: {
+      titulo: 'Dónde se usa',
+      uso: 'Checkout y pedidos para definir modalidad de envío.'
+    }
+  };
+
   filtroGrupo: string = '';
-  loadingMaestros = false;
-  guardando = false;
-  formSubmitAttempted = false;
+  auditoriaSeleccionada: MaestroAuditLog[] = [];
 
   constructor(
     private maestrosService: MaestrosService,
@@ -34,16 +82,18 @@ export class AdminMaestrosComponent implements OnInit {
   ngOnInit(): void {
     this.initForm();
     this.cargarMaestros();
+    this.detectarSoporteAuditoria();
   }
 
   initForm(): void {
     this.maestroForm = this.fb.group({
-      grupo: ['', Validators.required],
-      codigo: ['', Validators.required],
+      grupo: ['', [Validators.required]],
+      codigo: ['', [Validators.required]],
       valor: ['', Validators.required],
       descripcion: [''],
-      estado: [true, Validators.required]
-    });
+      estado: [true, Validators.required],
+      enUso: [false]
+    }, { validators: this.unicidadGrupoCodigoValidator.bind(this) });
   }
 
   get filteredMaestros() {
@@ -53,32 +103,47 @@ export class AdminMaestrosComponent implements OnInit {
     return this.maestros.filter(m => m.grupo === this.filtroGrupo);
   }
 
+  get ayudaGrupoSeleccionado(): GrupoAyuda | null {
+    const grupo = this.maestroForm.get('grupo')?.value;
+    if (!grupo) {
+      return null;
+    }
+    return this.ayudasPorGrupo[String(grupo).trim().toUpperCase()] ?? null;
+  }
+
   cargarMaestros(): void {
-    // Al no tener el backend de momento, inicializamos el array o mostramos loader.
-    this.loadingMaestros = true;
     this.maestrosService.obtenerTodosMaestros().subscribe({
       next: (data: Maestro[]) => {
         this.loadingMaestros = false;
         this.maestros = data;
-        // Extraer dinámicamente los grupos únicos y ordenarlos alfabéticamente
-        const gruposUnicos = new Set(data.map(m => m.grupo));
-        this.gruposConocidos = Array.from(gruposUnicos).sort();
+        this.actualizarGruposConocidos(data);
+        this.maestroForm.updateValueAndValidity({ emitEvent: false });
       },
       error: (err: any) => {
         this.loadingMaestros = false;
         console.error('Error cargando maestros', err);
-        // Fallback temporal si el api no existe
         this.maestros = [];
-        this.gruposConocidos = [];
+        this.actualizarGruposConocidos([]);
       }
     });
+  }
+
+  actualizarGruposConocidos(data: Maestro[]): void {
+    const gruposUnicos = new Set(
+      [...this.gruposSemillaRecomendados, ...data.map(m => m.grupo)]
+        .filter(Boolean)
+        .map(grupo => grupo.trim().toUpperCase())
+    );
+
+    this.gruposConocidos = Array.from(gruposUnicos).sort();
   }
 
   abrirModal(): void {
     this.formSubmitAttempted = false;
     this.editando = false;
     this.idEditando = undefined;
-    this.maestroForm.reset({ estado: true });
+    this.auditoriaSeleccionada = [];
+    this.maestroForm.reset({ estado: true, enUso: false });
     this.showModal = true;
     setTimeout(() => this.focusField('grupo'));
   }
@@ -92,22 +157,27 @@ export class AdminMaestrosComponent implements OnInit {
   editar(maestro: Maestro): void {
     this.editando = true;
     this.idEditando = maestro.id;
-    this.maestroForm.patchValue(maestro);
+    this.maestroForm.patchValue({
+      ...maestro,
+      grupo: maestro.grupo?.trim().toUpperCase(),
+      codigo: maestro.codigo?.trim().toUpperCase(),
+      enUso: Boolean(maestro.enUso)
+    });
     this.showModal = true;
-    setTimeout(() => this.focusField('grupo'));
+    this.cargarAuditoria(maestro.id);
   }
 
   guardar(): void {
-    this.formSubmitAttempted = true;
-    if (this.maestroForm.invalid) {
-      this.maestroForm.markAllAsTouched();
-      this.focusFirstInvalidControl();
+    this.marcarControlesComoTocados();
+    if (this.maestroForm.invalid) return;
+
+    const maestroData = this.obtenerPayloadFormulario();
+
+    const duplicado = this.buscarDuplicado(maestroData.grupo, maestroData.codigo, this.idEditando);
+    if (duplicado) {
+      this.maestroForm.setErrors({ duplicadoGrupoCodigo: true });
       return;
     }
-
-    this.guardando = true;
-
-    const maestroData: Maestro = this.maestroForm.value;
 
     if (this.editando && this.idEditando) {
       this.maestrosService.actualizarMaestro(this.idEditando, maestroData).subscribe({
@@ -116,52 +186,115 @@ export class AdminMaestrosComponent implements OnInit {
           this.cargarMaestros();
           this.cerrarModal();
         },
-        error: (err: any) => {
-          this.guardando = false;
-          console.error(err);
-        }
+        error: (err: any) => this.manejarErrorPersistencia(err)
       });
-    } else {
-      this.maestrosService.crearMaestro(maestroData).subscribe({
-        next: () => {
-          this.guardando = false;
-          this.cargarMaestros();
-          this.cerrarModal();
-        },
-        error: (err: any) => {
-          this.guardando = false;
-          console.error(err);
-        }
-      });
+      return;
     }
+
+    this.maestrosService.crearMaestro(maestroData).subscribe({
+      next: () => {
+        this.cargarMaestros();
+        this.cerrarModal();
+      },
+      error: (err: any) => this.manejarErrorPersistencia(err)
+    });
   }
 
-  eliminar(id: number): void {
-    if (confirm('¿Estás seguro de inhabilitar/eliminar este registro maestro?')) {
-      this.maestrosService.eliminarMaestro(id).subscribe({
+  eliminar(maestro: Maestro): void {
+    const accion = maestro.enUso ? 'inactivar' : 'eliminar';
+    if (confirm(`¿Estás seguro de ${accion} este registro maestro?`)) {
+      this.maestrosService.eliminarMaestro(maestro.id!).subscribe({
         next: () => this.cargarMaestros(),
-        error: (err: any) => console.error(err)
+        error: (err: any) => this.manejarErrorPersistencia(err)
       });
     }
   }
 
-  @HostListener('document:keydown.escape')
-  onEscape(): void {
-    if (this.showModal) {
-      this.cerrarModal();
+  aplicarGrupoSemilla(grupo: string): void {
+    this.maestroForm.patchValue({ grupo });
+    this.maestroForm.get('grupo')?.markAsTouched();
+    this.maestroForm.updateValueAndValidity();
+  }
+
+  private marcarControlesComoTocados(): void {
+    Object.values(this.maestroForm.controls).forEach(control => control.markAsTouched());
+  }
+
+  private obtenerPayloadFormulario(): Maestro {
+    const values = this.maestroForm.value;
+    return {
+      ...values,
+      grupo: String(values.grupo ?? '').trim().toUpperCase(),
+      codigo: String(values.codigo ?? '').trim().toUpperCase(),
+      valor: String(values.valor ?? '').trim(),
+      descripcion: String(values.descripcion ?? '').trim(),
+      estado: Boolean(values.estado),
+      enUso: Boolean(values.enUso)
+    };
+  }
+
+  private unicidadGrupoCodigoValidator(control: AbstractControl): ValidationErrors | null {
+    const grupoRaw = control.get('grupo')?.value;
+    const codigoRaw = control.get('codigo')?.value;
+
+    if (!grupoRaw || !codigoRaw) {
+      return null;
     }
+
+    const grupo = String(grupoRaw).trim().toUpperCase();
+    const codigo = String(codigoRaw).trim().toUpperCase();
+
+    return this.buscarDuplicado(grupo, codigo, this.idEditando)
+      ? { duplicadoGrupoCodigo: true }
+      : null;
   }
 
-  private focusFirstInvalidControl(): void {
-    const firstInvalid = Object.keys(this.maestroForm.controls).find((name) => this.maestroForm.get(name)?.invalid);
-    if (firstInvalid) {
-      this.focusField(firstInvalid);
+  private buscarDuplicado(grupo: string, codigo: string, idActual?: number): Maestro | undefined {
+    return this.maestros.find(maestro =>
+      maestro.grupo?.trim().toUpperCase() === grupo
+      && maestro.codigo?.trim().toUpperCase() === codigo
+      && maestro.id !== idActual
+    );
+  }
+
+  private manejarErrorPersistencia(err: any): void {
+    const status = err?.status;
+    const message = String(err?.error?.message ?? '').toLowerCase();
+    if (status === 409 || message.includes('duplic') || message.includes('unique')) {
+      this.maestroForm.setErrors({ duplicadoGrupoCodigo: true });
     }
+
+    if (status === 400 && (message.includes('en uso') || message.includes('in use'))) {
+      this.maestroForm.setErrors({ registroEnUso: true });
+    }
+
+    console.error(err);
   }
 
-  private focusField(controlName: string): void {
-    const target = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${controlName}"]`);
-    target?.focus();
+  private detectarSoporteAuditoria(): void {
+    this.maestrosService.soportaAuditoria().subscribe({
+      next: soporta => {
+        this.auditoriaDisponible = soporta;
+      },
+      error: () => {
+        this.auditoriaDisponible = false;
+      }
+    });
   }
 
+  private cargarAuditoria(id?: number): void {
+    if (!id || !this.auditoriaDisponible) {
+      this.auditoriaSeleccionada = [];
+      return;
+    }
+
+    this.maestrosService.obtenerAuditoria(id).subscribe({
+      next: data => {
+        this.auditoriaSeleccionada = data;
+      },
+      error: () => {
+        this.auditoriaSeleccionada = [];
+      }
+    });
+  }
 }

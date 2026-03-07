@@ -36,6 +36,13 @@ export interface Pedido {
   referencia?: string;
   ubicacionGps?: string;
 
+  tipoEntrega?: string;
+  ubigeoEvaluado?: string;
+  fallbackMotivo?: string;
+  costoEnvioEstimado?: number;
+  tiempoEntregaEstimado?: string;
+  agenciaRecojo?: string;
+
   // Fallbacks
   Fecha?: string;
   Nombre?: string;
