@@ -9,6 +9,7 @@ import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
 import { MaestrosService } from '../../../services/maestros.service';
+import { Maestro } from '../../../model/maestro.model';
 
 
 @Component({
@@ -36,6 +37,17 @@ export class CheckoutComponent implements OnInit {
   provincias: any[] = [];
   distritos: any[] = [];
   tiposDocumento: any[] = [];
+  tiposEntrega: Maestro[] = [];
+  coberturasCourier: Maestro[] = [];
+  mensajeCobertura = '';
+
+  readonly CODIGO_ENVIO_COURIER = 'DOMICILIO_COURIER';
+  readonly CODIGO_ENVIO_SHALOM = 'ENVIO_SHALOM';
+
+  estimacionEnvio: Record<string, { costo: number; tiempo: string }> = {
+    DOMICILIO_COURIER: { costo: 12, tiempo: '24-48 horas' },
+    ENVIO_SHALOM: { costo: 18, tiempo: '48-72 horas' }
+  };
 
   constructor(
     private fb: FormBuilder,
@@ -74,6 +86,10 @@ export class CheckoutComponent implements OnInit {
       referencia: this.fb.control('', { updateOn: 'blur' }),
       ubicacionGps: [''],
       direccion: [''],
+      tipoEntrega: ['', Validators.required],
+      agenciaRecojo: [''],
+      coberturaCourier: [false],
+      fallbackMotivo: ['']
     });
 
     // 2. Obtiene usuario logueado
@@ -150,6 +166,24 @@ export class CheckoutComponent implements OnInit {
       }
     });
 
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_ENTREGA').subscribe({
+      next: (data) => {
+        this.tiposEntrega = data?.length ? data : this.obtenerFallbackTipoEntrega();
+      },
+      error: () => {
+        this.tiposEntrega = this.obtenerFallbackTipoEntrega();
+      }
+    });
+
+    this.maestrosService.obtenerMaestrosPorGrupo('COBERTURA_COURIER').subscribe({
+      next: (data) => {
+        this.coberturasCourier = data ?? [];
+      },
+      error: () => {
+        this.coberturasCourier = [];
+      }
+    });
+
     // Gestionar dependencias de UBIGEO (Cascada Departamentos -> Provincias)
     this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
       if (!deptoNombre) return;
@@ -195,6 +229,23 @@ export class CheckoutComponent implements OnInit {
       }
     });
 
+    this.checkoutForm.get('distrito')?.valueChanges.subscribe(() => {
+      this.evaluarCoberturaCourier();
+    });
+
+    this.checkoutForm.get('tipoEntrega')?.valueChanges.subscribe((tipoEntrega) => {
+      const agenciaRecojo = this.checkoutForm.get('agenciaRecojo');
+      if (!agenciaRecojo) return;
+
+      agenciaRecojo.clearValidators();
+      if (tipoEntrega === this.CODIGO_ENVIO_SHALOM) {
+        agenciaRecojo.setValidators([Validators.required, Validators.minLength(3)]);
+      } else {
+        agenciaRecojo.setValue('');
+      }
+      agenciaRecojo.updateValueAndValidity();
+    });
+
     // Validaciones dinámicas según tipo de documento
     this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe(tipo => {
       const docInput = this.checkoutForm.get('documentoNumero');
@@ -219,6 +270,86 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm.valueChanges.subscribe(val => {
       sessionStorage.setItem('checkoutForm', JSON.stringify(val));
     });
+  }
+
+  private obtenerFallbackTipoEntrega(): Maestro[] {
+    return [
+      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_COURIER, valor: 'Envío a domicilio (Courier)', estado: true },
+      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_SHALOM, valor: 'Envío por Shalom', estado: true }
+    ];
+  }
+
+  private normalizarTexto(texto: string): string {
+    return (texto || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toUpperCase();
+  }
+
+  private evaluarCoberturaCourier(): void {
+    const departamento = this.checkoutForm.get('departamento')?.value;
+    const provincia = this.checkoutForm.get('provincia')?.value;
+    const distrito = this.checkoutForm.get('distrito')?.value;
+
+    if (!departamento || !provincia || !distrito) {
+      return;
+    }
+
+    const ubigeoEvaluado = `${departamento}|${provincia}|${distrito}`;
+    const ubigeoNormalizado = this.normalizarTexto(ubigeoEvaluado);
+
+    const cobertura = this.coberturasCourier.find(c => {
+      if (c.estado === false) return false;
+      const codigo = this.normalizarTexto(c.codigo || '');
+      if (!codigo) return false;
+      if (codigo === 'TODOS') return true;
+
+      const [dep, prov, dist] = codigo.split('|');
+      const [depSel, provSel, distSel] = ubigeoNormalizado.split('|');
+
+      const matchDep = !dep || dep === '*' || dep === depSel;
+      const matchProv = !prov || prov === '*' || prov === provSel;
+      const matchDist = !dist || dist === '*' || dist === distSel;
+      return matchDep && matchProv && matchDist;
+    });
+
+    const tieneCobertura = !!cobertura;
+    const fallbackMotivo = tieneCobertura
+      ? ''
+      : `Sin cobertura courier en ${departamento}, ${provincia}, ${distrito}`;
+
+    this.checkoutForm.patchValue({
+      coberturaCourier: tieneCobertura,
+      fallbackMotivo
+    }, { emitEvent: false });
+
+    if (tieneCobertura) {
+      this.checkoutForm.patchValue({ tipoEntrega: this.CODIGO_ENVIO_COURIER }, { emitEvent: true });
+      this.mensajeCobertura = '¡Tenemos cobertura courier! Puedes recibir tu pedido en domicilio.';
+      return;
+    }
+
+    this.checkoutForm.patchValue({ tipoEntrega: this.CODIGO_ENVIO_SHALOM }, { emitEvent: true });
+    this.mensajeCobertura = 'No llegamos por courier a este ubigeo. Te sugerimos envío por Shalom para una entrega segura.';
+  }
+
+  mostrarCampoAgencia(): boolean {
+    return this.checkoutForm.get('tipoEntrega')?.value === this.CODIGO_ENVIO_SHALOM;
+  }
+
+  obtenerEtiquetaTipoEntrega(codigo: string): string {
+    const tipo = this.tiposEntrega.find(t => t.codigo === codigo);
+    return tipo?.valor || codigo;
+  }
+
+  obtenerEstimacionEnvioSeleccionado(): { costo: number; tiempo: string } {
+    const tipoEntrega = this.checkoutForm.get('tipoEntrega')?.value;
+    return this.estimacionEnvio[tipoEntrega] || { costo: 0, tiempo: 'Por confirmar' };
+  }
+
+  calcularTotalConEnvio(): number {
+    return this.calcularSubtotal() + this.obtenerEstimacionEnvioSeleccionado().costo;
   }
 
   private cargarProvinciasYAutoSeleccionar(deptoNombre: string, provNombre: string, distNombre: string) {
@@ -271,7 +402,9 @@ export class CheckoutComponent implements OnInit {
       return this.checkoutForm.get('departamento')?.valid! &&
         this.checkoutForm.get('provincia')?.valid! &&
         this.checkoutForm.get('distrito')?.valid! &&
-        this.checkoutForm.get('calle')?.valid!;
+        this.checkoutForm.get('calle')?.valid! &&
+        this.checkoutForm.get('tipoEntrega')?.valid! &&
+        this.checkoutForm.get('agenciaRecojo')?.valid!;
     }
     return true;
   }
@@ -288,6 +421,8 @@ export class CheckoutComponent implements OnInit {
       this.checkoutForm.get('provincia')?.markAsTouched();
       this.checkoutForm.get('distrito')?.markAsTouched();
       this.checkoutForm.get('calle')?.markAsTouched();
+      this.checkoutForm.get('tipoEntrega')?.markAsTouched();
+      this.checkoutForm.get('agenciaRecojo')?.markAsTouched();
     }
   }
 
@@ -388,6 +523,12 @@ export class CheckoutComponent implements OnInit {
       referencia: formData.referencia,
       ubicacionGps: formData.ubicacionGps,
       telefono: formData.telefono,
+      tipoEntrega: formData.tipoEntrega,
+      ubigeoEvaluado: `${formData.departamento}|${formData.provincia}|${formData.distrito}`,
+      fallbackMotivo: formData.fallbackMotivo,
+      costoEnvioEstimado: this.obtenerEstimacionEnvioSeleccionado().costo,
+      tiempoEntregaEstimado: this.obtenerEstimacionEnvioSeleccionado().tiempo,
+      agenciaRecojo: formData.agenciaRecojo,
       items: this.itemsCarrito.map(item => ({
         cuentoId: item.cuento.id,
         nombreCuento: item.cuento.titulo,
@@ -396,7 +537,7 @@ export class CheckoutComponent implements OnInit {
         cantidad: item.cantidad,
         subtotal: item.cuento.precio * item.cantidad
       })),
-      total: this.calcularSubtotal(),
+      total: this.calcularTotalConEnvio(),
       estado: 'PAGO_PENDIENTE',
       userId: this.user?.id || 0,
       correoUsuario: this.user?.email || ''
