@@ -5,6 +5,7 @@ import { AlertBannerComponent } from '../../alert-banner/alert-banner.component'
 import { VoucherComponent } from '../voucher/voucher.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { PagoService } from '../../../services/pago.service';
+import { MaestrosService } from '../../../services/maestros.service';
 
 @Component({
   selector: 'app-pago',
@@ -25,6 +26,10 @@ export class PagoComponent implements OnInit {
   isGuest: boolean = false; // Add property to track if order belongs to a guest
   isMercadoPagoError = false;
 
+  // Feature Flags
+  flagMercadoPago: boolean = false;
+  flagYape: boolean = false;
+
   /** Mapa de estados del BE a etiquetas legibles */
   private readonly statusLabels: Record<string, string> = {
     GENERADO: 'Pedido generado',
@@ -40,12 +45,34 @@ export class PagoComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private pedidoService: PedidoService,
-    private pagoService: PagoService
+    private pagoService: PagoService,
+    private maestrosService: MaestrosService
   ) { }
 
   ngOnInit(): void {
     this.pedidoId = Number(this.route.snapshot.paramMap.get('id'));
     this.fetchOrderStatus();
+
+    // Cargar Feature Flags de Pagos
+    this.maestrosService.obtenerMaestrosPorGrupo('METODOS_PAGO').subscribe({
+      next: (flags) => {
+        console.log('--- Feature Flags recibidos desde BD ---', flags);
+        if (flags && flags.length > 0) {
+          const mpFlag = flags.find((f: any) => f.codigo === 'MP_ENABLED');
+          const yapeFlag = flags.find((f: any) => f.codigo === 'YAPE_ENABLED');
+
+          if (mpFlag) {
+            console.log('Evaluando MP_ENABLED estado:', mpFlag.estado, typeof mpFlag.estado);
+            this.flagMercadoPago = (mpFlag.estado === true || String(mpFlag.estado).toLowerCase() === 'true');
+          }
+          if (yapeFlag) {
+            console.log('Evaluando YAPE_ENABLED estado:', yapeFlag.estado, typeof yapeFlag.estado);
+            this.flagYape = (yapeFlag.estado === true || String(yapeFlag.estado).toLowerCase() === 'true');
+          }
+        }
+      },
+      error: (err) => console.error('Error cargando config de pagos:', err)
+    });
 
     // Cargar el total del pedido
     this.pedidoService.getOrderById(this.pedidoId).subscribe({

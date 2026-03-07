@@ -114,11 +114,17 @@
 
 <!-- Voucher Modal Desktop -->
 <ng-template #voucherContent>
+  <div *ngIf="!voucherUrl" style="text-align: center; padding: 20px;">
+    <div class="spinner" style="margin: 0 auto 10px auto;"></div>
+    <p>Cargando comprobante de pago...</p>
+  </div>
   <ng-container *ngIf="voucherUrl">
-    <img *ngIf="!voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" alt="Voucher" />
-    <iframe *ngIf="voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" width="100%" height="500px"></iframe>
-    <div class="descargar">
-      <button class="btn-sm btn-sm-primary" (click)="descargarVoucher()">Descargar</button>
+    <div class="voucher-preview-container">
+      <img *ngIf="!voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" alt="Voucher" />
+      <iframe *ngIf="voucherUrl.endsWith('.pdf')" [src]="voucherUrl | safe" width="100%" height="500px"></iframe>
+    </div>
+    <div class="descargar" style="margin-top: 15px; text-align: center;">
+      <button class="btn-sm btn-sm-primary" (click)="descargarVoucher()">⬇️ Descargar Copia</button>
     </div>
   </ng-container>
 </ng-template>
