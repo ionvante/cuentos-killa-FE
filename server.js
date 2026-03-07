@@ -3,7 +3,7 @@ const path = require('path');
 const app = express();
 
 // Puerto dinámico que inyecta Railway
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 4200;
 
 // Directorio donde Angular compiló los archivos estáticos
 const appDir = path.join(__dirname, 'dist', 'cuentos-killa-fe', 'browser');

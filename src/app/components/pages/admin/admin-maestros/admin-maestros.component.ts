@@ -18,7 +18,7 @@ export class AdminMaestrosComponent implements OnInit {
   editando = false;
   idEditando?: number;
 
-  gruposConocidos = ['TIPO_DOC', 'MONEDA', 'ESTADO_PEDIDO', 'CATEGORIA_CUENTO', 'RANGO_EDAD', 'SISTEMA'];
+  gruposConocidos: string[] = [];
 
   filtroGrupo: string = '';
 
@@ -52,11 +52,17 @@ export class AdminMaestrosComponent implements OnInit {
   cargarMaestros(): void {
     // Al no tener el backend de momento, inicializamos el array o mostramos loader.
     this.maestrosService.obtenerTodosMaestros().subscribe({
-      next: (data: Maestro[]) => this.maestros = data,
+      next: (data: Maestro[]) => {
+        this.maestros = data;
+        // Extraer dinámicamente los grupos únicos y ordenarlos alfabéticamente
+        const gruposUnicos = new Set(data.map(m => m.grupo));
+        this.gruposConocidos = Array.from(gruposUnicos).sort();
+      },
       error: (err: any) => {
         console.error('Error cargando maestros', err);
         // Fallback temporal si el api no existe
         this.maestros = [];
+        this.gruposConocidos = [];
       }
     });
   }

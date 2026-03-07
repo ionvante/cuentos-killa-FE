@@ -79,12 +79,15 @@
 
       <div class="payment-cards">
         <!-- Mercado Pago -->
-        <button class="payment-card mercado" (click)="openMercadoPagoModal()" [disabled]="isLoadingMercadoPago">
+        <button class="payment-card mercado" [class.payment-disabled]="!flagMercadoPago"
+          (click)="openMercadoPagoModal()" [disabled]="isLoadingMercadoPago || !flagMercadoPago">
           <div class="payment-icon">💳</div>
           <div class="payment-text">
             <span class="payment-name" *ngIf="!isLoadingMercadoPago">Mercado Pago</span>
             <span class="payment-name" *ngIf="isLoadingMercadoPago">Conectando...</span>
-            <span class="payment-desc">Tarjeta, Yape o saldo MP</span>
+            <span class="payment-desc" *ngIf="flagMercadoPago">Tarjeta, Yape o saldo MP</span>
+            <span class="payment-desc" *ngIf="!flagMercadoPago"
+              style="color: #d32f2f; font-weight: 500;">(Pronto)</span>
           </div>
           <svg class="payment-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -93,14 +96,17 @@
         </button>
 
         <!-- Yape / Plin -->
-        <button class="payment-card yape" (click)="openVoucherDialog()" [disabled]="isGuest"
-          [class.payment-disabled]="isGuest" [title]="isGuest ? 'Solo disponible para usuarios registrados' : ''">
+        <button class="payment-card yape" (click)="openVoucherDialog()" [disabled]="isGuest || !flagYape"
+          [class.payment-disabled]="isGuest || !flagYape"
+          [title]="isGuest ? 'Solo disponible para usuarios registrados' : ''">
           <div class="payment-icon">📸</div>
           <div class="payment-text">
             <span class="payment-name">Yape / Plin</span>
-            <span class="payment-desc" *ngIf="!isGuest">Subir comprobante de pago</span>
+            <span class="payment-desc" *ngIf="!isGuest && flagYape">Subir comprobante de pago</span>
             <span class="payment-desc" *ngIf="isGuest" style="color: #d32f2f; font-weight: 500;">Solo para
               registrados</span>
+            <span class="payment-desc" *ngIf="!isGuest && !flagYape"
+              style="color: #d32f2f; font-weight: 500;">(Pronto)</span>
           </div>
           <svg class="payment-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
