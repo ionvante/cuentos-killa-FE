@@ -7,6 +7,7 @@ import { CartService } from '../../../services/carrito.service';
 import { PedidoService } from '../../../services/pedido.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
+import { MaestrosService } from '../../../services/maestros.service';
 
 describe('CheckoutComponent', () => {
   let component: CheckoutComponent;
@@ -15,12 +16,14 @@ describe('CheckoutComponent', () => {
   let pedidoServiceSpy: jasmine.SpyObj<PedidoService>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let maestrosServiceSpy: jasmine.SpyObj<MaestrosService>;
 
   beforeEach(async () => {
     cartServiceSpy = jasmine.createSpyObj('CartService', ['obtenerItems', 'clearCart']);
     pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['registrarPedido']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getUser']);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    maestrosServiceSpy = jasmine.createSpyObj('MaestrosService', ['obtenerDepartamentos', 'obtenerMaestrosPorGrupo', 'obtenerProvincias', 'obtenerDistritos']);
 
     await TestBed.configureTestingModule({
       imports: [CheckoutComponent, RouterTestingModule],
@@ -28,7 +31,8 @@ describe('CheckoutComponent', () => {
         { provide: CartService, useValue: cartServiceSpy },
         { provide: PedidoService, useValue: pedidoServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: MaestrosService, useValue: maestrosServiceSpy }
       ]
     }).compileComponents();
 
@@ -36,6 +40,24 @@ describe('CheckoutComponent', () => {
     component = fixture.componentInstance;
     authServiceSpy.getUser.and.returnValue(null);
     cartServiceSpy.obtenerItems.and.returnValue([]);
+    maestrosServiceSpy.obtenerDepartamentos.and.returnValue(of([{ id: '15', nombre: 'Lima' }]));
+    maestrosServiceSpy.obtenerMaestrosPorGrupo.and.callFake((grupo: string) => {
+      if (grupo === 'TIPO_DOC') {
+        return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOC', estado: true }]);
+      }
+      if (grupo === 'TIPO_ENTREGA') {
+        return of([
+          { codigo: 'DOMICILIO_COURIER', valor: 'Courier', grupo: 'TIPO_ENTREGA', estado: true },
+          { codigo: 'ENVIO_SHALOM', valor: 'Shalom', grupo: 'TIPO_ENTREGA', estado: true }
+        ]);
+      }
+      if (grupo === 'COBERTURA_COURIER') {
+        return of([{ codigo: 'LIMA|LIMA|MIRAFLORES', valor: 'Cobertura', grupo: 'COBERTURA_COURIER', estado: true }]);
+      }
+      return of([]);
+    });
+    maestrosServiceSpy.obtenerProvincias.and.returnValue(of([{ id: '1501', nombre: 'Lima' }]));
+    maestrosServiceSpy.obtenerDistritos.and.returnValue(of([{ id: '150122', nombre: 'Miraflores' }]));
     fixture.detectChanges();
   });
 
@@ -62,4 +84,41 @@ describe('CheckoutComponent', () => {
     expect(toastServiceSpy.show).toHaveBeenCalled();
     expect(pedidoServiceSpy.registrarPedido).not.toHaveBeenCalled();
   });
+
+
+  it('should select courier when ubigeo has coverage', () => {
+    component.checkoutForm.patchValue({
+      departamento: 'Lima',
+      provincia: 'Lima',
+      distrito: 'Miraflores'
+    });
+
+    expect(component.checkoutForm.get('tipoEntrega')?.value).toBe('DOMICILIO_COURIER');
+    expect(component.checkoutForm.get('fallbackMotivo')?.value).toBe('');
+  });
+
+  it('should fallback to shalom when ubigeo has no coverage', () => {
+    maestrosServiceSpy.obtenerMaestrosPorGrupo.and.callFake((grupo: string) => {
+      if (grupo === 'TIPO_DOC') return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOC', estado: true }]);
+      if (grupo === 'TIPO_ENTREGA') {
+        return of([
+          { codigo: 'DOMICILIO_COURIER', valor: 'Courier', grupo: 'TIPO_ENTREGA', estado: true },
+          { codigo: 'ENVIO_SHALOM', valor: 'Shalom', grupo: 'TIPO_ENTREGA', estado: true }
+        ]);
+      }
+      if (grupo === 'COBERTURA_COURIER') return of([]);
+      return of([]);
+    });
+
+    component.ngOnInit();
+    component.checkoutForm.patchValue({
+      departamento: 'Cusco',
+      provincia: 'Cusco',
+      distrito: 'Santiago'
+    });
+
+    expect(component.checkoutForm.get('tipoEntrega')?.value).toBe('ENVIO_SHALOM');
+    expect(component.checkoutForm.get('fallbackMotivo')?.value).toContain('Sin cobertura courier');
+  });
+
 });

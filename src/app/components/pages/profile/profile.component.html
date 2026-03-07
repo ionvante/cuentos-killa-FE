@@ -76,14 +76,8 @@
                     <span class="hint">Ingresa 9 dígitos (opcional).</span>
                     <span class="hint error-hint" *ngIf="shouldShowProfileError('telefono')">Ingresa un teléfono válido de 9 dígitos.</span>
                 </div>
-                <div class="form-group field-sm">
-                    <label for="documentoTipo">Tipo de documento</label>
-                    <select id="documentoTipo" [(ngModel)]="profileForm.documentoTipo" name="documentoTipo">
-                        <option *ngFor="let t of tiposDocumento" [value]="t.codigo">{{ t.descripcion || t.valor }}</option>
-                    </select>
-                </div>
-                <div class="form-group" [class.error-field]="shouldShowProfileError('documento')">
-                    <label for="documento">Nro. de documento <span class="optional">(opcional)</span></label>
+                <div class="form-group">
+                    <label for="documento">Documento</label>
                     <input id="documento" type="text" [(ngModel)]="profileForm.documento" name="documento"
                         placeholder="12345678" />
                     <span class="hint error-hint" *ngIf="shouldShowProfileError('documento')">Debe contener entre 8 y 12 dígitos.</span>
@@ -177,9 +171,9 @@
 
 <!-- ═══════════ ADDRESS MODAL ═══════════ -->
 <div class="modal-backdrop" *ngIf="showAddressModal" (click)="closeAddressModal()">
-    <div class="modal-content" @modalAnim (click)="$event.stopPropagation()">
+    <div class="modal-content" @modalAnim (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="address-modal-title">
         <div class="modal-header">
-            <h3>{{ editingAddress ? 'Editar dirección' : 'Nueva dirección' }}</h3>
+            <h3 id="address-modal-title">{{ editingAddress ? 'Editar dirección' : 'Nueva dirección' }}</h3>
             <button class="btn-close-modal" (click)="closeAddressModal()">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                     stroke-linecap="round" stroke-linejoin="round">
@@ -200,43 +194,50 @@
                 </div>
                 <div class="form-group full" [class.error-field]="shouldShowAddressError('calle')">
                     <label for="calle">Calle / Dirección</label>
-                    <input id="calle" type="text" [(ngModel)]="addressForm.calle" name="calle" required
-                        placeholder="Av. Los Álamos 123" />
-                    <span class="hint error-hint" *ngIf="shouldShowAddressError('calle')">Este campo es requerido.</span>
+                    <input id="address-calle" type="text" [(ngModel)]="addressForm.calle" name="calle" required
+                        placeholder="Av. Los Álamos 123" [attr.aria-describedby]="getAddressDescribedBy('calle', 'calle-help')" />
+                    <small id="calle-help" class="field-help">Ingresa la calle y número para identificar tu dirección.</small>
+                    <small class="error-msg" id="calle-error" *ngIf="addressErrors.calle">{{ addressErrors.calle }}</small>
                 </div>
                 <div class="form-group" [class.error-field]="shouldShowAddressError('departamento')">
                     <label for="departamento">Departamento</label>
-                    <select id="departamento" [(ngModel)]="addressForm.departamento" name="departamento" required
-                        (ngModelChange)="onDepartamentoChange($event)">
-                        <option value="">Seleccione...</option>
+                    <select id="address-departamento" [(ngModel)]="addressForm.departamento" name="departamento" required
+                        [disabled]="loadingDepartamentos" (ngModelChange)="onDepartamentoChange($event)"
+                        [attr.aria-describedby]="getAddressDescribedBy('departamento', 'departamento-help')">
+                        <option value="">{{ loadingDepartamentos ? "Cargando..." : "Seleccione..." }}</option>
                         <option *ngFor="let d of departamentos" [value]="d.nombre">{{ d.nombre }}</option>
                     </select>
-                    <span class="hint error-hint" *ngIf="shouldShowAddressError('departamento')">Selecciona un departamento.</span>
+                    <small id="departamento-help" class="field-help">Elige un departamento para habilitar provincias.</small>
+                    <small class="error-msg" id="departamento-error" *ngIf="addressErrors.departamento">{{ addressErrors.departamento }}</small>
                 </div>
                 <div class="form-group" [class.error-field]="shouldShowAddressError('provincia')">
                     <label for="provincia">
                         Provincia
                         <span *ngIf="loadingProvincias" class="spinner-small"></span>
                     </label>
-                    <select id="provincia" [(ngModel)]="addressForm.provincia" name="provincia" required
+                    <select id="address-provincia" [(ngModel)]="addressForm.provincia" name="provincia" required
                         [disabled]="provincias.length === 0 || loadingProvincias"
-                        (ngModelChange)="onProvinciaChange($event)">
-                        <option value="">Seleccione...</option>
+                        (ngModelChange)="onProvinciaChange($event)"
+                        [attr.aria-describedby]="getAddressDescribedBy('provincia', 'provincia-help')">
+                        <option value="">{{ loadingDepartamentos ? "Cargando..." : "Seleccione..." }}</option>
                         <option *ngFor="let p of provincias" [value]="p.nombre">{{ p.nombre }}</option>
                     </select>
-                    <span class="hint error-hint" *ngIf="shouldShowAddressError('provincia')">Selecciona una provincia.</span>
+                    <small id="provincia-help" class="field-help">Selecciona la provincia según tu departamento.</small>
+                    <small class="error-msg" id="provincia-error" *ngIf="addressErrors.provincia">{{ addressErrors.provincia }}</small>
                 </div>
                 <div class="form-group" [class.error-field]="shouldShowAddressError('distrito')">
                     <label for="distrito">
                         Distrito
                         <span *ngIf="loadingDistritos" class="spinner-small"></span>
                     </label>
-                    <select id="distrito" [(ngModel)]="addressForm.distrito" name="distrito" required
-                        [disabled]="distritos.length === 0 || loadingDistritos">
-                        <option value="">Seleccione...</option>
+                    <select id="address-distrito" [(ngModel)]="addressForm.distrito" name="distrito" required
+                        [disabled]="distritos.length === 0 || loadingDistritos"
+                        [attr.aria-describedby]="getAddressDescribedBy('distrito', 'distrito-help')">
+                        <option value="">{{ loadingDepartamentos ? "Cargando..." : "Seleccione..." }}</option>
                         <option *ngFor="let d of distritos" [value]="d.nombre">{{ d.nombre }}</option>
                     </select>
-                    <span class="hint error-hint" *ngIf="shouldShowAddressError('distrito')">Selecciona un distrito.</span>
+                    <small id="distrito-help" class="field-help">Selecciona el distrito para completar tu UBIGEO.</small>
+                    <small class="error-msg" id="distrito-error" *ngIf="addressErrors.distrito">{{ addressErrors.distrito }}</small>
                 </div>
                 <div class="form-group">
                     <label for="ciudad">Ciudad</label>

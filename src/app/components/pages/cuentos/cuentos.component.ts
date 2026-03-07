@@ -4,6 +4,12 @@ import { CuentoService } from '../../../services/cuento.service';
 import { CartService } from '../../../services/carrito.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Maestro } from '../../../model/maestro.model';
+import {
+  CUENTO_MAESTRO_GRUPOS,
+  normalizarCodigoCategoria,
+  normalizarCodigoEdad
+} from '../../../shared/cuento-maestros';
 
 @Component({
   selector: 'app-cuentos-page',
@@ -19,8 +25,8 @@ export class CuentosComponent implements OnInit {
   precioFilter = '';
   isLoading = true;
 
-  categorias: any[] = [];
-  edades: any[] = [];
+  categorias: Maestro[] = [];
+  edades: Maestro[] = [];
 
   constructor(
     private cuentoService: CuentoService,
@@ -36,26 +42,14 @@ export class CuentosComponent implements OnInit {
       this.searchTerm = params.get('q') || '';
     });
 
-    this.maestrosService.obtenerMaestrosPorGrupo('CATEGORIA_CUENTO').subscribe({
-      next: c => this.categorias = c,
-      error: err => console.warn('Error cargando categorías:', err?.status)
-    });
-    this.maestrosService.obtenerMaestrosPorGrupo('RANGO_EDAD').subscribe({
-      next: e => this.edades = e,
-      error: err => console.warn('Error cargando edades:', err?.status)
-    });
+    this.cargarMaestros();
 
     this.cuentoService.obtenerCuentos().subscribe(data => {
       this.ngZone.runOutsideAngular(() => {
         setTimeout(() => {
           this.ngZone.run(() => {
             this.cuentos = data
-              .map((c, idx) => ({
-                ...c,
-                categoria: this.categorias.length > 0 ? this.categorias[Math.floor(Math.random() * this.categorias.length)].codigo : 'CAT_1',
-                rating: Math.floor(Math.random() * 5) + 1,
-                badge: idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : ''
-              }))
+              .map((c, idx) => this.normalizarCuento(c, idx))
               .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
               .slice(0, 20);
             this.isLoading = false;
@@ -76,12 +70,7 @@ export class CuentosComponent implements OnInit {
     }
 
     if (this.edadFilter) {
-      filtered = filtered.filter(c => {
-        if (!c.edadRecomendada) return false;
-        // La Base de Datos de prueba podría tener "0-3 años" o "0 - 3 años"
-        const prefix = this.edadFilter.split('-')[0].trim();
-        return c.edadRecomendada.includes(prefix);
-      });
+      filtered = filtered.filter(c => c.edadRecomendada === this.edadFilter);
     }
 
     if (this.precioFilter) {
@@ -124,5 +113,40 @@ export class CuentosComponent implements OnInit {
     this.categoriaFilter = '';
     this.edadFilter = '';
     this.precioFilter = '';
+  }
+
+  private cargarMaestros(): void {
+    this.maestrosService.obtenerMaestrosPorGrupo(CUENTO_MAESTRO_GRUPOS.categoria).subscribe({
+      next: c => {
+        this.categorias = c;
+        this.cuentos = this.cuentos.map((cuento, idx) => this.normalizarCuento(cuento, idx));
+      },
+      error: () => {
+        this.maestrosService.obtenerMaestrosPorGrupo(CUENTO_MAESTRO_GRUPOS.categoriaLegacy).subscribe({
+          next: c => {
+            this.categorias = c;
+            this.cuentos = this.cuentos.map((cuento, idx) => this.normalizarCuento(cuento, idx));
+          }
+        });
+      }
+    });
+
+    this.maestrosService.obtenerMaestrosPorGrupo(CUENTO_MAESTRO_GRUPOS.edad).subscribe({
+      next: e => {
+        this.edades = e;
+        this.cuentos = this.cuentos.map((cuento, idx) => this.normalizarCuento(cuento, idx));
+      },
+      error: err => console.warn('Error cargando edades:', err?.status)
+    });
+  }
+
+  private normalizarCuento(cuento: Cuento, idx: number): Cuento {
+    return {
+      ...cuento,
+      categoria: normalizarCodigoCategoria(cuento.categoria, this.categorias),
+      edadRecomendada: normalizarCodigoEdad(cuento.edadRecomendada, this.edades),
+      rating: cuento.rating ?? Math.floor(Math.random() * 5) + 1,
+      badge: cuento.badge ?? (idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : '')
+    };
   }
 }

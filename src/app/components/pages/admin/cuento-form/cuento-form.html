@@ -20,8 +20,21 @@
         <input type="text" formControlName="editorial" />
       </label>
       <label>
+        Categoría *
+        <select formControlName="categoria" required>
+          <option value="">Selecciona una categoría</option>
+          <option *ngFor="let categoria of categorias" [value]="categoria.codigo">{{ categoria.valor }}</option>
+        </select>
+        <small class="error-mensaje" *ngIf="cuentoForm.get('categoria')?.invalid && cuentoForm.get('categoria')?.touched">
+          La categoría es obligatoria.
+        </small>
+      </label>
+      <label>
         Tipo de Edición
-        <input type="text" formControlName="tipoEdicion" />
+        <select formControlName="tipoEdicion">
+          <option value="">Selecciona tipo de edición</option>
+          <option *ngFor="let tipo of tiposEdicion" [value]="tipo.codigo">{{ tipo.valor }}</option>
+        </select>
       </label>
       <label>
         Número de Páginas
@@ -33,7 +46,10 @@
       </label>
       <label>
         Edad Recomendada
-        <input type="text" formControlName="edadRecomendada" />
+        <select formControlName="edadRecomendada">
+          <option value="">Selecciona rango de edad</option>
+          <option *ngFor="let edad of edades" [value]="edad.codigo">{{ edad.valor }}</option>
+        </select>
       </label>
       <label>
         Stock

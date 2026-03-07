@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -73,14 +73,17 @@ export class ProfileComponent implements OnInit {
     departamentos: any[] = [];
     provincias: any[] = [];
     distritos: any[] = [];
+    loadingDepartamentos = false;
     loadingProvincias = false;
     loadingDistritos = false;
+    addressErrors: Partial<Record<'calle' | 'departamento' | 'provincia' | 'distrito', string>> = {};
 
     constructor(
         private authService: AuthService,
         private clienteService: ClienteService,
         private maestrosService: MaestrosService,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private elementRef: ElementRef<HTMLElement>
     ) { }
 
     ngOnInit(): void {
@@ -95,8 +98,6 @@ export class ProfileComponent implements OnInit {
             this.isLoadingAddresses = false;
         }
     }
-
-    // ── Profile ──────────────────────────────────────
 
     loadProfile(): void {
         this.clienteService.getProfile(this.user!.id!).subscribe({
@@ -150,13 +151,11 @@ export class ProfileComponent implements OnInit {
             },
             error: () => {
                 this.savingProfile = false;
-                this.showToast('Error al actualizar el perfil', 'error');
+                this.showToast('No pudimos actualizar tu perfil. Inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
     }
-
-    // ── Addresses ────────────────────────────────────
 
     loadAddresses(): void {
         this.clienteService.getAddresses(this.user!.id!).subscribe({
@@ -177,17 +176,18 @@ export class ProfileComponent implements OnInit {
         this.addressForm = this.emptyAddress();
         this.provincias = [];
         this.distritos = [];
-        this.addressSubmitted = false;
+        this.addressErrors = {};
         this.showAddressModal = true;
+        setTimeout(() => this.focusAddressField('calle'));
     }
 
     openEditAddress(addr: Address): void {
         this.editingAddress = addr;
-        this.addressForm = { ...addr, tipoDireccion: addr.tipoDireccion || 'CASA' };
-        this.addressSubmitted = false;
+        this.addressForm = { ...addr };
+        this.addressErrors = {};
         this.showAddressModal = true;
+        setTimeout(() => this.focusAddressField('calle'));
 
-        // Cargar cascadas si hay valores
         if (this.addressForm.departamento) {
             this.onDepartamentoChange(this.addressForm.departamento, true);
         }
@@ -196,14 +196,14 @@ export class ProfileComponent implements OnInit {
     closeAddressModal(): void {
         this.showAddressModal = false;
         this.editingAddress = null;
-        this.addressSubmitted = false;
+        this.addressErrors = {};
     }
 
     saveAddress(): void {
         if (!this.user?.id) return;
-        this.addressSubmitted = true;
 
-        if (this.isAddressInvalid()) {
+        if (!this.validateAddressForm()) {
+            this.showToast('Revisa el formulario y completa los campos obligatorios para guardar la dirección.', 'error');
             return;
         }
 
@@ -218,16 +218,12 @@ export class ProfileComponent implements OnInit {
             next: () => {
                 this.savingAddress = false;
                 this.showAddressModal = false;
-                this.addressSubmitted = false;
-                this.showToast(
-                    this.editingAddress ? 'Dirección actualizada' : 'Dirección agregada',
-                    'success'
-                );
+                this.showToast(this.editingAddress ? 'Dirección actualizada' : 'Dirección agregada', 'success');
                 this.loadAddresses();
             },
             error: () => {
                 this.savingAddress = false;
-                this.showToast('Error al guardar la dirección', 'error');
+                this.showToast('No pudimos guardar la dirección. Verifica los datos e inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
@@ -251,96 +247,22 @@ export class ProfileComponent implements OnInit {
             },
             error: () => {
                 this.addressToDelete = null;
-                this.showToast('Error al eliminar la dirección', 'error');
+                this.showToast('No pudimos eliminar la dirección. Inténtalo nuevamente.', 'error');
                 this.cdr.markForCheck();
             }
         });
     }
-
-
-    private loadTiposDocumento(): void {
-        this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
-            next: (tipos) => {
-                this.tiposDocumento = tipos;
-                this.cdr.markForCheck();
-            },
-            error: () => {
-                this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
-                    next: (tipos) => {
-                        this.tiposDocumento = tipos;
-                        this.cdr.markForCheck();
-                    },
-                    error: () => {
-                        this.tiposDocumento = [
-                            { codigo: 'DNI', descripcion: 'DNI' },
-                            { codigo: 'CE', descripcion: 'Carnet de Extranjería' },
-                            { codigo: 'RUC', descripcion: 'RUC' }
-                        ];
-                        this.cdr.markForCheck();
-                    }
-                });
-            }
-        });
-    }
-
-    private isProfileInvalid(): boolean {
-        const nombre = (this.profileForm.nombre || '').trim();
-        const apellido = (this.profileForm.apellido || '').trim();
-        const telefono = (this.profileForm.telefono || '').trim();
-        const documento = (this.profileForm.documento || '').trim();
-
-        if (!nombre || !apellido) return true;
-        if (telefono && !/^\d{9}$/.test(telefono)) return true;
-        if (documento && !/^\d{8,12}$/.test(documento)) return true;
-
-        return false;
-    }
-
-    private isAddressInvalid(): boolean {
-        return !this.addressForm.tipoDireccion ||
-            !this.addressForm.calle?.trim() ||
-            !this.addressForm.departamento ||
-            !this.addressForm.provincia ||
-            !this.addressForm.distrito;
-    }
-
-    shouldShowProfileError(field: 'nombre' | 'apellido' | 'telefono' | 'documento'): boolean {
-        if (!this.profileSubmitted) return false;
-
-        const value = (this.profileForm[field] || '').toString().trim();
-        if (field === 'nombre' || field === 'apellido') {
-            return !value;
-        }
-        if (field === 'telefono') {
-            return !!value && !/^\d{9}$/.test(value);
-        }
-        if (field === 'documento') {
-            return !!value && !/^\d{8,12}$/.test(value);
-        }
-
-        return false;
-    }
-
-    shouldShowAddressError(field: 'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito'): boolean {
-        if (!this.addressSubmitted) return false;
-
-        if (field === 'calle') {
-            return !this.addressForm.calle?.trim();
-        }
-
-        return !this.addressForm[field];
-    }
-
-    getDireccionTipoLabel(codigo?: string): string {
-        return this.tiposDireccion.find(t => t.codigo === codigo)?.descripcion || 'Otro';
-    }
-
-    // ── Ubigeo Helpers ──────────────────────────────
 
     loadDepartamentos(): void {
+        this.loadingDepartamentos = true;
         this.maestrosService.obtenerDepartamentos().subscribe({
             next: (data) => {
                 this.departamentos = data;
+                this.loadingDepartamentos = false;
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.loadingDepartamentos = false;
                 this.cdr.markForCheck();
             }
         });
@@ -397,7 +319,41 @@ export class ProfileComponent implements OnInit {
         }
     }
 
-    // ── Helpers ──────────────────────────────────────
+    @HostListener('document:keydown.escape')
+    onEscapeKey(): void {
+        if (this.showAddressModal) {
+            this.closeAddressModal();
+        }
+    }
+
+    private validateAddressForm(): boolean {
+        this.addressErrors = {
+            calle: this.addressForm.calle ? '' : 'Completa la calle o dirección para continuar.',
+            departamento: this.addressForm.departamento ? '' : 'Selecciona un departamento para continuar.',
+            provincia: this.addressForm.provincia ? '' : 'Selecciona una provincia para continuar.',
+            distrito: this.addressForm.distrito ? '' : 'Selecciona un distrito para continuar.'
+        };
+
+        const firstInvalid = (['calle', 'departamento', 'provincia', 'distrito'] as const)
+            .find((field) => !!this.addressErrors[field]);
+
+        if (firstInvalid) {
+            this.focusAddressField(firstInvalid);
+            this.cdr.markForCheck();
+            return false;
+        }
+
+        return true;
+    }
+
+    private focusAddressField(field: 'calle' | 'departamento' | 'provincia' | 'distrito'): void {
+        const el = this.elementRef.nativeElement.querySelector<HTMLElement>(`#address-${field}`);
+        el?.focus();
+    }
+
+    getAddressDescribedBy(field: 'calle' | 'departamento' | 'provincia' | 'distrito', helpId: string): string {
+        return this.addressErrors[field] ? `${helpId} ${field}-error` : helpId;
+    }
 
     private emptyAddress(): Address {
         return {

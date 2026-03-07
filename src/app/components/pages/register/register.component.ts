@@ -1,17 +1,19 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { FormErrorComponent } from '../../shared/form-error.component';
+import { FormHelpComponent } from '../../shared/form-help.component';
 import { ToastService } from '../../../services/toast.service';
+import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
 
 @Component({
   standalone: true,
   selector: 'app-register',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent, FormHelpComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -23,13 +25,17 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
   tiposDocumento: any[] = [];
+  docMaxLength = 8;
+  documentoPlaceholder = '12345678';
+  documentoHelpText = 'DNI: 8 dígitos numéricos.';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private maestrosService: MaestrosService,
     private router: Router,
-    private toast: ToastService
+    private toast: ToastService,
+    private elementRef: ElementRef<HTMLElement>
   ) { }
 
   ngOnInit(): void {
@@ -39,19 +45,50 @@ export class RegisterComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       telefono: ['', [Validators.required, Validators.pattern(/^\d{9}$/)]],
       documentoTipo: ['DNI'],
-      documentoNumero: [''],
+      documentoNumero: ['', getDocumentoRule('DNI').validators],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmarPassword: ['', Validators.required]
     });
 
+    this.loadingTiposDocumento = true;
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
-      next: tipos => this.tiposDocumento = tipos,
-      error: () => this.tiposDocumento = [
-        { codigo: 'DNI', descripcion: 'DNI' },
-        { codigo: 'CE', descripcion: 'Carnet de Extranjería' },
-        { codigo: 'RUC', descripcion: 'RUC' }
-      ]
+      next: tipos => {
+        this.tiposDocumento = tipos ?? [];
+        const actual = this.registerForm.get('documentoTipo')?.value;
+        if (this.tiposDocumento.length > 0 && !this.tiposDocumento.some((t: any) => t.codigo === actual)) {
+          this.registerForm.get('documentoTipo')?.setValue(this.tiposDocumento[0].codigo);
+        }
+      },
+      error: () => this.tiposDocumento = []
     });
+
+    this.registerForm.get('documentoTipo')?.valueChanges.subscribe((tipo: string) => {
+      this.aplicarReglaDocumento(tipo);
+    });
+
+    this.aplicarReglaDocumento(this.registerForm.get('documentoTipo')?.value);
+  }
+
+  getTipoDocumentoLabel(tipo: { codigo?: string; valor?: string; descripcion?: string }): string {
+    return getTipoDocumentoLabel(tipo);
+  }
+
+  private aplicarReglaDocumento(tipo: string): void {
+    const regla = getDocumentoRule(tipo);
+    const control = this.registerForm.get('documentoNumero');
+
+    this.docMaxLength = regla.maxLength;
+    this.documentoPlaceholder = regla.placeholder;
+    this.documentoHelpText = regla.helpText;
+
+    control?.setValidators(regla.validators);
+    control?.setValue('');
+    control?.updateValueAndValidity();
+  }
+
+
+  get documentoErrorMessage(): string {
+    return getDocumentoErrorMessage(this.registerForm.get('documentoTipo')?.value);
   }
 
   get passwordMismatch(): boolean {
@@ -72,10 +109,14 @@ export class RegisterComponent implements OnInit {
     this.isSubmitted = true;
     this.error = '';
 
-    if (this.registerForm.invalid) return;
+    if (this.registerForm.invalid) {
+      this.focusFirstInvalidControl();
+      return;
+    }
 
     if (this.passwordMismatch) {
-      this.error = 'Las contraseñas no coinciden';
+      this.error = 'Las contraseñas no coinciden. Verifica ambos campos para continuar.';
+      this.focusField('confirmarPassword');
       return;
     }
 
@@ -100,4 +141,17 @@ export class RegisterComponent implements OnInit {
       }
     });
   }
+
+  private focusFirstInvalidControl(): void {
+    const firstKey = Object.keys(this.registerForm.controls).find((key) => this.registerForm.get(key)?.invalid);
+    if (firstKey) {
+      this.focusField(firstKey);
+    }
+  }
+
+  private focusField(controlName: string): void {
+    const target = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${controlName}"]`);
+    target?.focus();
+  }
+
 }
