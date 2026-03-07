@@ -44,12 +44,22 @@ export class ProfileComponent implements OnInit {
     editingProfile = false;
     profileForm: Partial<User> = {};
     savingProfile = false;
+    profileSubmitted = false;
+
+    tiposDocumento: any[] = [];
+    tiposDireccion = [
+        { codigo: 'CASA', descripcion: 'Casa' },
+        { codigo: 'TRABAJO', descripcion: 'Trabajo' },
+        { codigo: 'FAMILIAR', descripcion: 'Familiar' },
+        { codigo: 'OTRO', descripcion: 'Otro' }
+    ];
 
     // Address modal
     showAddressModal = false;
     editingAddress: Address | null = null;
     addressForm: Address = this.emptyAddress();
     savingAddress = false;
+    addressSubmitted = false;
 
     // Delete confirmation
     addressToDelete: Address | null = null;
@@ -79,6 +89,7 @@ export class ProfileComponent implements OnInit {
             this.loadProfile();
             this.loadAddresses();
             this.loadDepartamentos();
+            this.loadTiposDocumento();
         } else {
             this.isLoading = false;
             this.isLoadingAddresses = false;
@@ -106,22 +117,32 @@ export class ProfileComponent implements OnInit {
             nombre: this.user?.nombre || '',
             apellido: this.user?.apellido || '',
             telefono: this.user?.telefono || '',
-            documento: this.user?.documento || ''
+            documentoTipo: this.user?.documentoTipo || 'DNI',
+            documento: this.user?.documento || this.user?.documentoNumero || ''
         };
+        this.profileSubmitted = false;
         this.editingProfile = true;
     }
 
     cancelEditProfile(): void {
+        this.profileSubmitted = false;
         this.editingProfile = false;
     }
 
     saveProfile(): void {
         if (!this.user?.id) return;
+        this.profileSubmitted = true;
+
+        if (this.isProfileInvalid()) {
+            return;
+        }
+
         this.savingProfile = true;
         this.clienteService.updateProfile(this.user.id, this.profileForm).subscribe({
             next: (updated) => {
                 this.user = updated;
                 this.authService.guardarUsuario(updated);
+                this.profileSubmitted = false;
                 this.editingProfile = false;
                 this.savingProfile = false;
                 this.showToast('Perfil actualizado correctamente', 'success');
@@ -156,12 +177,14 @@ export class ProfileComponent implements OnInit {
         this.addressForm = this.emptyAddress();
         this.provincias = [];
         this.distritos = [];
+        this.addressSubmitted = false;
         this.showAddressModal = true;
     }
 
     openEditAddress(addr: Address): void {
         this.editingAddress = addr;
-        this.addressForm = { ...addr };
+        this.addressForm = { ...addr, tipoDireccion: addr.tipoDireccion || 'CASA' };
+        this.addressSubmitted = false;
         this.showAddressModal = true;
 
         // Cargar cascadas si hay valores
@@ -173,10 +196,17 @@ export class ProfileComponent implements OnInit {
     closeAddressModal(): void {
         this.showAddressModal = false;
         this.editingAddress = null;
+        this.addressSubmitted = false;
     }
 
     saveAddress(): void {
         if (!this.user?.id) return;
+        this.addressSubmitted = true;
+
+        if (this.isAddressInvalid()) {
+            return;
+        }
+
         this.savingAddress = true;
         this.addressForm.usuarioId = this.user.id;
 
@@ -188,6 +218,7 @@ export class ProfileComponent implements OnInit {
             next: () => {
                 this.savingAddress = false;
                 this.showAddressModal = false;
+                this.addressSubmitted = false;
                 this.showToast(
                     this.editingAddress ? 'Dirección actualizada' : 'Dirección agregada',
                     'success'
@@ -224,6 +255,84 @@ export class ProfileComponent implements OnInit {
                 this.cdr.markForCheck();
             }
         });
+    }
+
+
+    private loadTiposDocumento(): void {
+        this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
+            next: (tipos) => {
+                this.tiposDocumento = tipos;
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
+                    next: (tipos) => {
+                        this.tiposDocumento = tipos;
+                        this.cdr.markForCheck();
+                    },
+                    error: () => {
+                        this.tiposDocumento = [
+                            { codigo: 'DNI', descripcion: 'DNI' },
+                            { codigo: 'CE', descripcion: 'Carnet de Extranjería' },
+                            { codigo: 'RUC', descripcion: 'RUC' }
+                        ];
+                        this.cdr.markForCheck();
+                    }
+                });
+            }
+        });
+    }
+
+    private isProfileInvalid(): boolean {
+        const nombre = (this.profileForm.nombre || '').trim();
+        const apellido = (this.profileForm.apellido || '').trim();
+        const telefono = (this.profileForm.telefono || '').trim();
+        const documento = (this.profileForm.documento || '').trim();
+
+        if (!nombre || !apellido) return true;
+        if (telefono && !/^\d{9}$/.test(telefono)) return true;
+        if (documento && !/^\d{8,12}$/.test(documento)) return true;
+
+        return false;
+    }
+
+    private isAddressInvalid(): boolean {
+        return !this.addressForm.tipoDireccion ||
+            !this.addressForm.calle?.trim() ||
+            !this.addressForm.departamento ||
+            !this.addressForm.provincia ||
+            !this.addressForm.distrito;
+    }
+
+    shouldShowProfileError(field: 'nombre' | 'apellido' | 'telefono' | 'documento'): boolean {
+        if (!this.profileSubmitted) return false;
+
+        const value = (this.profileForm[field] || '').toString().trim();
+        if (field === 'nombre' || field === 'apellido') {
+            return !value;
+        }
+        if (field === 'telefono') {
+            return !!value && !/^\d{9}$/.test(value);
+        }
+        if (field === 'documento') {
+            return !!value && !/^\d{8,12}$/.test(value);
+        }
+
+        return false;
+    }
+
+    shouldShowAddressError(field: 'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito'): boolean {
+        if (!this.addressSubmitted) return false;
+
+        if (field === 'calle') {
+            return !this.addressForm.calle?.trim();
+        }
+
+        return !this.addressForm[field];
+    }
+
+    getDireccionTipoLabel(codigo?: string): string {
+        return this.tiposDireccion.find(t => t.codigo === codigo)?.descripcion || 'Otro';
     }
 
     // ── Ubigeo Helpers ──────────────────────────────
@@ -292,6 +401,7 @@ export class ProfileComponent implements OnInit {
 
     private emptyAddress(): Address {
         return {
+            tipoDireccion: 'CASA',
             calle: '', ciudad: '', departamento: '', provincia: '',
             distrito: '', referencia: '', codigoPostal: '',
             esPrincipal: false, esFacturacion: false

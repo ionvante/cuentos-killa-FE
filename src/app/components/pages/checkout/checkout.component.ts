@@ -89,9 +89,9 @@ export class CheckoutComponent implements OnInit {
         documentoNumero: user.documentoNumero || user.documento || ''
       });
 
-      // Si el usuario tiene direcciones registradas, autocompletar la primera (o principal)
+      // Si el usuario tiene direcciones registradas, autocompletar usando selección inteligente
       if (user.direcciones && user.direcciones.length > 0) {
-        const dir = user.direcciones.find(d => d.esPrincipal) || user.direcciones[0];
+        const dir = this.getBestAddressForCheckout(user.direcciones);
         this.checkoutForm.patchValue({
           departamento: dir.departamento,
           calle: dir.calle,
@@ -128,26 +128,16 @@ export class CheckoutComponent implements OnInit {
       error: (err) => console.error('Error cargando departamentos:', err)
     });
 
-    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
       next: (data) => {
         if (data && data.length > 0) {
           this.tiposDocumento = data;
-        } else {
-          this.tiposDocumento = [
-            { codigo: 'DNI', valor: 'DNI' },
-            { codigo: 'CE', valor: 'Carné de Extranjería' },
-            { codigo: 'PASAPORTE', valor: 'Pasaporte' }
-          ];
+          return;
         }
+
+        this.loadTiposDocumentoLegacy();
       },
-      error: (err) => {
-        console.error('Error cargando tipos de documento:', err);
-        this.tiposDocumento = [
-          { codigo: 'DNI', valor: 'DNI' },
-          { codigo: 'CE', valor: 'Carné de Extranjería' },
-          { codigo: 'PASAPORTE', valor: 'Pasaporte' }
-        ];
-      }
+      error: () => this.loadTiposDocumentoLegacy()
     });
 
     // Gestionar dependencias de UBIGEO (Cascada Departamentos -> Provincias)
@@ -219,6 +209,51 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm.valueChanges.subscribe(val => {
       sessionStorage.setItem('checkoutForm', JSON.stringify(val));
     });
+  }
+
+  private loadTiposDocumentoLegacy(): void {
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
+      next: (data) => {
+        if (data && data.length > 0) {
+          this.tiposDocumento = data;
+          return;
+        }
+
+        this.tiposDocumento = [
+          { codigo: 'DNI', valor: 'DNI' },
+          { codigo: 'CE', valor: 'Carné de Extranjería' },
+          { codigo: 'PASAPORTE', valor: 'Pasaporte' }
+        ];
+      },
+      error: () => {
+        this.tiposDocumento = [
+          { codigo: 'DNI', valor: 'DNI' },
+          { codigo: 'CE', valor: 'Carné de Extranjería' },
+          { codigo: 'PASAPORTE', valor: 'Pasaporte' }
+        ];
+      }
+    });
+  }
+
+  private getBestAddressForCheckout(direcciones: any[]): any {
+    const rankByTipo: Record<string, number> = {
+      CASA: 0,
+      TRABAJO: 1,
+      FAMILIAR: 2,
+      OTRO: 3
+    };
+
+    return [...direcciones].sort((a, b) => {
+      const aPrincipal = a.esPrincipal ? 0 : 1;
+      const bPrincipal = b.esPrincipal ? 0 : 1;
+      if (aPrincipal !== bPrincipal) return aPrincipal - bPrincipal;
+
+      const aRank = rankByTipo[(a.tipoDireccion || '').toUpperCase()] ?? 99;
+      const bRank = rankByTipo[(b.tipoDireccion || '').toUpperCase()] ?? 99;
+      if (aRank !== bRank) return aRank - bRank;
+
+      return 0;
+    })[0];
   }
 
   private cargarProvinciasYAutoSeleccionar(deptoNombre: string, provNombre: string, distNombre: string) {
