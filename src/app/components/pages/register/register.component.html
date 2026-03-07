@@ -44,13 +44,17 @@
           <div class="field field-sm">
             <label for="documentoTipo">Tipo Doc.</label>
             <select id="documentoTipo" formControlName="documentoTipo">
-              <option value="DNI">DNI</option>
-              <option *ngFor="let t of tiposDocumento" [value]="t.codigo">{{ t.descripcion }}</option>
+              <option *ngFor="let t of tiposDocumento" [value]="t.codigo">{{ getTipoDocumentoLabel(t) }}</option>
             </select>
           </div>
           <div class="field">
             <label for="documentoNumero">Nro. Documento <span class="optional">(opcional)</span></label>
-            <input id="documentoNumero" formControlName="documentoNumero" type="text" placeholder="12345678" />
+            <input id="documentoNumero" formControlName="documentoNumero" type="text" [placeholder]="documentoPlaceholder" [attr.maxlength]="docMaxLength" />
+            <span class="hint">{{ documentoHelpText }}</span>
+            <span class="hint error-hint"
+              *ngIf="registerForm.get('documentoNumero')?.touched && registerForm.get('documentoNumero')?.invalid">
+              {{ documentoErrorMessage }}
+            </span>
           </div>
         </div>
 
