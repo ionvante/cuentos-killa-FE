@@ -9,6 +9,7 @@ import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
 import { MaestrosService } from '../../../services/maestros.service';
+import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
 
 
 @Component({
@@ -29,7 +30,9 @@ export class CheckoutComponent implements OnInit {
   gpsLoading = false;
   loadingProvincias = false;
   loadingDistritos = false;
-  docMaxLength = 8;  // DNI=8, CE=9, Pasaporte=12
+  docMaxLength = 8;
+  documentoPlaceholder = '12345678';
+  documentoHelpText = 'DNI: 8 dígitos numéricos.';
 
   // Arrays asincrónicos desde la BD (tabla general / maestros)
   departamentos: any[] = [];
@@ -63,7 +66,7 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm = this.fb.group({
       nombre: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
       documentoTipo: ['DNI', Validators.required],
-      documentoNumero: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{8}$/)], updateOn: 'blur' }),
+      documentoNumero: this.fb.control('', { validators: getDocumentoRule('DNI').validators, updateOn: 'blur' }),
       correo: this.fb.control('', { validators: [Validators.required, Validators.email], updateOn: 'blur' }),
       telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)], updateOn: 'blur' }),
 
@@ -128,25 +131,17 @@ export class CheckoutComponent implements OnInit {
       error: (err) => console.error('Error cargando departamentos:', err)
     });
 
-    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOC').subscribe({
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
       next: (data) => {
-        if (data && data.length > 0) {
-          this.tiposDocumento = data;
-        } else {
-          this.tiposDocumento = [
-            { codigo: 'DNI', valor: 'DNI' },
-            { codigo: 'CE', valor: 'Carné de Extranjería' },
-            { codigo: 'PASAPORTE', valor: 'Pasaporte' }
-          ];
+        this.tiposDocumento = data ?? [];
+        const actual = this.checkoutForm.get('documentoTipo')?.value;
+        if (this.tiposDocumento.length > 0 && !this.tiposDocumento.some(t => t.codigo === actual)) {
+          this.checkoutForm.get('documentoTipo')?.setValue(this.tiposDocumento[0].codigo);
         }
       },
       error: (err) => {
         console.error('Error cargando tipos de documento:', err);
-        this.tiposDocumento = [
-          { codigo: 'DNI', valor: 'DNI' },
-          { codigo: 'CE', valor: 'Carné de Extranjería' },
-          { codigo: 'PASAPORTE', valor: 'Pasaporte' }
-        ];
+        this.tiposDocumento = [];
       }
     });
 
@@ -197,23 +192,9 @@ export class CheckoutComponent implements OnInit {
 
     // Validaciones dinámicas según tipo de documento
     this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe(tipo => {
-      const docInput = this.checkoutForm.get('documentoNumero');
-      if (docInput) {
-        docInput.setValue(''); // Limpiar al cambiar tipo
-        docInput.clearValidators();
-        if (tipo === 'DNI') {
-          this.docMaxLength = 8;
-          docInput.setValidators([Validators.required, Validators.pattern(/^\d{8}$/)]);
-        } else if (tipo === 'CE') {
-          this.docMaxLength = 9;
-          docInput.setValidators([Validators.required, Validators.pattern(/^\d{9}$/)]);
-        } else {
-          this.docMaxLength = 12;
-          docInput.setValidators([Validators.required, Validators.minLength(5)]);
-        }
-        docInput.updateValueAndValidity();
-      }
+      this.aplicarReglaDocumento(tipo);
     });
+    this.aplicarReglaDocumento(this.checkoutForm.get('documentoTipo')?.value);
 
     // Guardar en session storage en cada cambio
     this.checkoutForm.valueChanges.subscribe(val => {
@@ -328,6 +309,33 @@ export class CheckoutComponent implements OnInit {
     );
   }
 
+
+  get tipoDocumentoActual(): string {
+    return this.checkoutForm.get('documentoTipo')?.value || '';
+  }
+
+  get documentoErrorMessage(): string {
+    return getDocumentoErrorMessage(this.tipoDocumentoActual);
+  }
+
+  getTipoDocumentoLabel(tipo: { codigo?: string; valor?: string; descripcion?: string }): string {
+    return getTipoDocumentoLabel(tipo);
+  }
+
+  private aplicarReglaDocumento(tipo: string): void {
+    const docInput = this.checkoutForm.get('documentoNumero');
+    if (!docInput) return;
+
+    const regla = getDocumentoRule(tipo);
+    this.docMaxLength = regla.maxLength;
+    this.documentoPlaceholder = regla.placeholder;
+    this.documentoHelpText = regla.helpText;
+
+    docInput.setValue('');
+    docInput.setValidators(regla.validators);
+    docInput.updateValueAndValidity();
+  }
+
   enfocarDocumento(): void {
     setTimeout(() => {
       const el = document.getElementById('docNumeroInput');
@@ -335,10 +343,17 @@ export class CheckoutComponent implements OnInit {
     }, 50);
   }
 
-  /** Filtra cualquier caracter no numérico del campo de documento */
+  /** Filtra el valor del campo de documento según la regla del tipo seleccionado */
   soloNumeros(event: Event): void {
     const input = event.target as HTMLInputElement;
-    input.value = input.value.replace(/[^0-9]/g, '').slice(0, this.docMaxLength);
+    const regla = getDocumentoRule(this.tipoDocumentoActual);
+
+    if (regla.numericOnly) {
+      input.value = input.value.replace(/[^0-9]/g, '').slice(0, regla.maxLength);
+    } else {
+      input.value = input.value.slice(0, regla.maxLength);
+    }
+
     this.checkoutForm.get('documentoNumero')?.setValue(input.value);
   }
 

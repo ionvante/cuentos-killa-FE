@@ -7,6 +7,7 @@ import { CartService } from '../../../services/carrito.service';
 import { PedidoService } from '../../../services/pedido.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
+import { MaestrosService } from '../../../services/maestros.service';
 
 describe('CheckoutComponent', () => {
   let component: CheckoutComponent;
@@ -15,12 +16,14 @@ describe('CheckoutComponent', () => {
   let pedidoServiceSpy: jasmine.SpyObj<PedidoService>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
+  let maestrosServiceSpy: jasmine.SpyObj<MaestrosService>;
 
   beforeEach(async () => {
     cartServiceSpy = jasmine.createSpyObj('CartService', ['obtenerItems', 'clearCart']);
     pedidoServiceSpy = jasmine.createSpyObj('PedidoService', ['registrarPedido']);
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getUser']);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
+    maestrosServiceSpy = jasmine.createSpyObj('MaestrosService', ['obtenerDepartamentos', 'obtenerMaestrosPorGrupo', 'obtenerProvincias', 'obtenerDistritos']);
 
     await TestBed.configureTestingModule({
       imports: [CheckoutComponent, RouterTestingModule],
@@ -28,7 +31,8 @@ describe('CheckoutComponent', () => {
         { provide: CartService, useValue: cartServiceSpy },
         { provide: PedidoService, useValue: pedidoServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: ToastService, useValue: toastServiceSpy }
+        { provide: ToastService, useValue: toastServiceSpy },
+        { provide: MaestrosService, useValue: maestrosServiceSpy }
       ]
     }).compileComponents();
 
@@ -36,6 +40,10 @@ describe('CheckoutComponent', () => {
     component = fixture.componentInstance;
     authServiceSpy.getUser.and.returnValue(null);
     cartServiceSpy.obtenerItems.and.returnValue([]);
+    maestrosServiceSpy.obtenerDepartamentos.and.returnValue(of([]));
+    maestrosServiceSpy.obtenerMaestrosPorGrupo.and.returnValue(of([{ grupo: 'TIPO_DOCUMENTO', codigo: 'DNI', valor: 'DNI', estado: true }]));
+    maestrosServiceSpy.obtenerProvincias.and.returnValue(of([]));
+    maestrosServiceSpy.obtenerDistritos.and.returnValue(of([]));
     fixture.detectChanges();
   });
 
