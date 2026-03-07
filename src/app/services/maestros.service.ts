@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Maestro } from '../model/maestro.model';
+import { Maestro, MaestroAuditLog } from '../model/maestro.model';
 
 @Injectable({
   providedIn: 'root'
@@ -43,6 +43,20 @@ export class MaestrosService {
   eliminarMaestro(id: number): Observable<void> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`).pipe(
       map(res => res.data ?? res)
+    );
+  }
+
+  soportaAuditoria(): Observable<boolean> {
+    return this.http.get<any>(`${this.apiUrl}/audit/health`).pipe(
+      map(() => true),
+      catchError(() => of(false))
+    );
+  }
+
+  obtenerAuditoria(id: number): Observable<MaestroAuditLog[]> {
+    return this.http.get<any>(`${this.apiUrl}/${id}/audit`).pipe(
+      map(res => res.data ?? res),
+      catchError(() => of([]))
     );
   }
 
