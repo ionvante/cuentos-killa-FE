@@ -225,6 +225,35 @@
         </div>
       </div>
 
+
+      <!-- Tipo de envío -->
+      <div class="form-group">
+        <label class="form-label">Tipo de envío:</label>
+        <div class="input-wrapper">
+          <select formControlName="tipoEntrega" class="form-input form-select">
+            <option value="" disabled>Seleccionar</option>
+            <option *ngFor="let tipo of tiposEntrega" [value]="tipo.codigo">{{ tipo.valor }}</option>
+          </select>
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('tipoEntrega')?.touched && checkoutForm.get('tipoEntrega')?.invalid">
+          Selecciona un tipo de envío
+        </div>
+      </div>
+
+      <div class="coverage-info" *ngIf="mensajeCobertura">
+        {{ mensajeCobertura }}
+      </div>
+
+      <div class="form-group" *ngIf="mostrarCampoAgencia()">
+        <label class="form-label">Agencia de recojo Shalom:</label>
+        <div class="input-wrapper">
+          <input formControlName="agenciaRecojo" type="text" class="form-input" placeholder="Ej: Agencia Shalom - Centro" />
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('agenciaRecojo')?.touched && checkoutForm.get('agenciaRecojo')?.invalid">
+          Ingresa la agencia de recojo para envío Shalom
+        </div>
+      </div>
+
       <!-- Referencia -->
       <div class="form-group">
         <label class="form-label">Referencia (opcional):</label>
@@ -282,8 +311,16 @@
             </div>
           </div>
           <div class="resumen-total-row">
-            <span class="resumen-total-label">Total a Pagar</span>
+            <span class="resumen-total-label">Subtotal</span>
             <span class="resumen-total-value">{{ calcularSubtotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          </div>
+          <div class="resumen-total-row resumen-envio">
+            <span class="resumen-total-label">Envío (estimado)</span>
+            <span class="resumen-total-value">{{ obtenerEstimacionEnvioSeleccionado().costo | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          </div>
+          <div class="resumen-total-row">
+            <span class="resumen-total-label">Total a Pagar</span>
+            <span class="resumen-total-value">{{ calcularTotalConEnvio() | currency:'PEN':'S/ ':'1.2-2' }}</span>
           </div>
         </div>
       </div>
@@ -302,6 +339,10 @@
           <p><strong>{{ checkoutForm.get('nombre')?.value }}</strong></p>
           <p>{{ checkoutForm.get('direccion')?.value }}</p>
           <p>{{ checkoutForm.get('telefono')?.value }} · {{ checkoutForm.get('correo')?.value }}</p>
+          <p><strong>Tipo de envío:</strong> {{ obtenerEtiquetaTipoEntrega(checkoutForm.get('tipoEntrega')?.value) }}</p>
+          <p><strong>Tiempo estimado:</strong> {{ obtenerEstimacionEnvioSeleccionado().tiempo }}</p>
+          <p *ngIf="checkoutForm.get('fallbackMotivo')?.value"><strong>Motivo fallback:</strong> {{ checkoutForm.get('fallbackMotivo')?.value }}</p>
+          <p *ngIf="mostrarCampoAgencia()"><strong>Agencia Shalom:</strong> {{ checkoutForm.get('agenciaRecojo')?.value }}</p>
         </div>
       </div>
 
