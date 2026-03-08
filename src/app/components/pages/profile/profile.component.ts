@@ -8,6 +8,7 @@ import { MaestrosService } from '../../../services/maestros.service';
 import { User } from '../../../model/user.model';
 import { Address } from '../../../model/address.model';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { normalizeUser } from '../../../utils/user-normalizer';
 
 @Component({
     selector: 'app-profile',
@@ -87,7 +88,7 @@ export class ProfileComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.user = this.authService.getUser();
+        this.user = normalizeUser(this.authService.getUser() as any);
         if (this.user?.id) {
             this.loadProfile();
             this.loadAddresses();

@@ -18,6 +18,7 @@ import {
 import { FormErrorComponent } from '../../shared/form-error.component';
 import { FormHelpComponent } from '../../shared/form-help.component';
 import { Maestro } from '../../../model/maestro.model';
+import { normalizeUser } from '../../../utils/user-normalizer';
 
 @Component({
   standalone: true,
@@ -72,7 +73,7 @@ export class CheckoutComponent implements OnInit {
     private maestrosService: MaestrosService,
     private elementRef: ElementRef<HTMLElement>
   ) {
-    this.user = this.authService.getUser();
+    this.user = normalizeUser(this.authService.getUser() as any);
   }
 
   ngOnInit(): void {
@@ -132,17 +133,14 @@ export class CheckoutComponent implements OnInit {
     const user = this.user;
     if (!user) return;
 
-    const userAny = user as any;
     const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim();
-    const documentoTipo = user.documentoTipo || userAny.tipoDocumento || 'DNI';
-    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || user.documento || '';
 
     this.checkoutForm.patchValue({
       nombre: nombreCompleto,
       correo: user.email || '',
       telefono: user.telefono || '',
-      documentoTipo,
-      documentoNumero
+      documentoTipo: user.documentoTipo || 'DNI',
+      documentoNumero: user.documentoNumero || user.documento || ''
     }, { emitEvent: false });
 
     this.isRegisteredUser = !!(user.id || user.email);
