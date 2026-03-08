@@ -146,8 +146,8 @@ export class CheckoutComponent implements OnInit {
     }, { emitEvent: false });
 
     this.isRegisteredUser = !!(user.id || user.email);
-    this.bloquearNombre = this.isRegisteredUser && !!nombreCompleto;
-    this.bloquearDocumento = this.isRegisteredUser && !!documentoNumero;
+    this.bloquearNombre = this.isRegisteredUser;
+    this.bloquearDocumento = this.isRegisteredUser;
   }
 
   private restaurarEstadoFormulario(): void {

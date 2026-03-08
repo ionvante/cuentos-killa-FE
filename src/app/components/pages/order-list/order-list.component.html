@@ -45,10 +45,7 @@
           <h2 id="order-{{getPedidoId(pedido)}}">Pedido #{{ getPedidoId(pedido) }}</h2>
         </div>
         <div class="meta-group">
-          <button class="btn-icon" (click)="descargarPDF(getPedidoId(pedido))" aria-label="Descargar PDF"
-            title="Descargar PDF">
-            <span class="material-icons">picture_as_pdf</span>
-          </button>
+
           <div class="date-badge">
             <span class="material-icons text-sm">calendar_today</span>
             {{ pedido.fecha | date:'dd/MM/yyyy' }}
