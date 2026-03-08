@@ -1,7 +1,7 @@
 @import '../../../../styles/variables';
 
 /* ===============================
-   CHECKOUT — Premium step-by-step flow
+   CHECKOUT â€” Premium step-by-step flow
    =============================== */
 
 $accent-green: #6db37f;
@@ -516,4 +516,20 @@ button:disabled {
 
 .resumen-envio {
   border-top: 1px dashed #e8e0d6;
+}
+
+
+.form-input.is-locked {
+  background: #f4f1ec;
+  color: #6f6357;
+  cursor: not-allowed;
+}
+
+.direccion-confirmacion {
+  font-weight: 700;
+  line-height: 1.4;
+  background: #f9f5f0;
+  border: 1px solid #ece3d8;
+  border-radius: 10px;
+  padding: 0.5rem 0.65rem;
 }

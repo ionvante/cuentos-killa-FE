@@ -5,14 +5,21 @@ import { CartService } from '../../../services/carrito.service';
 import { PedidoService } from '../../../services/pedido.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
-import { Pedido, PedidoItem } from '../../../model/pedido.model';
+import { Pedido } from '../../../model/pedido.model';
 import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
 import { MaestrosService } from '../../../services/maestros.service';
-import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
+import {
+  getDocumentoErrorMessage,
+  getDocumentoRule,
+  getTipoDocumentoLabel,
+  resolveTipoDocumento
+} from '../../../utils/documento-utils';
 import { FormErrorComponent } from '../../shared/form-error.component';
 import { FormHelpComponent } from '../../shared/form-help.component';
-import { Maestro } from '../../../model/maestro.model'; @Component({
+import { Maestro } from '../../../model/maestro.model';
+
+@Component({
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormErrorComponent, FormHelpComponent],
   selector: 'app-checkout',
@@ -20,22 +27,25 @@ import { Maestro } from '../../../model/maestro.model'; @Component({
   styleUrls: ['./checkout.component.scss']
 })
 export class CheckoutComponent implements OnInit {
-
-
   checkoutForm!: FormGroup;
   itemsCarrito: any[] = [];
   user: User | null;
-  pasoActual: number = 1;
+
+  pasoActual = 1;
   isLoading = false;
   gpsLoading = false;
   loadingDepartamentos = false;
   loadingProvincias = false;
   loadingDistritos = false;
+
+  isRegisteredUser = false;
+  bloquearNombre = false;
+  bloquearDocumento = false;
+
   docMaxLength = 8;
   documentoPlaceholder = '12345678';
-  documentoHelpText = 'DNI: 8 dígitos numéricos.';
+  documentoHelpText = 'DNI: 8 digitos numericos.';
 
-  // Arrays asincrónicos desde la BD (tabla general / maestros)
   departamentos: any[] = [];
   provincias: any[] = [];
   distritos: any[] = [];
@@ -61,21 +71,42 @@ export class CheckoutComponent implements OnInit {
     private toast: ToastService,
     private maestrosService: MaestrosService,
     private elementRef: ElementRef<HTMLElement>
-
   ) {
     this.user = this.authService.getUser();
   }
 
   ngOnInit(): void {
-    // this.itemsCarrito = this.cartService.obtenerItems(); // método debe existir
-    // this.checkoutForm = this.fb.group({
-    //   nombre: [this.user?.nombre || '', Validators.required],
-    //   correo: [this.user?.email || '', [Validators.required, Validators.email]],
-    //   direccion: ['', Validators.required],
-    //   telefono: [this.user?.telefono || '', Validators.required],
-    // });
+    this.inicializarFormulario();
+    this.autocompletarDatosUsuarioRegistrado();
 
-    // 1. Inicializa el formulario
+    this.itemsCarrito = this.cartService.obtenerItems();
+
+    this.restaurarEstadoFormulario();
+    this.cargarDatosMaestros();
+    this.configurarDependenciasUbigeo();
+    this.configurarTipoEntrega();
+    this.configurarDocumento();
+
+    this.checkoutForm.valueChanges.subscribe((val) => {
+      const estadoGuardado: any = {
+        correo: val.correo,
+        telefono: val.telefono,
+        calle: val.calle,
+        referencia: val.referencia,
+        ubicacionGps: val.ubicacionGps
+      };
+
+      if (!this.isRegisteredUser) {
+        estadoGuardado.nombre = val.nombre;
+        estadoGuardado.documentoTipo = val.documentoTipo;
+        estadoGuardado.documentoNumero = val.documentoNumero;
+      }
+
+      sessionStorage.setItem('checkoutForm', JSON.stringify(estadoGuardado));
+    });
+  }
+
+  private inicializarFormulario(): void {
     this.checkoutForm = this.fb.group({
       nombre: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
       documentoTipo: ['DNI', Validators.required],
@@ -84,8 +115,8 @@ export class CheckoutComponent implements OnInit {
       telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)], updateOn: 'blur' }),
 
       departamento: ['', Validators.required],
-      provincia: [{ value: '', disabled: false }, Validators.required],
-      distrito: [{ value: '', disabled: false }, Validators.required],
+      provincia: ['', Validators.required],
+      distrito: ['', Validators.required],
       calle: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
       referencia: this.fb.control('', { updateOn: 'blur' }),
       ubicacionGps: [''],
@@ -95,75 +126,77 @@ export class CheckoutComponent implements OnInit {
       coberturaCourier: [false],
       fallbackMotivo: ['']
     });
+  }
 
-    // 2. Obtiene usuario logueado
-    const user = this.authService.getUser();
+  private autocompletarDatosUsuarioRegistrado(): void {
+    const user = this.user;
+    if (!user) return;
 
-    // 3. Si existe, autocompleta datos básicos y documento
-    if (user) {
-      this.checkoutForm.patchValue({
-        nombre: (user.nombre + ' ' + (user.apellido || '')).trim(),
-        correo: user.email || '',
-        telefono: user.telefono || '',
-        documentoTipo: user.documentoTipo || 'DNI',
-        documentoNumero: user.documentoNumero || user.documento || ''
-      });
+    const userAny = user as any;
+    const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim();
+    const documentoTipo = user.documentoTipo || userAny.tipoDocumento || 'DNI';
+    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || user.documento || '';
 
-      // Si el usuario tiene direcciones registradas, autocompletar usando selección inteligente
-      if (user.direcciones && user.direcciones.length > 0) {
-        const dir = this.getBestAddressForCheckout(user.direcciones);
-        this.checkoutForm.patchValue({
-          departamento: dir.departamento,
-          calle: dir.calle,
-          referencia: dir.referencia
-        });
+    this.checkoutForm.patchValue({
+      nombre: nombreCompleto,
+      correo: user.email || '',
+      telefono: user.telefono || '',
+      documentoTipo,
+      documentoNumero
+    }, { emitEvent: false });
 
-        // IMPORTANTE: Disparar manualmente la carga de provincias para que se autoseleccione el valor
-        if (dir.departamento) {
-          this.cargarProvinciasYAutoSeleccionar(dir.departamento, dir.provincia, dir.distrito);
-        }
-      }
-    }
+    this.isRegisteredUser = !!(user.id || user.email);
+    this.bloquearNombre = this.isRegisteredUser && !!nombreCompleto;
+    this.bloquearDocumento = this.isRegisteredUser && !!documentoNumero;
+  }
 
-    // 4. Carga el carrito
-    this.itemsCarrito = this.cartService.obtenerItems();
-
-    // 5. Recuperar estado del stepper desde session storage (sobrescribe autocompletado si hay algo previo)
+  private restaurarEstadoFormulario(): void {
     const savedForm = sessionStorage.getItem('checkoutForm');
-    if (savedForm) {
-      const parsedForm = JSON.parse(savedForm);
-      this.checkoutForm.patchValue(parsedForm);
-    }
+    if (!savedForm) return;
 
-    // 6. Carga inicial de Datos Maestros (Departamentos, Tipos Doc)
+    try {
+      const parsedForm = JSON.parse(savedForm);
+      const estado: any = {
+        correo: parsedForm.correo ?? this.checkoutForm.get('correo')?.value,
+        telefono: parsedForm.telefono ?? this.checkoutForm.get('telefono')?.value,
+        calle: parsedForm.calle ?? '',
+        referencia: parsedForm.referencia ?? '',
+        ubicacionGps: parsedForm.ubicacionGps ?? ''
+      };
+
+      if (!this.isRegisteredUser) {
+        estado.nombre = parsedForm.nombre ?? '';
+        estado.documentoTipo = parsedForm.documentoTipo ?? this.checkoutForm.get('documentoTipo')?.value;
+        estado.documentoNumero = parsedForm.documentoNumero ?? '';
+      }
+
+      this.checkoutForm.patchValue(estado, { emitEvent: false });
+    } catch {
+      sessionStorage.removeItem('checkoutForm');
+    }
+  }
+
+  private cargarDatosMaestros(): void {
     this.loadingDepartamentos = true;
     this.maestrosService.obtenerDepartamentos().subscribe({
       next: (data) => {
-        this.departamentos = data;
+        this.departamentos = data ?? [];
         this.loadingDepartamentos = false;
-        // Si ya hay un departamento seleccionado por autocompletado o cache, cargar provincias
-        const currentDepto = this.checkoutForm.get('departamento')?.value;
-        if (currentDepto && this.provincias.length === 0) {
-          this.checkoutForm.get('departamento')?.setValue(currentDepto); // Re-dispara el valueChanges
-        }
       },
-      error: (err) => {
+      error: () => {
         this.loadingDepartamentos = false;
-        console.error('Error cargando departamentos:', err);
+        this.departamentos = [];
       }
     });
 
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
       next: (data) => {
         this.tiposDocumento = data ?? [];
-        const actual = this.checkoutForm.get('documentoTipo')?.value;
-        if (this.tiposDocumento.length > 0 && !this.tiposDocumento.some(t => t.codigo === actual)) {
-          this.checkoutForm.get('documentoTipo')?.setValue(this.tiposDocumento[0].codigo);
-        }
+        this.sincronizarTipoDocumentoConMaestro();
       },
-      error: (err) => {
-        console.error('Error cargando tipos de documento:', err);
+      error: () => {
         this.tiposDocumento = [];
+        this.aplicarReglaDocumento(this.checkoutForm.get('documentoTipo')?.value, false);
       }
     });
 
@@ -184,56 +217,117 @@ export class CheckoutComponent implements OnInit {
         this.coberturasCourier = [];
       }
     });
+  }
 
-    // Gestionar dependencias de UBIGEO (Cascada Departamentos -> Provincias)
-    this.checkoutForm.get('departamento')?.valueChanges.subscribe(deptoNombre => {
-      if (!deptoNombre) return;
+  private sincronizarTipoDocumentoConMaestro(): void {
+    const controlTipo = this.checkoutForm.get('documentoTipo');
+    if (!controlTipo || this.tiposDocumento.length === 0) {
+      this.aplicarReglaDocumento(controlTipo?.value, false);
+      return;
+    }
 
-      this.loadingProvincias = true;
-      const depto = this.departamentos.find(d => d.nombre === deptoNombre);
+    const actual = controlTipo.value;
 
-      if (depto) {
-        this.maestrosService.obtenerProvincias(depto.id).subscribe({
-          next: (provs) => {
-            this.provincias = provs;
-            this.loadingProvincias = false;
-            // Si el valor actual de provincia no está en la nueva lista, resetear
-            const currentProv = this.checkoutForm.get('provincia')?.value;
-            if (!this.provincias.some(p => p.nombre === currentProv)) {
-              this.checkoutForm.patchValue({ provincia: '', distrito: '' }, { emitEvent: false });
-            }
-          },
-          error: () => this.loadingProvincias = false
-        });
-      }
+    const exacto = this.tiposDocumento.find((t) => String(t.codigo) === String(actual));
+    if (exacto) {
+      this.aplicarReglaDocumento(exacto.codigo, false);
+      return;
+    }
+
+    const actualCanonico = resolveTipoDocumento(actual);
+    const porAlias = this.tiposDocumento.find((t) => {
+      const tipoCatalogo = t?.codigo || t?.valor || t?.descripcion || '';
+      return resolveTipoDocumento(tipoCatalogo) === actualCanonico;
     });
 
-    // Gestionar dependencias de UBIGEO (Cascada Provincias -> Distritos)
-    this.checkoutForm.get('provincia')?.valueChanges.subscribe(provNombre => {
+    if (porAlias) {
+      controlTipo.setValue(porAlias.codigo, { emitEvent: false });
+      this.aplicarReglaDocumento(porAlias.codigo, false);
+      return;
+    }
+
+    controlTipo.setValue(this.tiposDocumento[0].codigo, { emitEvent: false });
+    this.aplicarReglaDocumento(this.tiposDocumento[0].codigo, false);
+  }
+
+  private configurarDependenciasUbigeo(): void {
+    this.checkoutForm.get('departamento')?.valueChanges.subscribe((deptoNombre) => {
+      const provinciaActual = this.checkoutForm.get('provincia')?.value;
+      const distritoActual = this.checkoutForm.get('distrito')?.value;
+
+      this.provincias = [];
+      this.distritos = [];
+      this.checkoutForm.patchValue(
+        { provincia: '', distrito: '', tipoEntrega: '', coberturaCourier: false, fallbackMotivo: '' },
+        { emitEvent: false }
+      );
+      this.mensajeCobertura = '';
+
+      if (!deptoNombre) return;
+
+      const depto = this.departamentos.find((d) => d.nombre === deptoNombre);
+      if (!depto) return;
+
+      this.loadingProvincias = true;
+      this.maestrosService.obtenerProvincias(depto.id).subscribe({
+        next: (provs) => {
+          this.provincias = provs ?? [];
+          this.loadingProvincias = false;
+
+          if (provinciaActual && this.provincias.some((p) => p.nombre === provinciaActual)) {
+            this.checkoutForm.patchValue({ provincia: provinciaActual }, { emitEvent: false });
+            this.cargarDistritosPorProvinciaNombre(provinciaActual, distritoActual);
+          }
+        },
+        error: () => {
+          this.loadingProvincias = false;
+          this.provincias = [];
+        }
+      });
+    });
+
+    this.checkoutForm.get('provincia')?.valueChanges.subscribe((provNombre) => {
+      const distritoActual = this.checkoutForm.get('distrito')?.value;
+
+      this.distritos = [];
+      this.checkoutForm.patchValue(
+        { distrito: '', tipoEntrega: '', coberturaCourier: false, fallbackMotivo: '' },
+        { emitEvent: false }
+      );
+      this.mensajeCobertura = '';
+
       if (!provNombre) return;
-
-      this.loadingDistritos = true;
-      const prov = this.provincias.find(p => p.nombre === provNombre);
-
-      if (prov) {
-        this.maestrosService.obtenerDistritos(prov.id).subscribe({
-          next: (dists) => {
-            this.distritos = dists;
-            this.loadingDistritos = false;
-            const currentDist = this.checkoutForm.get('distrito')?.value;
-            if (!this.distritos.some(d => d.nombre === currentDist)) {
-              this.checkoutForm.patchValue({ distrito: '' }, { emitEvent: false });
-            }
-          },
-          error: () => this.loadingDistritos = false
-        });
-      }
+      this.cargarDistritosPorProvinciaNombre(provNombre, distritoActual);
     });
 
     this.checkoutForm.get('distrito')?.valueChanges.subscribe(() => {
+      this.checkoutForm.patchValue({ tipoEntrega: '' }, { emitEvent: false });
       this.evaluarCoberturaCourier();
     });
+  }
 
+  private cargarDistritosPorProvinciaNombre(provNombre: string, distritoPreferido?: string): void {
+    const prov = this.provincias.find((p) => p.nombre === provNombre);
+    if (!prov) return;
+
+    this.loadingDistritos = true;
+    this.maestrosService.obtenerDistritos(prov.id).subscribe({
+      next: (dists) => {
+        this.distritos = dists ?? [];
+        this.loadingDistritos = false;
+
+        if (distritoPreferido && this.distritos.some((d) => d.nombre === distritoPreferido)) {
+          this.checkoutForm.patchValue({ distrito: distritoPreferido }, { emitEvent: false });
+        }
+      },
+      error: () => {
+        this.loadingDistritos = false;
+        this.distritos = [];
+      }
+    });
+  }
+
+  private configurarTipoEntrega(): void {
     this.checkoutForm.get('tipoEntrega')?.valueChanges.subscribe((tipoEntrega) => {
       const agenciaRecojo = this.checkoutForm.get('agenciaRecojo');
       if (!agenciaRecojo) return;
@@ -244,30 +338,25 @@ export class CheckoutComponent implements OnInit {
       } else {
         agenciaRecojo.setValue('');
       }
+
       agenciaRecojo.updateValueAndValidity();
+      this.actualizarMensajeCobertura();
+    });
+  }
+
+  private configurarDocumento(): void {
+    this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe((tipo) => {
+      this.aplicarReglaDocumento(tipo, true);
     });
 
-    // Validaciones dinámicas según tipo de documento
-    this.checkoutForm.get('documentoTipo')?.valueChanges.subscribe(tipo => {
-      this.aplicarReglaDocumento(tipo);
-    });
-    this.aplicarReglaDocumento(this.checkoutForm.get('documentoTipo')?.value);
-
-    // Guardar en session storage en cada cambio
-    this.checkoutForm.valueChanges.subscribe(val => {
-      sessionStorage.setItem('checkoutForm', JSON.stringify(val));
-    });
+    this.aplicarReglaDocumento(this.checkoutForm.get('documentoTipo')?.value, false);
   }
 
   private obtenerFallbackTipoEntrega(): Maestro[] {
     return [
-      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_COURIER, valor: 'Envío a domicilio (Courier)', estado: true },
-      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_SHALOM, valor: 'Envío por Shalom', estado: true }
+      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_COURIER, valor: 'Envio a domicilio (Courier)', estado: true },
+      { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_SHALOM, valor: 'Envio por Shalom', estado: true }
     ];
-  }
-
-  getBestAddressForCheckout(direcciones: any[]): any {
-    return direcciones.find(d => d.esFacturacion) || direcciones.find(d => d.esPrincipal) || direcciones[0];
   }
 
   private normalizarTexto(texto: string): string {
@@ -284,13 +373,15 @@ export class CheckoutComponent implements OnInit {
     const distrito = this.checkoutForm.get('distrito')?.value;
 
     if (!departamento || !provincia || !distrito) {
+      this.checkoutForm.patchValue({ coberturaCourier: false, fallbackMotivo: '' }, { emitEvent: false });
+      this.actualizarMensajeCobertura();
       return;
     }
 
     const ubigeoEvaluado = `${departamento}|${provincia}|${distrito}`;
     const ubigeoNormalizado = this.normalizarTexto(ubigeoEvaluado);
 
-    const cobertura = this.coberturasCourier.find(c => {
+    const cobertura = this.coberturasCourier.find((c) => {
       if (c.estado === false) return false;
       const codigo = this.normalizarTexto(c.codigo || '');
       if (!codigo) return false;
@@ -302,6 +393,7 @@ export class CheckoutComponent implements OnInit {
       const matchDep = !dep || dep === '*' || dep === depSel;
       const matchProv = !prov || prov === '*' || prov === provSel;
       const matchDist = !dist || dist === '*' || dist === distSel;
+
       return matchDep && matchProv && matchDist;
     });
 
@@ -310,19 +402,28 @@ export class CheckoutComponent implements OnInit {
       ? ''
       : `Sin cobertura courier en ${departamento}, ${provincia}, ${distrito}`;
 
-    this.checkoutForm.patchValue({
-      coberturaCourier: tieneCobertura,
-      fallbackMotivo
-    }, { emitEvent: false });
+    this.checkoutForm.patchValue({ coberturaCourier: tieneCobertura, fallbackMotivo }, { emitEvent: false });
+    this.actualizarMensajeCobertura();
+  }
 
-    if (tieneCobertura) {
-      this.checkoutForm.patchValue({ tipoEntrega: this.CODIGO_ENVIO_COURIER }, { emitEvent: true });
-      this.mensajeCobertura = '¡Tenemos cobertura courier! Puedes recibir tu pedido en domicilio.';
+  private actualizarMensajeCobertura(): void {
+    const tipoEntrega = this.checkoutForm.get('tipoEntrega')?.value;
+    const tieneCobertura = !!this.checkoutForm.get('coberturaCourier')?.value;
+
+    if (tipoEntrega === this.CODIGO_ENVIO_COURIER) {
+      this.mensajeCobertura =
+        'El cobro del delivery dependera si esta o no en la zona de cobertura de la empresa repartidora. Los horarios de reparto son coordinados de forma ajena a nuestro control.';
       return;
     }
 
-    this.checkoutForm.patchValue({ tipoEntrega: this.CODIGO_ENVIO_SHALOM }, { emitEvent: true });
-    this.mensajeCobertura = 'No llegamos por courier a este ubigeo. Te sugerimos envío por Shalom para una entrega segura.';
+    if (tipoEntrega === this.CODIGO_ENVIO_SHALOM) {
+      this.mensajeCobertura = tieneCobertura
+        ? 'Si eliges envio por Shalom, selecciona la agencia para coordinar el recojo.'
+        : 'No llegamos por courier a este ubigeo. Te sugerimos envio por Shalom para una entrega segura.';
+      return;
+    }
+
+    this.mensajeCobertura = '';
   }
 
   mostrarCampoAgencia(): boolean {
@@ -330,7 +431,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   obtenerEtiquetaTipoEntrega(codigo: string): string {
-    const tipo = this.tiposEntrega.find(t => t.codigo === codigo);
+    const tipo = this.tiposEntrega.find((t) => t.codigo === codigo);
     return tipo?.valor || codigo;
   }
 
@@ -343,32 +444,7 @@ export class CheckoutComponent implements OnInit {
     return this.calcularSubtotal() + this.obtenerEstimacionEnvioSeleccionado().costo;
   }
 
-  private cargarProvinciasYAutoSeleccionar(deptoNombre: string, provNombre: string, distNombre: string) {
-    this.loadingProvincias = true;
-    // Intentar buscar el ID del depto
-    this.maestrosService.obtenerDepartamentos().subscribe(deptos => {
-      this.departamentos = deptos;
-      const depto = deptos.find(d => d.nombre === deptoNombre);
-      if (depto) {
-        this.maestrosService.obtenerProvincias(depto.id).subscribe(provs => {
-          this.provincias = provs;
-          this.loadingProvincias = false;
-          const prov = provs.find(p => p.nombre === provNombre);
-          if (prov) {
-            this.checkoutForm.patchValue({ provincia: provNombre }, { emitEvent: false });
-            this.loadingDistritos = true;
-            this.maestrosService.obtenerDistritos(prov.id).subscribe(dists => {
-              this.distritos = dists;
-              this.loadingDistritos = false;
-              this.checkoutForm.patchValue({ distrito: distNombre }, { emitEvent: false });
-            });
-          }
-        });
-      }
-    });
-  }
-
-  siguientePaso() {
+  siguientePaso(): void {
     if (this.esPasoValido(this.pasoActual)) {
       this.pasoActual++;
     } else {
@@ -377,7 +453,7 @@ export class CheckoutComponent implements OnInit {
     }
   }
 
-  pasoAnterior() {
+  pasoAnterior(): void {
     if (this.pasoActual > 1) {
       this.pasoActual--;
     }
@@ -385,19 +461,26 @@ export class CheckoutComponent implements OnInit {
 
   esPasoValido(paso: number): boolean {
     if (paso === 1) {
-      return this.checkoutForm.get('nombre')?.valid! &&
-        this.checkoutForm.get('documentoTipo')?.valid! &&
-        this.checkoutForm.get('documentoNumero')?.valid! &&
-        this.checkoutForm.get('correo')?.valid! &&
-        this.checkoutForm.get('telefono')?.valid!;
-    } else if (paso === 2) {
-      return this.checkoutForm.get('departamento')?.valid! &&
-        this.checkoutForm.get('provincia')?.valid! &&
-        this.checkoutForm.get('distrito')?.valid! &&
-        this.checkoutForm.get('calle')?.valid! &&
-        this.checkoutForm.get('tipoEntrega')?.valid! &&
-        this.checkoutForm.get('agenciaRecojo')?.valid!;
+      return (
+        this.checkoutForm.get('nombre')?.valid === true &&
+        this.checkoutForm.get('documentoTipo')?.valid === true &&
+        this.checkoutForm.get('documentoNumero')?.valid === true &&
+        this.checkoutForm.get('correo')?.valid === true &&
+        this.checkoutForm.get('telefono')?.valid === true
+      );
     }
+
+    if (paso === 2) {
+      return (
+        this.checkoutForm.get('departamento')?.valid === true &&
+        this.checkoutForm.get('provincia')?.valid === true &&
+        this.checkoutForm.get('distrito')?.valid === true &&
+        this.checkoutForm.get('calle')?.valid === true &&
+        this.checkoutForm.get('tipoEntrega')?.valid === true &&
+        this.checkoutForm.get('agenciaRecojo')?.valid === true
+      );
+    }
+
     return true;
   }
 
@@ -408,7 +491,10 @@ export class CheckoutComponent implements OnInit {
       this.checkoutForm.get('documentoNumero')?.markAsTouched();
       this.checkoutForm.get('correo')?.markAsTouched();
       this.checkoutForm.get('telefono')?.markAsTouched();
-    } else if (paso === 2) {
+      return;
+    }
+
+    if (paso === 2) {
       this.checkoutForm.get('departamento')?.markAsTouched();
       this.checkoutForm.get('provincia')?.markAsTouched();
       this.checkoutForm.get('distrito')?.markAsTouched();
@@ -420,7 +506,7 @@ export class CheckoutComponent implements OnInit {
 
   usarGPS(): void {
     if (!navigator.geolocation) {
-      this.toast.show('Tu navegador no soporta geolocalización.');
+      this.toast.show('Tu navegador no soporta geolocalizacion.');
       return;
     }
 
@@ -429,7 +515,7 @@ export class CheckoutComponent implements OnInit {
     const gpsTimeout = setTimeout(() => {
       if (this.gpsLoading) {
         this.gpsLoading = false;
-        this.toast.show('Tiempo de espera agotado. Revisa permisos o ingresa la dirección manualmente.');
+        this.toast.show('Tiempo de espera agotado. Revisa permisos o ingresa la direccion manualmente.');
       }
     }, 10000);
 
@@ -440,21 +526,20 @@ export class CheckoutComponent implements OnInit {
           ubicacionGps: `${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`
         });
         this.gpsLoading = false;
-        this.toast.show('Ubicación obtenida correctamente');
+        this.toast.show('Ubicacion obtenida correctamente');
       },
       (error) => {
         clearTimeout(gpsTimeout);
         this.gpsLoading = false;
         if (error.code === error.PERMISSION_DENIED) {
-          this.toast.show('Permiso de ubicación denegado.');
+          this.toast.show('Permiso de ubicacion denegado.');
         } else {
-          this.toast.show('No se pudo obtener la ubicación.');
+          this.toast.show('No se pudo obtener la ubicacion.');
         }
       },
       { timeout: 10000 }
     );
   }
-
 
   get tipoDocumentoActual(): string {
     return this.checkoutForm.get('documentoTipo')?.value || '';
@@ -468,7 +553,7 @@ export class CheckoutComponent implements OnInit {
     return getTipoDocumentoLabel(tipo);
   }
 
-  private aplicarReglaDocumento(tipo: string): void {
+  private aplicarReglaDocumento(tipo: string, limpiarNumero = true): void {
     const docInput = this.checkoutForm.get('documentoNumero');
     if (!docInput) return;
 
@@ -477,20 +562,26 @@ export class CheckoutComponent implements OnInit {
     this.documentoPlaceholder = regla.placeholder;
     this.documentoHelpText = regla.helpText;
 
-    docInput.setValue('');
+    if (limpiarNumero && !this.bloquearDocumento) {
+      docInput.setValue('');
+    }
+
     docInput.setValidators(regla.validators);
     docInput.updateValueAndValidity();
   }
 
   enfocarDocumento(): void {
+    if (this.bloquearDocumento) return;
+
     setTimeout(() => {
       const el = document.getElementById('docNumeroInput');
       if (el) el.focus();
     }, 50);
   }
 
-  /** Filtra el valor del campo de documento según la regla del tipo seleccionado */
   soloNumeros(event: Event): void {
+    if (this.bloquearDocumento) return;
+
     const input = event.target as HTMLInputElement;
     const regla = getDocumentoRule(this.tipoDocumentoActual);
 
@@ -503,12 +594,22 @@ export class CheckoutComponent implements OnInit {
     this.checkoutForm.get('documentoNumero')?.setValue(input.value);
   }
 
-  /** Compose full direccion string before submit */
+  obtenerDireccionResumen(): string {
+    const calle = (this.checkoutForm.get('calle')?.value || '').trim();
+    const distrito = (this.checkoutForm.get('distrito')?.value || '').trim();
+    const provincia = (this.checkoutForm.get('provincia')?.value || '').trim();
+    const departamento = (this.checkoutForm.get('departamento')?.value || '').trim();
+
+    const partes = [calle, distrito, provincia, departamento].filter((p) => !!p);
+    return partes.length ? partes.join(', ') : 'Sin direccion registrada';
+  }
+
+  obtenerReferenciaResumen(): string {
+    return (this.checkoutForm.get('referencia')?.value || '').trim();
+  }
+
   private composeDireccion(): void {
-    const f = this.checkoutForm.value;
-    this.checkoutForm.patchValue({
-      direccion: `${f.calle}, ${f.distrito}, ${f.provincia}, ${f.departamento}`
-    });
+    this.checkoutForm.patchValue({ direccion: this.obtenerDireccionResumen() });
   }
 
   calcularSubtotal(): number {
@@ -518,16 +619,12 @@ export class CheckoutComponent implements OnInit {
   private focusFirstInvalidInCurrentStep(): void {
     const stepFields: Record<number, string[]> = {
       1: ['nombre', 'documentoTipo', 'documentoNumero', 'correo', 'telefono'],
-      2: ['departamento', 'provincia', 'distrito', 'calle'],
+      2: ['departamento', 'provincia', 'distrito', 'calle', 'tipoEntrega', 'agenciaRecojo'],
       3: ['nombre', 'documentoNumero', 'correo', 'telefono', 'direccion']
     };
 
-    const firstInvalid = (stepFields[this.pasoActual] || [])
-      .find((name) => this.checkoutForm.get(name)?.invalid);
-
-    if (!firstInvalid) {
-      return;
-    }
+    const firstInvalid = (stepFields[this.pasoActual] || []).find((name) => this.checkoutForm.get(name)?.invalid);
+    if (!firstInvalid) return;
 
     const element = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${firstInvalid}"]`);
     element?.focus();
@@ -536,41 +633,43 @@ export class CheckoutComponent implements OnInit {
   getControlAriaDescribedBy(controlName: string, helpId?: string): string {
     const ctrl = this.checkoutForm.get(controlName);
     const errorId = `${controlName}-error`;
+
     if (ctrl && ctrl.invalid && ctrl.touched) {
       return helpId ? `${helpId} ${errorId}` : errorId;
     }
+
     return helpId || '';
   }
-
 
   registrarPedido(): void {
     this.composeDireccion();
 
-    // Check essential fields only (address sub-fields compose into direccion)
     const nombre = this.checkoutForm.get('nombre');
     const docNum = this.checkoutForm.get('documentoNumero');
     const correo = this.checkoutForm.get('correo');
     const telefono = this.checkoutForm.get('telefono');
     const direccion = this.checkoutForm.get('direccion');
+    const tipoEntrega = this.checkoutForm.get('tipoEntrega');
 
-    if (!nombre?.value || !docNum?.value || !correo?.valid || !telefono?.valid || !direccion?.value) {
+    if (!nombre?.value || !docNum?.value || !correo?.valid || !telefono?.valid || !direccion?.value || !tipoEntrega?.value) {
       this.checkoutForm.markAllAsTouched();
       this.focusFirstInvalidInCurrentStep();
       return;
     }
 
     if (this.itemsCarrito.length === 0) {
-      this.toast.show('Tu carrito est\u00e1 vac\u00edo');
+      this.toast.show('Tu carrito esta vacio');
       return;
     }
-    if (this.isLoading) return; // evita doble submit
+
+    if (this.isLoading) return;
     this.isLoading = true;
 
     const formData = this.checkoutForm.value;
 
     const pedido: Pedido = {
-      Id: 0, // O usa UUID temporal si se espera del backend
-      fecha: new Date().toISOString(), // Convert Date to ISO string      
+      Id: 0,
+      fecha: new Date().toISOString(),
       nombre: formData.nombre,
       documentoTipo: formData.documentoTipo,
       documentoNumero: formData.documentoNumero,
@@ -585,7 +684,7 @@ export class CheckoutComponent implements OnInit {
       costoEnvioEstimado: this.obtenerEstimacionEnvioSeleccionado().costo,
       tiempoEntregaEstimado: this.obtenerEstimacionEnvioSeleccionado().tiempo,
       agenciaRecojo: formData.agenciaRecojo,
-      items: this.itemsCarrito.map(item => ({
+      items: this.itemsCarrito.map((item) => ({
         cuentoId: item.cuento.id,
         nombreCuento: item.cuento.titulo,
         imagenUrl: item.cuento.imagenUrl,
@@ -603,12 +702,11 @@ export class CheckoutComponent implements OnInit {
       next: (resp) => {
         this.cartService.clearCart();
         sessionStorage.removeItem('checkoutForm');
-        const pedidoId = resp.id;
-        this.router.navigate(['/pago', pedidoId]); // Redirigir a página de pago
+        this.router.navigate(['/pago', resp.id]);
       },
       error: (err) => {
         console.error('Error al registrar pedido:', err);
-        this.toast.show('Ocurrió un error al registrar el pedido');
+        this.toast.show('Ocurrio un error al registrar el pedido');
         this.isLoading = false;
       }
     });

@@ -38,12 +38,14 @@ describe('CheckoutComponent', () => {
 
     fixture = TestBed.createComponent(CheckoutComponent);
     component = fixture.componentInstance;
+
     authServiceSpy.getUser.and.returnValue(null);
     cartServiceSpy.obtenerItems.and.returnValue([]);
+
     maestrosServiceSpy.obtenerDepartamentos.and.returnValue(of([{ id: '15', nombre: 'Lima' }]));
     maestrosServiceSpy.obtenerMaestrosPorGrupo.and.callFake((grupo: string) => {
-      if (grupo === 'TIPO_DOC') {
-        return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOC', estado: true }]);
+      if (grupo === 'TIPO_DOCUMENTO') {
+        return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOCUMENTO', estado: true }]);
       }
       if (grupo === 'TIPO_ENTREGA') {
         return of([
@@ -56,8 +58,10 @@ describe('CheckoutComponent', () => {
       }
       return of([]);
     });
+
     maestrosServiceSpy.obtenerProvincias.and.returnValue(of([{ id: '1501', nombre: 'Lima' }]));
     maestrosServiceSpy.obtenerDistritos.and.returnValue(of([{ id: '150122', nombre: 'Miraflores' }]));
+
     fixture.detectChanges();
   });
 
@@ -75,7 +79,8 @@ describe('CheckoutComponent', () => {
       departamento: 'Lima',
       provincia: 'Lima',
       distrito: 'Miraflores',
-      calle: 'Av Principal 123'
+      calle: 'Av Principal 123',
+      tipoEntrega: 'DOMICILIO_COURIER'
     });
 
     component.itemsCarrito = [];
@@ -85,21 +90,20 @@ describe('CheckoutComponent', () => {
     expect(pedidoServiceSpy.registrarPedido).not.toHaveBeenCalled();
   });
 
-
-  it('should select courier when ubigeo has coverage', () => {
+  it('should calculate courier coverage for selected ubigeo', () => {
     component.checkoutForm.patchValue({
       departamento: 'Lima',
       provincia: 'Lima',
       distrito: 'Miraflores'
     });
 
-    expect(component.checkoutForm.get('tipoEntrega')?.value).toBe('DOMICILIO_COURIER');
+    expect(component.checkoutForm.get('coberturaCourier')?.value).toBeTrue();
     expect(component.checkoutForm.get('fallbackMotivo')?.value).toBe('');
   });
 
-  it('should fallback to shalom when ubigeo has no coverage', () => {
+  it('should set fallback reason when ubigeo has no coverage', () => {
     maestrosServiceSpy.obtenerMaestrosPorGrupo.and.callFake((grupo: string) => {
-      if (grupo === 'TIPO_DOC') return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOC', estado: true }]);
+      if (grupo === 'TIPO_DOCUMENTO') return of([{ codigo: 'DNI', valor: 'DNI', grupo: 'TIPO_DOCUMENTO', estado: true }]);
       if (grupo === 'TIPO_ENTREGA') {
         return of([
           { codigo: 'DOMICILIO_COURIER', valor: 'Courier', grupo: 'TIPO_ENTREGA', estado: true },
@@ -117,8 +121,7 @@ describe('CheckoutComponent', () => {
       distrito: 'Santiago'
     });
 
-    expect(component.checkoutForm.get('tipoEntrega')?.value).toBe('ENVIO_SHALOM');
+    expect(component.checkoutForm.get('coberturaCourier')?.value).toBeFalse();
     expect(component.checkoutForm.get('fallbackMotivo')?.value).toContain('Sin cobertura courier');
   });
-
 });
