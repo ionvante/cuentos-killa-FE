@@ -10,9 +10,9 @@ import { User } from '../../../model/user.model';
 import { Router } from '@angular/router';
 import { MaestrosService } from '../../../services/maestros.service';
 import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
-
-
-@Component({
+import { FormErrorComponent } from '../../shared/form-error.component';
+import { FormHelpComponent } from '../../shared/form-help.component';
+import { Maestro } from '../../../model/maestro.model'; @Component({
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormErrorComponent, FormHelpComponent],
   selector: 'app-checkout',
@@ -160,8 +160,6 @@ export class CheckoutComponent implements OnInit {
         if (this.tiposDocumento.length > 0 && !this.tiposDocumento.some(t => t.codigo === actual)) {
           this.checkoutForm.get('documentoTipo')?.setValue(this.tiposDocumento[0].codigo);
         }
-
-        this.loadTiposDocumentoLegacy();
       },
       error: (err) => {
         console.error('Error cargando tipos de documento:', err);
@@ -266,6 +264,10 @@ export class CheckoutComponent implements OnInit {
       { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_COURIER, valor: 'Envío a domicilio (Courier)', estado: true },
       { grupo: 'TIPO_ENTREGA', codigo: this.CODIGO_ENVIO_SHALOM, valor: 'Envío por Shalom', estado: true }
     ];
+  }
+
+  getBestAddressForCheckout(direcciones: any[]): any {
+    return direcciones.find(d => d.esFacturacion) || direcciones.find(d => d.esPrincipal) || direcciones[0];
   }
 
   private normalizarTexto(texto: string): string {

@@ -16,7 +16,8 @@
     </form>
     <p class="register-link">
       ¿No tienes cuenta?
-      <a routerLink="/register">Regístrate aquí</a>
+      <a routerLink="/register" [queryParams]="returnTo && returnTo !== '/' ? { returnTo: returnTo } : null">Regístrate
+        aquí</a>
     </p>
   </div>
 

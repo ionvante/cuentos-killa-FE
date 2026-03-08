@@ -31,6 +31,9 @@ export class AdminMaestrosComponent implements OnInit {
   editando = false;
   idEditando?: number;
   auditoriaDisponible = false;
+  guardando = false;
+  formSubmitAttempted = false;
+  loadingMaestros = false;
 
   gruposConocidos: string[] = [];
 
@@ -296,5 +299,10 @@ export class AdminMaestrosComponent implements OnInit {
         this.auditoriaSeleccionada = [];
       }
     });
+  }
+
+  private focusField(controlName: string): void {
+    const target = this.elementRef.nativeElement.querySelector<HTMLElement>(`[formControlName="${controlName}"]`);
+    target?.focus();
   }
 }

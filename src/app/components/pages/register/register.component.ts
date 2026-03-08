@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
@@ -25,6 +25,7 @@ export class RegisterComponent implements OnInit {
   showPassword = false;
   showConfirmPassword = false;
   tiposDocumento: any[] = [];
+  loadingTiposDocumento = false;
   docMaxLength = 8;
   documentoPlaceholder = '12345678';
   documentoHelpText = 'DNI: 8 dígitos numéricos.';
@@ -35,6 +36,7 @@ export class RegisterComponent implements OnInit {
     private maestrosService: MaestrosService,
     private router: Router,
     private toast: ToastService,
+    private route: ActivatedRoute,
     private elementRef: ElementRef<HTMLElement>
   ) { }
 
@@ -127,7 +129,12 @@ export class RegisterComponent implements OnInit {
     this.authService.register(data).subscribe({
       next: () => {
         this.toast.show('¡Cuenta creada exitosamente! Inicia sesión para continuar.');
-        this.router.navigate(['/login']);
+        const returnTo = this.route.snapshot.queryParamMap.get('returnTo');
+        if (returnTo) {
+          this.router.navigate(['/login'], { queryParams: { returnTo } });
+        } else {
+          this.router.navigate(['/login']);
+        }
       },
       error: (err: any) => {
         this.isLoading = false;

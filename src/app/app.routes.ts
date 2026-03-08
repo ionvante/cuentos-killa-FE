@@ -27,7 +27,8 @@ export const routes: Routes = [
       {
         path: 'checkout',
         loadComponent: () =>
-          import('./components/pages/checkout/checkout.component').then(m => m.CheckoutComponent)
+          import('./components/pages/checkout/checkout.component').then(m => m.CheckoutComponent),
+        canActivate: [authGuard]
       },
       {
         path: 'pago/:id',

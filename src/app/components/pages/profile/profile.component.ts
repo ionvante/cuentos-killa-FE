@@ -76,7 +76,7 @@ export class ProfileComponent implements OnInit {
     loadingDepartamentos = false;
     loadingProvincias = false;
     loadingDistritos = false;
-    addressErrors: Partial<Record<'calle' | 'departamento' | 'provincia' | 'distrito', string>> = {};
+    addressErrors: Partial<Record<'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito', string>> = {};
 
     constructor(
         private authService: AuthService,
@@ -128,6 +128,14 @@ export class ProfileComponent implements OnInit {
     cancelEditProfile(): void {
         this.profileSubmitted = false;
         this.editingProfile = false;
+    }
+
+    isProfileInvalid(): boolean {
+        return !this.profileForm.nombre || !this.profileForm.apellido || !this.profileForm.documento;
+    }
+
+    shouldShowProfileError(field: 'nombre' | 'apellido' | 'documento' | 'telefono'): boolean {
+        return this.profileSubmitted && !this.profileForm[field];
     }
 
     saveProfile(): void {
@@ -268,6 +276,19 @@ export class ProfileComponent implements OnInit {
         });
     }
 
+    loadTiposDocumento(): void {
+        this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
+            next: (data) => {
+                this.tiposDocumento = data || [];
+                this.cdr.markForCheck();
+            },
+            error: () => {
+                this.tiposDocumento = [];
+                this.cdr.markForCheck();
+            }
+        });
+    }
+
     onDepartamentoChange(nombre: string, isInitial = false): void {
         if (!isInitial) {
             this.addressForm.provincia = '';
@@ -334,7 +355,7 @@ export class ProfileComponent implements OnInit {
             distrito: this.addressForm.distrito ? '' : 'Selecciona un distrito para continuar.'
         };
 
-        const firstInvalid = (['calle', 'departamento', 'provincia', 'distrito'] as const)
+        const firstInvalid = (['tipoDireccion', 'calle', 'departamento', 'provincia', 'distrito'] as const)
             .find((field) => !!this.addressErrors[field]);
 
         if (firstInvalid) {
@@ -346,13 +367,17 @@ export class ProfileComponent implements OnInit {
         return true;
     }
 
-    private focusAddressField(field: 'calle' | 'departamento' | 'provincia' | 'distrito'): void {
+    private focusAddressField(field: 'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito'): void {
         const el = this.elementRef.nativeElement.querySelector<HTMLElement>(`#address-${field}`);
         el?.focus();
     }
 
-    getAddressDescribedBy(field: 'calle' | 'departamento' | 'provincia' | 'distrito', helpId: string): string {
+    getAddressDescribedBy(field: 'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito', helpId: string): string {
         return this.addressErrors[field] ? `${helpId} ${field}-error` : helpId;
+    }
+
+    shouldShowAddressError(field: 'tipoDireccion' | 'calle' | 'departamento' | 'provincia' | 'distrito'): boolean {
+        return !!this.addressErrors[field];
     }
 
     private emptyAddress(): Address {
@@ -362,6 +387,12 @@ export class ProfileComponent implements OnInit {
             distrito: '', referencia: '', codigoPostal: '',
             esPrincipal: false, esFacturacion: false
         };
+    }
+
+    getDireccionTipoLabel(codigo: string | undefined): string {
+        if (!codigo) return '';
+        const tipo = this.tiposDireccion.find(t => t.codigo === codigo);
+        return tipo ? tipo.descripcion : codigo;
     }
 
     private showToast(message: string, type: 'success' | 'error'): void {
