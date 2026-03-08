@@ -83,6 +83,18 @@ export class AdminPedidosComponent implements OnInit {
     this.processing = false;
   }
 
+  descargarBoleta(pedido: Pedido): void {
+    const id = pedido.Id || pedido.id || 0;
+    this.pedidoService.downloadInvoice(id).subscribe(blob => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `boleta-${id}.pdf`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    });
+  }
+
   descargarVoucher(): void {
     if (this.voucherUrl) {
       window.open(this.voucherUrl, '_blank');

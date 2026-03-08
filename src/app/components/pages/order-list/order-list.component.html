@@ -77,16 +77,30 @@
       </div>
 
       <div class="actions-new">
-        <ng-container *ngIf="pedido.estado === 'PAGADO'; else checkEntregado">
+        <ng-container *ngIf="pedido.estado === 'PAGADO' || pedido.estado === 'PAGO_VERIFICADO'; else checkEntregado">
+          <button class="btn-action primary generate-boleta" (click)="descargarPDF(getPedidoId(pedido))"
+            title="Descargar Boleta PDF">
+            <span class="material-icons text-sm">download</span> Descargar Boleta
+          </button>
           <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
         </ng-container>
         <ng-template #checkEntregado>
-          <ng-container *ngIf="pedido.estado === 'ENTREGADO'; else checkPendiente">
+          <ng-container *ngIf="pedido.estado === 'ENTREGADO' || pedido.estado === 'ENVIADO'; else checkPendiente">
+            <button class="btn-action primary generate-boleta" (click)="descargarPDF(getPedidoId(pedido))"
+              title="Descargar Boleta PDF">
+              <span class="material-icons text-sm">download</span> Descargar Boleta
+            </button>
             <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
-            <button class="btn-action outline warning" (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
+            <button *ngIf="pedido.estado === 'ENTREGADO'" class="btn-action outline warning"
+              (click)="dejarResena(getPedidoId(pedido))">Valorar</button>
           </ng-container>
         </ng-template>
         <ng-template #checkPendiente>
+          <ng-container *ngIf="pedido.estado === 'PAGO_ENVIADO'; else checkPagar">
+            <button class="btn-action outline" (click)="verDetalle(getPedidoId(pedido))">Ver detalle</button>
+          </ng-container>
+        </ng-template>
+        <ng-template #checkPagar>
           <button class="btn-action primary" (click)="irAPago(getPedidoId(pedido))">
             <span class="material-icons text-sm">payment</span> Pagar ahora
           </button>

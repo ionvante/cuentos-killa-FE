@@ -41,6 +41,7 @@
           <th>Teléfono</th>
           <th>Estado</th>
           <th class="col-total">Total</th>
+          <th>Comprobante</th>
           <th>Acción</th>
         </tr>
       </thead>
@@ -54,6 +55,15 @@
           <td>{{ pedido.telefono }}</td>
           <td><app-badge [status]="pedido.estado"></app-badge></td>
           <td class="col-total"><strong>S/ {{ pedido.total | number:'1.2-2' }}</strong></td>
+          <td>
+            <button class="btn-sm btn-sm-warn"
+              *ngIf="pedido.estado === 'PAGO_VERIFICADO' || pedido.estado === 'EMPAQUETADO' || pedido.estado === 'ENVIADO' || pedido.estado === 'ENTREGADO'"
+              (click)="descargarBoleta(pedido)">
+              ⬇️ Boleta
+            </button>
+            <span *ngIf="pedido.estado === 'PAGO_ENVIADO' || pedido.estado === 'PAGO_PENDIENTE'"
+              class="text-muted">Pendiente</span>
+          </td>
           <td>
             <div class="action-group">
               <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn-sm btn-sm-primary"
@@ -97,6 +107,10 @@
       <div class="card-detail">📱 {{ pedido.telefono }}</div>
       <div class="card-detail">📅 {{ pedido.fecha | date:'dd/MM/yyyy HH:mm' }}</div>
       <div class="card-total">S/ {{ pedido.total | number:'1.2-2' }}</div>
+      <div class="card-detail"
+        *ngIf="pedido.estado === 'PAGO_VERIFICADO' || pedido.estado === 'EMPAQUETADO' || pedido.estado === 'ENVIADO' || pedido.estado === 'ENTREGADO'">
+        <button class="btn-sm btn-sm-warn" (click)="descargarBoleta(pedido)">⬇️ Boleta</button>
+      </div>
       <div class="action-group"
         *ngIf="pedido.estado === 'PAGO_ENVIADO' || pedido.estado === 'PAGO_VERIFICADO' || pedido.estado === 'EMPAQUETADO' || pedido.estado === 'ENVIADO'">
         <button *ngIf="pedido.estado === 'PAGO_ENVIADO'" class="btn-sm btn-sm-primary" (click)="abrirModal(pedido)">🧾
