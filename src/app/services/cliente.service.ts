@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { User } from '../model/user.model';
 import { Address } from '../model/address.model';
 import { environment } from '../../environments/environment';
+import { normalizeUser } from '../utils/user-normalizer';
 
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
@@ -16,13 +17,13 @@ export class ClienteService {
     // ── Perfil ──
     getProfile(uid: number): Observable<User> {
         return this.http.get<any>(`${this.userUrl}/perfil`, { params: { uid: uid.toString() } }).pipe(
-            map(res => res.data ?? res)
+            map(res => normalizeUser(res?.data ?? res))
         );
     }
 
     updateProfile(uid: number, data: Partial<User>): Observable<User> {
         return this.http.put<any>(`${this.userUrl}/perfil`, data, { params: { uid: uid.toString() } }).pipe(
-            map(res => res.data ?? res)
+            map(res => normalizeUser(res?.data ?? res))
         );
     }
 
