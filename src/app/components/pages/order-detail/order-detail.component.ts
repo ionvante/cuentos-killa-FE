@@ -9,6 +9,8 @@ import { ToastService } from '../../../services/toast.service';
 import { VoucherComponent } from '../voucher/voucher.component';
 import { forkJoin } from 'rxjs';
 
+import { MaestrosService } from '../../../services/maestros.service';
+
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
@@ -20,6 +22,7 @@ export class OrderDetailComponent implements OnInit {
   pedido: Pedido | null = null;
   isLoading: boolean = true;
   errorMensaje: string | null = null;
+  tiposDocumento: any[] = [];
 
   showVoucherModal = false;
   voucherFile: File | null = null;
@@ -30,6 +33,7 @@ export class OrderDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private pedidoService: PedidoService,
+    private maestrosService: MaestrosService,
     private toast: ToastService
   ) { }
 
@@ -66,6 +70,7 @@ export class OrderDetailComponent implements OnInit {
           this.isLoading = false;
         }
       });
+      this.loadTiposDocumento();
     } else {
       this.errorMensaje = 'ID de pedido no encontrado en la URL.';
       this.isLoading = false;
@@ -155,5 +160,22 @@ export class OrderDetailComponent implements OnInit {
   getPedidoId(): number | string {
     if (!this.pedido) return '';
     return (this.pedido.Id ?? (this.pedido as any).id) || '';
+  }
+
+  loadTiposDocumento(): void {
+    this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
+      next: (data) => {
+        this.tiposDocumento = data || [];
+      },
+      error: () => {
+        this.tiposDocumento = [];
+      }
+    });
+  }
+
+  getTipoDocumentoDisplay(codigo: string | undefined): string {
+    if (!codigo) return '';
+    const tipo = this.tiposDocumento.find(t => t.codigo === codigo);
+    return tipo ? (tipo.valor || tipo.descripcion || codigo) : codigo;
   }
 }

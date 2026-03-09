@@ -41,6 +41,7 @@ export class CheckoutComponent implements OnInit {
   isRegisteredUser = false;
   bloquearNombre = false;
   bloquearDocumento = false;
+  bloquearTipoDocumento = false;
 
   docMaxLength = 8;
   documentoPlaceholder = '12345678';
@@ -108,17 +109,17 @@ export class CheckoutComponent implements OnInit {
 
   private inicializarFormulario(): void {
     this.checkoutForm = this.fb.group({
-      nombre: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
+      nombre: this.fb.control('', { validators: [Validators.required] }),
       documentoTipo: ['DNI', Validators.required],
-      documentoNumero: this.fb.control('', { validators: getDocumentoRule('DNI').validators, updateOn: 'blur' }),
-      correo: this.fb.control('', { validators: [Validators.required, Validators.email], updateOn: 'blur' }),
-      telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)], updateOn: 'blur' }),
+      documentoNumero: this.fb.control('', { validators: getDocumentoRule('DNI').validators }),
+      correo: this.fb.control('', { validators: [Validators.required, Validators.email] }),
+      telefono: this.fb.control('', { validators: [Validators.required, Validators.pattern(/^\d{9}$/)] }),
 
       departamento: ['', Validators.required],
       provincia: ['', Validators.required],
       distrito: ['', Validators.required],
-      calle: this.fb.control('', { validators: [Validators.required], updateOn: 'blur' }),
-      referencia: this.fb.control('', { updateOn: 'blur' }),
+      calle: this.fb.control('', { validators: [Validators.required] }),
+      referencia: this.fb.control(''),
       ubicacionGps: [''],
       direccion: [''],
       tipoEntrega: ['', Validators.required],
@@ -134,20 +135,30 @@ export class CheckoutComponent implements OnInit {
 
     const userAny = user as any;
     const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim();
-    const documentoTipo = user.documentoTipo || userAny.tipoDocumento || 'DNI';
-    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || user.documento || '';
+    const documentTypeRaw = user.documentoTipo || userAny.tipoDocumento || 'DNI';
+    const documentTypeResolved = resolveTipoDocumento(documentTypeRaw);
+    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || '';
 
     this.checkoutForm.patchValue({
       nombre: nombreCompleto,
       correo: user.email || '',
       telefono: user.telefono || '',
-      documentoTipo,
+      documentoTipo: documentTypeRaw,
       documentoNumero
     }, { emitEvent: false });
+
+    this.aplicarReglaDocumento(documentTypeResolved, false);
 
     this.isRegisteredUser = !!(user.id || user.email);
     this.bloquearNombre = this.isRegisteredUser;
     this.bloquearDocumento = this.isRegisteredUser;
+    this.bloquearTipoDocumento = this.isRegisteredUser;
+
+    if (this.isRegisteredUser) {
+      this.checkoutForm.get('nombre')?.disable();
+      this.checkoutForm.get('documentoTipo')?.disable();
+      this.checkoutForm.get('documentoNumero')?.disable();
+    }
   }
 
   private restaurarEstadoFormulario(): void {
@@ -461,13 +472,33 @@ export class CheckoutComponent implements OnInit {
 
   esPasoValido(paso: number): boolean {
     if (paso === 1) {
-      return (
-        this.checkoutForm.get('nombre')?.valid === true &&
-        this.checkoutForm.get('documentoTipo')?.valid === true &&
-        this.checkoutForm.get('documentoNumero')?.valid === true &&
-        this.checkoutForm.get('correo')?.valid === true &&
-        this.checkoutForm.get('telefono')?.valid === true
-      );
+      const controls = ['nombre', 'documentoTipo', 'documentoNumero', 'correo', 'telefono'];
+
+      // Si el usuario es registrado y los campos están deshabilitados, validamos sus valores directamente
+      // ya que Angular excluye controles deshabilitados de form.valid
+      const allValid = controls.every(c => {
+        const ctrl = this.checkoutForm.get(c);
+        if (!ctrl) return false;
+
+        // Si está deshabilitado pero tiene valor (para campos bloqueados), lo consideramos válido
+        // para pasar al siguiente paso si cumple los criterios mínimos
+        if (ctrl.disabled) {
+          return !!ctrl.value;
+        }
+
+        return ctrl.valid;
+      });
+
+      if (!allValid) {
+        console.warn('Paso 1 inválido. Detalles:', controls.map(c => ({
+          campo: c,
+          value: this.checkoutForm.get(c)?.value,
+          errors: this.checkoutForm.get(c)?.errors,
+          status: this.checkoutForm.get(c)?.status
+        })));
+      }
+
+      return allValid;
     }
 
     if (paso === 2) {
@@ -665,7 +696,7 @@ export class CheckoutComponent implements OnInit {
     if (this.isLoading) return;
     this.isLoading = true;
 
-    const formData = this.checkoutForm.value;
+    const formData = this.checkoutForm.getRawValue();
 
     const pedido: Pedido = {
       Id: 0,

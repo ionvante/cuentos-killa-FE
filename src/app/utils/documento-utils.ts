@@ -12,12 +12,14 @@ type DocumentoTipoCanonico = 'DNI' | 'CE' | 'PASAPORTE' | 'OTRO';
 
 const DOCUMENTO_ALIAS: Record<string, DocumentoTipoCanonico> = {
   '1': 'DNI',
+  '1_DNI': 'DNI',
   DNI: 'DNI',
   DOC_DNI: 'DNI',
   DOCUMENTO_NACIONAL_IDENTIDAD: 'DNI',
   DOCUMENTO_NACIONAL_DE_IDENTIDAD: 'DNI',
 
   '4': 'CE',
+  '4_CE': 'CE',
   CE: 'CE',
   DOC_CE: 'CE',
   CARNET_EXTRANJERIA: 'CE',
@@ -25,6 +27,7 @@ const DOCUMENTO_ALIAS: Record<string, DocumentoTipoCanonico> = {
   CARNETEXTRANJERIA: 'CE',
 
   '7': 'PASAPORTE',
+  '7_PASAPORTE': 'PASAPORTE',
   PASAPORTE: 'PASAPORTE',
   DOC_PASAPORTE: 'PASAPORTE',
   PASSPORT: 'PASAPORTE'

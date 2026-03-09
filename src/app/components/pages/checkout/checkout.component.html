@@ -46,6 +46,11 @@
         Datos de Contacto
       </h3>
 
+      <app-form-help *ngIf="isRegisteredUser"
+        text="Nombre y documento vienen desde tu registro y no pueden editarse en este paso."
+        style="margin-bottom: 1.5rem; display: block;">
+      </app-form-help>
+
       <div class="form-group">
         <label class="form-label">Nombre completo:</label>
         <div class="input-wrapper">
@@ -58,17 +63,16 @@
             <circle cx="12" cy="7" r="4" />
           </svg>
         </div>
-        <app-form-help id="nombre-help" text="Escribe tu nombre completo como figura en tu documento."></app-form-help>
         <app-form-error [control]="checkoutForm.get('nombre')" fieldLabel="el nombre completo"
           errorId="nombre-error"></app-form-error>
-      </div>
+      </div>' '
 
       <div class="form-row" style="display: flex; gap: 1rem;">
         <div class="form-group" style="flex: 1;">
           <label class="form-label">Tipo de doc.:</label>
           <div class="input-wrapper">
-            <select formControlName="documentoTipo" class="form-input form-select" [class.is-locked]="bloquearDocumento"
-              [attr.disabled]="bloquearDocumento ? '' : null" (change)="enfocarDocumento()">
+            <select formControlName="documentoTipo" class="form-input form-select"
+              [class.is-locked]="bloquearTipoDocumento" (change)="enfocarDocumento()">
               <option *ngFor="let tipo of tiposDocumento" [value]="tipo.codigo">{{ getTipoDocumentoLabel(tipo) }}
               </option>
             </select>
@@ -101,10 +105,6 @@
           </div>
         </div>
       </div>
-
-      <app-form-help *ngIf="bloquearNombre || bloquearDocumento"
-        text="Nombre y documento vienen desde tu registro y no pueden editarse en este paso."></app-form-help>
-
       <div class="form-group">
         <label class="form-label">Correo electronico:</label>
         <div class="input-wrapper">

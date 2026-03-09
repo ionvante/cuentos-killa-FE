@@ -51,6 +51,10 @@
           <label>Teléfono</label>
           <p>{{ pedido.telefono || pedido.Telefono || pedido.usuario?.telefono || 'No registrado' }}</p>
         </div>
+        <div class="info-group">
+          <label>Documento</label>
+          <p>{{ getTipoDocumentoDisplay(pedido.documentoTipo) }} - {{ pedido.documentoNumero || 'No registrado' }}</p>
+        </div>
         <div class="info-group full-width">
           <label>Dirección de Envío</label>
           <p>{{ pedido.direccion || pedido.Direccion || 'No registrado' }}</p>

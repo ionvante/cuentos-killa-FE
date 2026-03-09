@@ -124,7 +124,10 @@ export class RegisterComponent implements OnInit {
 
     this.isLoading = true;
     const { confirmarPassword, ...formData } = this.registerForm.value;
-    const data = { ...formData, role: 'USER' };
+    const data = {
+      ...formData,
+      role: 'USER'
+    };
 
     this.authService.register(data).subscribe({
       next: () => {

@@ -4,7 +4,6 @@ export interface User {
     apellido: string;
     email: string;
     telefono: string;
-    documento?: string;
     documentoTipo?: string;
     documentoNumero?: string;
     direcciones?: any[];

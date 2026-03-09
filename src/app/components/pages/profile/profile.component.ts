@@ -119,7 +119,7 @@ export class ProfileComponent implements OnInit {
             apellido: this.user?.apellido || '',
             telefono: this.user?.telefono || '',
             documentoTipo: this.user?.documentoTipo || 'DNI',
-            documento: this.user?.documento || this.user?.documentoNumero || ''
+            documentoNumero: this.user?.documentoNumero || ''
         };
         this.profileSubmitted = false;
         this.editingProfile = true;
@@ -131,10 +131,10 @@ export class ProfileComponent implements OnInit {
     }
 
     isProfileInvalid(): boolean {
-        return !this.profileForm.nombre || !this.profileForm.apellido || !this.profileForm.documento;
+        return !this.profileForm.nombre || !this.profileForm.apellido || !this.profileForm.documentoNumero || !this.profileForm.documentoTipo;
     }
 
-    shouldShowProfileError(field: 'nombre' | 'apellido' | 'documento' | 'telefono'): boolean {
+    shouldShowProfileError(field: 'nombre' | 'apellido' | 'documentoNumero' | 'documentoTipo' | 'telefono'): boolean {
         return this.profileSubmitted && !this.profileForm[field];
     }
 
@@ -287,6 +287,12 @@ export class ProfileComponent implements OnInit {
                 this.cdr.markForCheck();
             }
         });
+    }
+
+    getTipoDocumentoDisplay(codigo: string | undefined): string {
+        if (!codigo) return '—';
+        const tipo = this.tiposDocumento.find(t => t.codigo === codigo);
+        return tipo ? (tipo.valor || tipo.descripcion || codigo) : codigo;
     }
 
     onDepartamentoChange(nombre: string, isInitial = false): void {

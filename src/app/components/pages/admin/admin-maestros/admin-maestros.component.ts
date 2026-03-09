@@ -48,8 +48,8 @@ export class AdminMaestrosComponent implements OnInit {
 
   readonly ayudasPorGrupo: Record<string, GrupoAyuda> = {
     TIPO_DOCUMENTO: {
-      titulo: 'Dónde se usa',
-      uso: 'Registro de usuario, checkout y perfil para validar documento de identidad.'
+      titulo: 'Códigos SUNAT recomendados',
+      uso: 'DNI (1), CE (4), Pasaporte (7). Se usa en registro, checkout y perfil.'
     },
     CUENTO_CATEGORIA: {
       titulo: 'Dónde se usa',
