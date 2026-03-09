@@ -124,4 +124,23 @@ describe('CheckoutComponent', () => {
     expect(component.checkoutForm.get('coberturaCourier')?.value).toBeFalse();
     expect(component.checkoutForm.get('fallbackMotivo')?.value).toContain('Sin cobertura courier');
   });
+
+  it('should autocompletar documento cuando user llega con alias de campos', () => {
+    authServiceSpy.getUser.and.returnValue({
+      id: 10,
+      nombre: 'Ana',
+      apellido: 'Pérez',
+      correo: 'ana@example.com',
+      celular: '999888777',
+      tipoDocumento: 'cedula',
+      numeroDocumento: 'A123456'
+    } as any);
+
+    fixture = TestBed.createComponent(CheckoutComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    expect(component.checkoutForm.get('documentoTipo')?.value).toBe('CEDULA');
+    expect(component.checkoutForm.get('documentoNumero')?.value).toBe('A123456');
+  });
 });

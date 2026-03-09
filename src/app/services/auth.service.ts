@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { User } from '../model/user.model';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { normalizeUser } from '../utils/user-normalizer';
 import { environment } from '../../environments/environment';
 import { LoginResponse } from '../model/auth-response.model';
 import { StorageService, TOKEN_KEY, USER_KEY } from '../services/storage.service';
@@ -33,7 +34,13 @@ export class AuthService {
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password }).pipe(
-      map(res => res.data ?? res)
+      map((res) => {
+        const payload = res?.data ?? res;
+        return {
+          ...payload,
+          user: normalizeUser(payload?.user)
+        } as LoginResponse;
+      })
     );
   }
 
@@ -48,8 +55,9 @@ export class AuthService {
   }
 
   guardarUsuario(user: User) {
-    this.storageService.setItem(this.userKey, JSON.stringify(user));
-    this.usuarioLogueado$.next(user);
+    const userNormalizado = normalizeUser(user);
+    this.storageService.setItem(this.userKey, JSON.stringify(userNormalizado));
+    this.usuarioLogueado$.next(userNormalizado);
   }
 
   getToken(): string | null {
@@ -71,7 +79,7 @@ export class AuthService {
     const data = this.storageService.getItem(this.userKey);
     if (!data) return null;
     try {
-      return JSON.parse(data);
+      return normalizeUser(JSON.parse(data));
     } catch {
       // Datos corruptos en localStorage, limpiar
       this.storageService.removeItem(this.userKey);

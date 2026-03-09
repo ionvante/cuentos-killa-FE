@@ -7,6 +7,7 @@ import { AuthService } from '../../../services/auth.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { ToastService } from '../../../services/toast.service';
 import { FormErrorComponent } from '../../shared/form-error.component';
+import { User } from '../../../model/user.model';
 
 @Component({
   standalone: true,
@@ -49,7 +50,7 @@ export class LoginComponent implements OnInit {
 
     this.authService.login(correo, password).subscribe({
       next: (res) => {
-        const usuario = res.user;
+        const usuario: User = res.user;
         console.log('Login exitoso', usuario?.role || usuario?.nombre || usuario?.email);
         this.authService.guardarToken(res.token);
         this.authService.guardarUsuario(usuario);
