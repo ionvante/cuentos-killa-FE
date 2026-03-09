@@ -8,6 +8,7 @@ import { PedidoService } from '../../../services/pedido.service';
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 import { MaestrosService } from '../../../services/maestros.service';
+import { ClienteService } from '../../../services/cliente.service';
 
 describe('CheckoutComponent', () => {
   let component: CheckoutComponent;
@@ -17,6 +18,7 @@ describe('CheckoutComponent', () => {
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let toastServiceSpy: jasmine.SpyObj<ToastService>;
   let maestrosServiceSpy: jasmine.SpyObj<MaestrosService>;
+  let clienteServiceSpy: jasmine.SpyObj<ClienteService>;
 
   beforeEach(async () => {
     cartServiceSpy = jasmine.createSpyObj('CartService', ['obtenerItems', 'clearCart']);
@@ -24,6 +26,7 @@ describe('CheckoutComponent', () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', ['getUser']);
     toastServiceSpy = jasmine.createSpyObj('ToastService', ['show']);
     maestrosServiceSpy = jasmine.createSpyObj('MaestrosService', ['obtenerDepartamentos', 'obtenerMaestrosPorGrupo', 'obtenerProvincias', 'obtenerDistritos']);
+    clienteServiceSpy = jasmine.createSpyObj('ClienteService', ['getProfile', 'getAddresses', 'createAddress']);
 
     await TestBed.configureTestingModule({
       imports: [CheckoutComponent, RouterTestingModule],
@@ -32,7 +35,8 @@ describe('CheckoutComponent', () => {
         { provide: PedidoService, useValue: pedidoServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
-        { provide: MaestrosService, useValue: maestrosServiceSpy }
+        { provide: MaestrosService, useValue: maestrosServiceSpy },
+        { provide: ClienteService, useValue: clienteServiceSpy }
       ]
     }).compileComponents();
 
@@ -61,6 +65,8 @@ describe('CheckoutComponent', () => {
 
     maestrosServiceSpy.obtenerProvincias.and.returnValue(of([{ id: '1501', nombre: 'Lima' }]));
     maestrosServiceSpy.obtenerDistritos.and.returnValue(of([{ id: '150122', nombre: 'Miraflores' }]));
+    clienteServiceSpy.getProfile.and.returnValue(of(null as any));
+    clienteServiceSpy.getAddresses.and.returnValue(of([]));
 
     fixture.detectChanges();
   });

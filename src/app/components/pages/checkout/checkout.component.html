@@ -171,6 +171,20 @@
         <span *ngIf="gpsLoading">Obteniendo ubicacion...</span>
       </button>
 
+      <div class="form-group" *ngIf="direccionesDisponibles()">
+        <label class="form-label">Direccion guardada:</label>
+        <div class="input-wrapper">
+          <select formControlName="direccionId" class="form-input form-select" (change)="onSeleccionDireccion($event.target.value)">
+            <option value="">Seleccionar</option>
+            <option *ngFor="let dir of direcciones" [value]="dir.id">{{ formatDireccionOpcion(dir) }}</option>
+            <option [value]="NUEVA_DIRECCION_VALOR">Nueva direccion</option>
+          </select>
+        </div>
+        <div class="error-mensaje" *ngIf="checkoutForm.get('direccionId')?.touched && usaDireccionGuardada() && !checkoutForm.get('direccionId')?.value">
+          Selecciona una direccion guardada o elige Nueva direccion.
+        </div>
+      </div>
+
       <div class="form-group">
         <label class="form-label">Departamento:</label>
         <div class="input-wrapper">
@@ -235,6 +249,24 @@
         <app-form-help id="calle-help" text="Incluye calle y numero para poder entregar tu pedido."></app-form-help>
         <app-form-error [control]="checkoutForm.get('calle')" fieldLabel="la calle"
           errorId="calle-error"></app-form-error>
+      </div>
+
+      <div class="form-row" *ngIf="!usaDireccionGuardada()" style="display: flex; gap: 1rem;">
+        <div class="form-group" style="flex: 1;">
+          <label class="form-label">Tipo de direccion:</label>
+          <div class="input-wrapper">
+            <select formControlName="tipoDireccion" class="form-input form-select">
+              <option *ngFor="let tipo of tiposDireccion" [value]="tipo.codigo">{{ tipo.descripcion }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="flex: 1; align-items: center; display: flex;">
+          <label class="form-checkbox" style="display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+            <input type="checkbox" formControlName="guardarDireccion" />
+            <span>Guardar esta direccion</span>
+          </label>
+        </div>
       </div>
 
       <div class="form-group">

@@ -21,6 +21,7 @@ export interface Pedido {
   nombre: string;
   correo: string;
   direccion: string;
+  direccionId?: number | string;
   telefono: string;
   items: PedidoItem[];
   total: number;
@@ -35,6 +36,7 @@ export interface Pedido {
   documentoNumero?: string;
   referencia?: string;
   ubicacionGps?: string;
+  tipoDireccion?: string;
 
   tipoEntrega?: string;
   ubigeoEvaluado?: string;
