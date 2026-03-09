@@ -70,8 +70,7 @@
         <div class="form-group" style="flex: 1;">
           <label class="form-label">Tipo de doc.:</label>
           <div class="input-wrapper">
-            <select formControlName="documentoTipo" class="form-input form-select"
-              [class.is-locked]="bloquearTipoDocumento" (change)="enfocarDocumento()">
+            <select formControlName="documentoTipo" class="form-input form-select" (change)="enfocarDocumento()">
               <option *ngFor="let tipo of tiposDocumento" [value]="tipo.codigo">{{ getTipoDocumentoLabel(tipo) }}
               </option>
             </select>
@@ -174,13 +173,14 @@
       <div class="form-group" *ngIf="direccionesDisponibles()">
         <label class="form-label">Direccion guardada:</label>
         <div class="input-wrapper">
-          <select formControlName="direccionId" class="form-input form-select" (change)="onSeleccionDireccion($event.target.value)">
+          <select formControlName="direccionId" class="form-input form-select">
             <option value="">Seleccionar</option>
             <option *ngFor="let dir of direcciones" [value]="dir.id">{{ formatDireccionOpcion(dir) }}</option>
             <option [value]="NUEVA_DIRECCION_VALOR">Nueva direccion</option>
           </select>
         </div>
-        <div class="error-mensaje" *ngIf="checkoutForm.get('direccionId')?.touched && usaDireccionGuardada() && !checkoutForm.get('direccionId')?.value">
+        <div class="error-mensaje"
+          *ngIf="checkoutForm.get('direccionId')?.touched && usaDireccionGuardada() && !checkoutForm.get('direccionId')?.value">
           Selecciona una direccion guardada o elige Nueva direccion.
         </div>
       </div>

@@ -157,7 +157,7 @@ export class CheckoutComponent implements OnInit {
         this.user = { ...this.user, ...perfil };
         this.autocompletarDatosUsuarioRegistrado();
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -168,7 +168,7 @@ export class CheckoutComponent implements OnInit {
     const userAny = user as any;
     const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim();
     const documentoTipo = user.documentoTipo || userAny.tipoDocumento || 'DNI';
-    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || user.documento || '';
+    const documentoNumero = user.documentoNumero || userAny.numeroDocumento || '';
 
     this.checkoutForm.patchValue({
       nombre: nombreCompleto,
