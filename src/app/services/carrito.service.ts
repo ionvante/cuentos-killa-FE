@@ -4,11 +4,13 @@ import { Cuento } from '../model/cuento.model';
 import { ToastService } from './toast.service';
 import { MiniCartService } from './mini-cart.service';
 
+export const CART_KEY = 'killa_cart';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private cartKey = 'cart';
+  private readonly cartKey = CART_KEY;
   private items: { cuento: Cuento, cantidad: number }[] = [];
   private itemsSubject = new BehaviorSubject<{ cuento: Cuento, cantidad: number }[]>([]);
   items$ = this.itemsSubject.asObservable();
@@ -19,7 +21,7 @@ export class CartService {
 
   constructor(private toast: ToastService, private miniCart: MiniCartService) {
     if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      const carritoGuardado = localStorage.getItem('carrito');
+      const carritoGuardado = localStorage.getItem(this.cartKey);
       if (carritoGuardado) {
         this.items = JSON.parse(carritoGuardado);
         this.itemsSubject.next(this.items);
@@ -88,7 +90,7 @@ export class CartService {
 
   actualizarCarrito(): void {
     this.itemsSubject.next(this.items);
-    localStorage.setItem('carrito', JSON.stringify(this.items));
+    localStorage.setItem(this.cartKey, JSON.stringify(this.items));
   }
   removeItem(cuentoId: number): void {
     this.items = this.items.filter(item => item.cuento.id !== cuentoId);
@@ -98,10 +100,6 @@ export class CartService {
   clearCart(): void {
     this.items = [];
     this.itemsSubject.next(this.items);
-    localStorage.removeItem('carrito');
-  }
-
-  private saveCart(): void {
-    localStorage.setItem(this.cartKey, JSON.stringify(this.items));
+    localStorage.removeItem(this.cartKey);
   }
 }

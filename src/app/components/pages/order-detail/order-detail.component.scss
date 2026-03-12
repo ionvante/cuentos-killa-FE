@@ -66,6 +66,93 @@
     gap: 1.5rem;
   }
 
+  /* Order Tracker */
+  .order-tracker {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 16px rgba(166, 110, 56, 0.06);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: calc(1.5rem + 24px); // padding-top + half icon
+      left: 10%;
+      right: 10%;
+      height: 4px;
+      background: #f3f4f6;
+      z-index: 1;
+    }
+
+    .tracker-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+
+      .step-icon {
+        width: 48px;
+        height: 48px;
+        background: #f3f4f6;
+        color: #9ca3af;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        border: 4px solid #fff; // to cut the line
+        z-index: 2;
+
+        span {
+          font-size: 1.5rem;
+        }
+      }
+
+      .step-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #9ca3af;
+        text-align: center;
+        transition: all 0.3s ease;
+      }
+
+      &.active {
+        .step-icon {
+          background: #A66E38;
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(166, 110, 56, 0.3);
+        }
+
+        .step-label {
+          color: #A66E38;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            top: 24px;
+            left: -50%;
+            width: 100%;
+            height: 4px;
+            background: #A66E38;
+            z-index: 1;
+        }
+      }
+      
+      &:first-child::after {
+        display: none;
+      }
+    }
+  }
+
   .detail-header {
     display: flex;
     justify-content: space-between;
@@ -464,6 +551,25 @@
         width: 100%;
         display: flex;
         justify-content: flex-end;
+      }
+    }
+
+    .order-tracker {
+      .step-label {
+        font-size: 0.65rem;
+      }
+      .step-icon {
+        width: 36px;
+        height: 36px;
+        span {
+          font-size: 1.25rem;
+        }
+      }
+      &::before {
+        top: calc(1.5rem + 18px);
+      }
+      .tracker-step.active::after {
+        top: 16px;
       }
     }
 

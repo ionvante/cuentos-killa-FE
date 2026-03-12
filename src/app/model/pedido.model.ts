@@ -52,5 +52,7 @@ export interface Pedido {
   Direccion?: string;
   Telefono?: string;
   Total?: number;
+  DocumentoTipo?: string;
+  DocumentoNumero?: string;
   usuario?: { nombre?: string; correo?: string; email?: string; telefono?: string; direccion?: string };
 }

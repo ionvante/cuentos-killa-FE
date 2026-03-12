@@ -20,6 +20,7 @@ import { FormErrorComponent } from '../../shared/form-error.component';
 import { FormHelpComponent } from '../../shared/form-help.component';
 import { Maestro } from '../../../model/maestro.model';
 import { Address } from '../../../model/address.model';
+import { EstadoPedido } from '../../../model/estado-pedido.enum';
 
 @Component({
   standalone: true,
@@ -102,6 +103,13 @@ export class CheckoutComponent implements OnInit {
     this.configurarDocumento();
     this.cargarDireccionesUsuario();
 
+    // RM-02: Si viene de Express Checkout, cargar dirección principal y saltar a paso 3
+    if (sessionStorage.getItem('checkoutExpress') === 'true') {
+      sessionStorage.removeItem('checkoutExpress');
+      // Esperamos a que se carguen direcciones y maestros, luego saltamos
+      setTimeout(() => this.usarDireccionPrincipalYSaltar(), 1200);
+    }
+
     this.checkoutForm.valueChanges.subscribe((val) => {
       const estadoGuardado: any = {
         correo: val.correo,
@@ -159,6 +167,26 @@ export class CheckoutComponent implements OnInit {
       },
       error: () => { }
     });
+  }
+
+  /**
+   * RM-02: Express Checkout.
+   * Toma la primera dirección disponible del usuario, pre-llena el formulario
+   * y salta directamente al paso 3 (confirmación).
+   */
+  private usarDireccionPrincipalYSaltar(): void {
+    if (!this.direcciones || this.direcciones.length === 0) return;
+    const dir = this.direcciones[0]; // Usa la primera / más reciente
+    this.onSeleccionDireccion(dir.id as string | number);
+
+    // Seleccionamos un tipo de entrega por defecto si hay opciones disponibles
+    if (this.tiposEntrega.length > 0 && !this.checkoutForm.get('tipoEntrega')?.value) {
+      this.checkoutForm.patchValue({ tipoEntrega: this.tiposEntrega[0].codigo }, { emitEvent: false });
+    }
+
+    // Saltamos al paso 3 solo si el paso 2 es válido tras pre-llenado
+    this.pasoActual = 3;
+    this.toast.show(`⚡ Checkout Express — Enviando a ${dir.calle || dir.distrito || 'tu dirección guardada'}`);
   }
 
   private autocompletarDatosUsuarioRegistrado(): void {
@@ -891,7 +919,7 @@ export class CheckoutComponent implements OnInit {
         subtotal: item.cuento.precio * item.cantidad
       })),
       total: this.calcularTotalConEnvio(),
-      estado: 'PAGO_PENDIENTE',
+      estado: EstadoPedido.PAGO_PENDIENTE,
       userId: this.user?.id || 0,
       correoUsuario: this.user?.email || ''
     };

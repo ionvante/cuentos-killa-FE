@@ -5,6 +5,8 @@ import { CartService } from '../../services/carrito.service';
 import { Cuento } from '../../model/cuento.model';
 import { DrawerService } from '../../services/drawer.service';
 import { MiniCartService } from '../../services/mini-cart.service';
+import { AuthService } from '../../services/auth.service';
+import { ClienteService } from '../../services/cliente.service';
 
 @Component({
   selector: 'app-mini-cart',
@@ -23,8 +25,13 @@ export class MiniCartComponent implements OnInit {
     private router: Router,
     public drawer: DrawerService,
     private miniCart: MiniCartService,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private authService: AuthService,
+    private clienteService: ClienteService
   ) { }
+
+  /** Flag cargado en ngOnInit: true si el usuario tiene al menos una dirección guardada */
+  tieneDirecciones = false;
 
   ngOnInit(): void {
     this.cart.items$.subscribe(items => (this.items = items));
@@ -38,6 +45,15 @@ export class MiniCartComponent implements OnInit {
         }, 600);
       });
     });
+
+    // RM-02: Verificar si el usuario tiene direcciones guardadas
+    const user = this.authService.getUser();
+    if (user?.id) {
+      this.clienteService.getAddresses(user.id).subscribe({
+        next: dirs => { this.tieneDirecciones = dirs && dirs.length > 0; },
+        error: () => { this.tieneDirecciones = false; }
+      });
+    }
   }
 
   get totalQuantity(): number {
@@ -69,6 +85,20 @@ export class MiniCartComponent implements OnInit {
   }
 
   goCheckout() {
+    this.closeCart();
+    this.router.navigate(['/checkout']);
+  }
+
+  /**
+   * RM-02: Express Checkout.
+   * Guarda la señal en sessionStorage para que CheckoutComponent salte al paso 3.
+   */
+  puedeCheckoutExpress(): boolean {
+    return !!this.authService.getUser() && this.tieneDirecciones && this.items.length > 0;
+  }
+
+  goCheckoutExpress() {
+    sessionStorage.setItem('checkoutExpress', 'true');
     this.closeCart();
     this.router.navigate(['/checkout']);
   }

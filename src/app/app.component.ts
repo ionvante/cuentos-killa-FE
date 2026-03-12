@@ -56,7 +56,7 @@ export class AppComponent {
 
   get showMiniCart(): boolean {
     const url = this.router.url;
-    const hideCartFlows = url.includes('/carrito') || url.includes('/checkout') || url.includes('/pago');
+    const hideCartFlows = url.includes('/carrito') || url.includes('/checkout') || url.includes('/pago') || url.includes('/login') || url.includes('/register') || url.includes('/admin');
     return this.userRole !== 'ADMIN' && !hideCartFlows;
   }
 }

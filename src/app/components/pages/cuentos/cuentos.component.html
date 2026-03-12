@@ -19,21 +19,21 @@
     </button>
 
     <div class="select-wrapper">
-      <select [(ngModel)]="categoriaFilter">
+      <select [(ngModel)]="categoriaFilter" (ngModelChange)="onFilterChange()">
         <option value="">Categoría</option>
         <option *ngFor="let c of categorias" [value]="c.codigo">{{ c.valor }}</option>
       </select>
     </div>
 
     <div class="select-wrapper">
-      <select [(ngModel)]="edadFilter">
+      <select [(ngModel)]="edadFilter" (ngModelChange)="onFilterChange()">
         <option value="">Edad</option>
         <option *ngFor="let e of edades" [value]="e.codigo">{{ e.valor }}</option>
       </select>
     </div>
 
     <div class="select-wrapper">
-      <select [(ngModel)]="precioFilter">
+      <select [(ngModel)]="precioFilter" (ngModelChange)="onFilterChange()">
         <option value="">Precio</option>
         <option value="lt10">Menos de S/10</option>
         <option value="10-20">S/10 - S/20</option>
@@ -54,12 +54,21 @@
   </div>
 
   <div class="grid-cuentos" *ngIf="!isLoading">
-    <app-cuento-card *ngFor="let cuento of filteredCuentos" [cuento]="cuento"
+    <app-cuento-card *ngFor="let cuento of cuentos" [cuento]="cuento"
       (agregar)="agregarAlCarrito($event)"></app-cuento-card>
   </div>
 
-  <div class="no-results" *ngIf="filteredCuentos.length === 0">
+  <div class="no-results" *ngIf="!isLoading && cuentos.length === 0">
     <span class="icon">⚠</span>
     <span>¡Uy! No encontramos historias con esos filtros. Intenta con otros.</span>
+  </div>
+
+  <!-- RM-01: Paginación server-side -->
+  <div class="pagination" *ngIf="!isLoading && totalPages > 1">
+    <button class="page-btn" [disabled]="currentPage === 0" (click)="irAPagina(currentPage - 1)">‹</button>
+    <button class="page-btn" *ngFor="let p of pages" [class.active]="p === currentPage" (click)="irAPagina(p)">
+      {{ p + 1 }}
+    </button>
+    <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="irAPagina(currentPage + 1)">›</button>
   </div>
 </div>

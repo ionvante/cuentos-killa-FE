@@ -76,6 +76,11 @@
       <span>Total a Pagar</span>
       <span class="checkout-total-value">S/ {{ subtotal | number:'1.2-2' }}</span>
     </div>
+    <!-- RM-02: Checkout Express - solo para usuarios con dirección guardada -->
+    <button class="btn-checkout-express" *ngIf="puedeCheckoutExpress()" (click)="goCheckoutExpress()"
+      title="Comprar con tu última dirección guardada" id="btn-express-checkout">
+      ⚡ Comprar ahora
+    </button>
     <button class="btn-checkout" (click)="goCheckout()">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
         stroke-linecap="round" stroke-linejoin="round">

@@ -1,10 +1,21 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Cuento } from '../model/cuento.model';
 import { Page } from '../model/page.model';
 import { environment } from '../../environments/environment';
+
+export interface CuentoSearchParams {
+  q?: string;
+  categoria?: string;
+  edad?: string;
+  precioMin?: number;
+  precioMax?: number;
+  page?: number;
+  size?: number;
+  sortBy?: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CuentoService {
@@ -20,6 +31,26 @@ export class CuentoService {
 
   obtenerCuentosPaginados(page: number = 0, size: number = 10): Observable<Page<Cuento>> {
     return this.http.get<any>(`${this.apiUrl}/page?page=${page}&size=${size}`).pipe(
+      map(res => res.data ?? res)
+    );
+  }
+
+  /**
+   * RM-01: Búsqueda server-side con filtros opcionales.
+   * Llama a GET /cuentos/search con los params que vengan non-null.
+   */
+  buscarCuentos(params: CuentoSearchParams = {}): Observable<Page<Cuento>> {
+    let httpParams = new HttpParams();
+    if (params.q)          httpParams = httpParams.set('q', params.q);
+    if (params.categoria)  httpParams = httpParams.set('categoria', params.categoria);
+    if (params.edad)       httpParams = httpParams.set('edad', params.edad);
+    if (params.precioMin != null) httpParams = httpParams.set('precioMin', params.precioMin);
+    if (params.precioMax != null) httpParams = httpParams.set('precioMax', params.precioMax);
+    httpParams = httpParams
+      .set('page', params.page ?? 0)
+      .set('size', params.size ?? 20)
+      .set('sortBy', params.sortBy ?? 'fechaIngreso');
+    return this.http.get<any>(`${this.apiUrl}/search`, { params: httpParams }).pipe(
       map(res => res.data ?? res)
     );
   }

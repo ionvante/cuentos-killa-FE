@@ -10,6 +10,7 @@ import { VoucherComponent } from '../voucher/voucher.component';
 import { forkJoin } from 'rxjs';
 
 import { MaestrosService } from '../../../services/maestros.service';
+import { EstadoPedido } from '../../../model/estado-pedido.enum';
 
 @Component({
   selector: 'app-order-detail',
@@ -58,10 +59,11 @@ export class OrderDetailComponent implements OnInit {
             mergedPedido.telefono = mergedPedido.telefono || listMatch.telefono || listMatch.Telefono || listMatch.usuario?.telefono || '';
             mergedPedido.direccion = mergedPedido.direccion || listMatch.direccion || listMatch.Direccion || '';
             mergedPedido.total = mergedPedido.total || listMatch.total || listMatch.Total || 0;
+            mergedPedido.documentoTipo = mergedPedido.documentoTipo || listMatch.documentoTipo || listMatch.DocumentoTipo || '';
+            mergedPedido.documentoNumero = mergedPedido.documentoNumero || listMatch.documentoNumero || listMatch.DocumentoNumero || '';
           }
 
           this.pedido = mergedPedido;
-          console.log('Detalle del pedido (fusionado):', this.pedido);
           this.isLoading = false;
         },
         error: (err: any) => {
@@ -83,19 +85,38 @@ export class OrderDetailComponent implements OnInit {
   }
 
   pagarAhora(): void {
-    // Lógica de pago real podría ir aquí
-    // Por ahora, solo un log y/o redirección a una página de placeholder
-    console.log('Intento de pago para el pedido:', this.pedido?.Id);
     if (this.pedido) {
-      // Ejemplo: Redirigir a una ruta de pago simulada o real
-      // this.router.navigate(['/pago', this.pedido.id]);
-      this.toast.show('Funcionalidad de pago aún no implementada. Serás redirigido a una página de simulación.');
+      const id = this.pedido.Id ?? this.pedido.id;
+      this.router.navigate(['/pago', id]);
     }
   }
 
   // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
-    return this.pedido?.estado?.toUpperCase() === 'PAGO_PENDIENTE';
+    return this.pedido?.estado?.toUpperCase() === EstadoPedido.PAGO_PENDIENTE;
+  }
+
+  get stepProgreso(): number {
+    if (!this.pedido) return 0;
+    switch (this.pedido.estado) {
+      case EstadoPedido.PAGO_PENDIENTE:
+      case EstadoPedido.PAGO_ENVIADO:
+        return 1;
+      case EstadoPedido.PAGO_VERIFICADO:
+        return 2;
+      case EstadoPedido.EMPAQUETADO:
+        return 3;
+      case EstadoPedido.ENVIADO:
+        return 4;
+      case EstadoPedido.ENTREGADO:
+        return 5;
+      default:
+        return 0; // Cancelado/Rechazado
+    }
+  }
+
+  isCancelledState(): boolean {
+    return this.pedido?.estado === EstadoPedido.CANCELADO || this.pedido?.estado === EstadoPedido.PAGO_RECHAZADO;
   }
 
   confirmReplaceVoucher(): void {
@@ -135,11 +156,11 @@ export class OrderDetailComponent implements OnInit {
   }
   // Helpers visuales para el diseño
   estadoMap: Record<string, { texto: string; icon: string; theme: string }> = {
-    'PAGO_PENDIENTE': { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente' },
-    'PAGO_ENVIADO': { texto: 'Pago enviado', icon: 'sync', theme: 'enviado' },
-    'PAGO_VERIFICADO': { texto: 'Pago verificado', icon: 'verified', theme: 'verificado' },
-    'ENVIADO': { texto: 'En camino', icon: 'category', theme: 'encamino' },
-    'ENTREGADO': { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado' },
+    [EstadoPedido.PAGO_PENDIENTE]: { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente' },
+    [EstadoPedido.PAGO_ENVIADO]: { texto: 'Pago enviado', icon: 'sync', theme: 'enviado' },
+    [EstadoPedido.PAGO_VERIFICADO]: { texto: 'Pago verificado', icon: 'verified', theme: 'verificado' },
+    [EstadoPedido.ENVIADO]: { texto: 'En camino', icon: 'category', theme: 'encamino' },
+    [EstadoPedido.ENTREGADO]: { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado' },
   };
 
   getEstadoVisible(estado: string): string {

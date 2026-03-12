@@ -3,6 +3,7 @@ import { PedidoService } from '../../../../services/pedido.service';
 import { Pedido } from '../../../../model/pedido.model';
 import { ActivatedRoute } from '@angular/router';
 import { MaestrosService } from '../../../../services/maestros.service';
+import { EstadoPedido } from '../../../../model/estado-pedido.enum';
 
 @Component({
   selector: 'app-admin-pedidos',
@@ -105,9 +106,9 @@ export class AdminPedidosComponent implements OnInit {
     if (!this.selectedPedido) return;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
-    this.pedidoService.updateOrderStatus(id, 'PAGO_VERIFICADO').subscribe({
+    this.pedidoService.updateOrderStatus(id, EstadoPedido.PAGO_VERIFICADO).subscribe({
       next: () => {
-        this.selectedPedido!.estado = 'PAGO_VERIFICADO';
+        this.selectedPedido!.estado = EstadoPedido.PAGO_VERIFICADO;
         this.cerrarModal();
       },
       error: err => {
@@ -127,9 +128,9 @@ export class AdminPedidosComponent implements OnInit {
     this.showReasonDialog = false;
     this.processing = true;
     const id = this.selectedPedido.Id || this.selectedPedido.id || 0;
-    this.pedidoService.updateOrderStatus(id, 'PAGO_RECHAZADO', motivo).subscribe({
+    this.pedidoService.updateOrderStatus(id, EstadoPedido.PAGO_RECHAZADO, motivo).subscribe({
       next: () => {
-        this.selectedPedido!.estado = 'PAGO_RECHAZADO';
+        this.selectedPedido!.estado = EstadoPedido.PAGO_RECHAZADO;
         this.cerrarModal();
       },
       error: err => {

@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { BadgeComponent } from '../../badge/badge.component';
 import { AuthService } from '../../../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { EstadoPedido } from '../../../model/estado-pedido.enum';
 
 @Component({
   selector: 'app-order-list',
@@ -37,11 +38,11 @@ export class OrderListComponent implements OnInit {
   itemsExpanded: { [id: number]: boolean } = {};
 
   estadoMap: Record<string, { texto: string; icon: string; theme: string; cornerIcon: string }> = {
-    'PAGO_PENDIENTE': { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente', cornerIcon: 'menu_book' },
-    'PAGO_ENVIADO': { texto: 'Pago enviado', icon: 'sync', theme: 'enviado', cornerIcon: 'pending_actions' },
-    'PAGO_VERIFICADO': { texto: 'Pago verificado', icon: 'verified', theme: 'verificado', cornerIcon: 'check_circle' },
-    'ENVIADO': { texto: 'En camino', icon: 'category', theme: 'encamino', cornerIcon: 'toys' },
-    'ENTREGADO': { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado', cornerIcon: 'auto_stories' },
+    [EstadoPedido.PAGO_PENDIENTE]: { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente', cornerIcon: 'menu_book' },
+    [EstadoPedido.PAGO_ENVIADO]: { texto: 'Pago enviado', icon: 'sync', theme: 'enviado', cornerIcon: 'pending_actions' },
+    [EstadoPedido.PAGO_VERIFICADO]: { texto: 'Pago verificado', icon: 'verified', theme: 'verificado', cornerIcon: 'check_circle' },
+    [EstadoPedido.ENVIADO]: { texto: 'En camino', icon: 'category', theme: 'encamino', cornerIcon: 'toys' },
+    [EstadoPedido.ENTREGADO]: { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado', cornerIcon: 'auto_stories' },
   };
 
   constructor(

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CartService } from '../../services/carrito.service';
 import { Router, RouterModule } from '@angular/router';
 import { DrawerService } from '../../services/drawer.service';
@@ -12,8 +12,8 @@ import { User } from '../../model/user.model';
 import { FormsModule } from '@angular/forms';
 import { LazyLoadImageDirective } from '../../directives/lazy-load-image.directive';
 import { CuentoService } from '../../services/cuento.service';
-import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 
 
 
@@ -30,7 +30,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
     LazyLoadImageDirective
   ]
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
   cantidadItems: number = 0;
   user: User | null = null;
   mostrarPerfil = false;
@@ -54,20 +55,21 @@ export class NavbarComponent implements OnInit {
   public itemsCarrito: { cuento: Cuento, cantidad: number }[] = [];
 
   ngOnInit(): void {
-    this.CartService.items$.subscribe(items => {
-      this.itemsCarrito = this.CartService.obtenerItems();
-      this.user = this.authService.getUser();
-
-      // 👇 Escucha cambios de login
-      this.authService.usuarioLogueado$.subscribe((nuevoUsuario: User | null) => {
-        this.user = nuevoUsuario;
+    // Suscripción unificada: carrito + usuario sin anidamiento
+    combineLatest([
+      this.CartService.items$,
+      this.authService.usuarioLogueado$
+    ]).pipe(takeUntil(this.destroy$))
+      .subscribe(([items, usuario]) => {
+        this.itemsCarrito = items;
+        this.user = usuario;
       });
-    });
 
     // Typeahead Logic
     this.searchSubject.pipe(
       debounceTime(300),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
     ).subscribe(query => {
       if (query.length > 2) {
         this.cuentoService.obtenerCuentos().subscribe(cuentos => {
@@ -82,6 +84,11 @@ export class NavbarComponent implements OnInit {
         this.showDropdown = false;
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   actualizarCantidad() {

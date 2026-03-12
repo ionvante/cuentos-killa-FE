@@ -1,6 +1,6 @@
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Cuento } from '../../../model/cuento.model';
-import { CuentoService } from '../../../services/cuento.service';
+import { CuentoService, CuentoSearchParams } from '../../../services/cuento.service';
 import { CartService } from '../../../services/carrito.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -10,94 +10,116 @@ import {
   normalizarCodigoCategoria,
   normalizarCodigoEdad
 } from '../../../shared/cuento-maestros';
+import { Subject, combineLatest, BehaviorSubject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-cuentos-page',
   templateUrl: './cuentos.component.html',
   styleUrls: ['./cuentos.component.scss']
 })
-export class CuentosComponent implements OnInit {
+export class CuentosComponent implements OnInit, OnDestroy {
   cuentos: Cuento[] = [];
   searchTerm = '';
-  sortOption: 'fecha' | 'alfabetico' | 'precio' = 'fecha';
+  sortOption: 'fechaIngreso' | 'alfabetico' | 'precio' = 'fechaIngreso';
   categoriaFilter = '';
   edadFilter = '';
   precioFilter = '';
   isLoading = true;
 
+  // Paginación server-side
+  currentPage = 0;
+  totalPages = 1;
+  totalElements = 0;
+  pageSize = 20;
+
   categorias: Maestro[] = [];
   edades: Maestro[] = [];
+
+  // RM-01: Subject para debounce de filtros
+  private filtros$ = new BehaviorSubject<CuentoSearchParams>({});
+  private destroy$ = new Subject<void>();
 
   constructor(
     private cuentoService: CuentoService,
     private cartService: CartService,
     private router: Router,
     private route: ActivatedRoute,
-    private maestrosService: MaestrosService,
-    private ngZone: NgZone
+    private maestrosService: MaestrosService
   ) { }
 
   ngOnInit(): void {
     this.route.queryParamMap.subscribe(params => {
       this.searchTerm = params.get('q') || '';
+      this.categoriaFilter = params.get('categoria') || '';
+      this.edadFilter = params.get('edad') || '';
+      this.precioFilter = params.get('precio') || '';
+      this.currentPage = 0;
+      this.emitFiltros();
     });
 
     this.cargarMaestros();
 
-    this.cuentoService.obtenerCuentos().subscribe(data => {
-      this.ngZone.runOutsideAngular(() => {
-        setTimeout(() => {
-          this.ngZone.run(() => {
-            this.cuentos = data
-              .map((c, idx) => this.normalizarCuento(c, idx))
-              .sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime())
-              .slice(0, 20);
-            this.isLoading = false;
-          });
-        }, 1000);
-      });
+    // RM-01: Debounce de 400ms antes de llamar al BE
+    this.filtros$.pipe(
+      debounceTime(400),
+      distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
+      switchMap(params => {
+        this.isLoading = true;
+        return this.cuentoService.buscarCuentos(params);
+      }),
+      takeUntil(this.destroy$)
+    ).subscribe({
+      next: (page: any) => {
+        const items = page.content ?? page;
+        this.cuentos = Array.isArray(items)
+          ? items.map((c: Cuento, idx: number) => this.normalizarCuento(c, idx))
+          : [];
+        this.totalPages = page.totalPages ?? 1;
+        this.totalElements = page.totalElements ?? this.cuentos.length;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.isLoading = false;
+      }
     });
   }
 
-  get filteredCuentos(): Cuento[] {
-    let filtered = this.cuentos.filter(c =>
-      c.titulo.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-      c.autor.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
-    if (this.categoriaFilter) {
-      filtered = filtered.filter(c => c.categoria === this.categoriaFilter);
-    }
+  /** Construye los parámetros de búsqueda desde el estado actual */
+  private buildParams(): CuentoSearchParams {
+    const [precioMin, precioMax] = this.parsePrecio(this.precioFilter);
+    const sortBy = this.sortOption === 'alfabetico' ? 'titulo'
+                 : this.sortOption === 'precio'      ? 'precio'
+                 : 'fechaIngreso';
+    return {
+      q: this.searchTerm || undefined,
+      categoria: this.categoriaFilter || undefined,
+      edad: this.edadFilter || undefined,
+      precioMin,
+      precioMax,
+      page: this.currentPage,
+      size: this.pageSize,
+      sortBy
+    };
+  }
 
-    if (this.edadFilter) {
-      filtered = filtered.filter(c => c.edadRecomendada === this.edadFilter);
+  private parsePrecio(filtro: string): [number | undefined, number | undefined] {
+    switch (filtro) {
+      case 'lt10':  return [undefined, 10];
+      case '10-20': return [10, 20];
+      case 'gt20':  return [20, undefined];
+      default:      return [undefined, undefined];
     }
+  }
 
-    if (this.precioFilter) {
-      filtered = filtered.filter(c => {
-        switch (this.precioFilter) {
-          case 'lt10':
-            return c.precio < 10;
-          case '10-20':
-            return c.precio >= 10 && c.precio <= 20;
-          case 'gt20':
-            return c.precio > 20;
-          default:
-            return true;
-        }
-      });
-    }
-    switch (this.sortOption) {
-      case 'alfabetico':
-        filtered = filtered.sort((a, b) => a.titulo.localeCompare(b.titulo));
-        break;
-      case 'precio':
-        filtered = filtered.sort((a, b) => a.precio - b.precio);
-        break;
-      default:
-        filtered = filtered.sort((a, b) => new Date(b.fechaIngreso).getTime() - new Date(a.fechaIngreso).getTime());
-    }
-    return filtered;
+  /** Emite los filtros actuales al Subject para disparar la búsqueda con debounce */
+  emitFiltros(): void {
+    this.filtros$.next(this.buildParams());
   }
 
   agregarAlCarrito(cuento: Cuento): void {
@@ -113,6 +135,28 @@ export class CuentosComponent implements OnInit {
     this.categoriaFilter = '';
     this.edadFilter = '';
     this.precioFilter = '';
+    this.onFilterChange();
+  }
+
+  onFilterChange(): void {
+    this.currentPage = 0;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        q: this.searchTerm || null,
+        categoria: this.categoriaFilter || null,
+        edad: this.edadFilter || null,
+        precio: this.precioFilter || null
+      },
+      queryParamsHandling: 'merge'
+    });
+    this.emitFiltros();
+  }
+
+  irAPagina(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
+    this.currentPage = page;
+    this.emitFiltros();
   }
 
   private cargarMaestros(): void {
@@ -145,8 +189,16 @@ export class CuentosComponent implements OnInit {
       ...cuento,
       categoria: normalizarCodigoCategoria(cuento.categoria, this.categorias),
       edadRecomendada: normalizarCodigoEdad(cuento.edadRecomendada, this.edades),
-      rating: cuento.rating ?? Math.floor(Math.random() * 5) + 1,
+      rating: cuento.rating ?? undefined,
       badge: cuento.badge ?? (idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : '')
     };
+  }
+
+  get hasFiltros(): boolean {
+    return !!(this.searchTerm || this.categoriaFilter || this.edadFilter || this.precioFilter);
+  }
+
+  get pages(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i);
   }
 }

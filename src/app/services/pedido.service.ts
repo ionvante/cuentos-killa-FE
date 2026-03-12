@@ -53,8 +53,7 @@ export class PedidoService {
 
   /** Obtiene la URL del voucher asociado al pedido */
   getVoucherUrl(id: number): Observable<string> {
-    const pedidosUrl = `${environment.apiBaseUrl}/pedidos`;
-    return this.http.get<any>(`${pedidosUrl}/${id}/voucher-url`, {
+    return this.http.get<any>(`${this.apiUrl}/${id}/voucher-url`, {
       withCredentials: true
     }).pipe(
       map(res => {

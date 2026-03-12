@@ -6,6 +6,7 @@ import { VoucherComponent } from '../voucher/voucher.component';
 import { PedidoService } from '../../../services/pedido.service';
 import { PagoService } from '../../../services/pago.service';
 import { MaestrosService } from '../../../services/maestros.service';
+import { EstadoPedido } from '../../../model/estado-pedido.enum';
 
 @Component({
   selector: 'app-pago',
@@ -33,13 +34,13 @@ export class PagoComponent implements OnInit {
   /** Mapa de estados del BE a etiquetas legibles */
   private readonly statusLabels: Record<string, string> = {
     GENERADO: 'Pedido generado',
-    PAGO_PENDIENTE: 'Pendiente de pago',
-    PAGO_ENVIADO: 'Comprobante enviado',
+    [EstadoPedido.PAGO_PENDIENTE]: 'Pendiente de pago',
+    [EstadoPedido.PAGO_ENVIADO]: 'Comprobante enviado',
     PAGADO: 'Pago verificado',
-    VERIFICADO: 'Pago verificado',
-    EMPAQUETADO: 'Pedido empaquetado',
-    ENVIADO: 'Pedido enviado',
-    ENTREGADO: 'Pedido entregado'
+    [EstadoPedido.PAGO_VERIFICADO]: 'Pago verificado',
+    [EstadoPedido.EMPAQUETADO]: 'Pedido empaquetado',
+    [EstadoPedido.ENVIADO]: 'Pedido enviado',
+    [EstadoPedido.ENTREGADO]: 'Pedido entregado'
   };
 
   constructor(
@@ -203,7 +204,7 @@ export class PagoComponent implements OnInit {
   }
 
   onVoucherUploaded(): void {
-    this.orderStatus = this.statusLabels['PAGO_ENVIADO'];
+    this.orderStatus = this.statusLabels[EstadoPedido.PAGO_ENVIADO];
     this.mensaje = 'Comprobante enviado correctamente. Lo verificaremos pronto.';
     this.mensajeTipo = 'success';
     this.fetchOrderStatus();
@@ -217,6 +218,6 @@ export class PagoComponent implements OnInit {
 
   /** True cuando el comprobante fue enviado (esperando verificación manual) */
   get isPendingVerification(): boolean {
-    return this.orderStatus === this.statusLabels['PAGO_ENVIADO'];
+    return this.orderStatus === this.statusLabels[EstadoPedido.PAGO_ENVIADO];
   }
 }

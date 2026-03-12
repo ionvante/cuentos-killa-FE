@@ -1,7 +1,7 @@
 import { Maestro } from '../model/maestro.model';
 
 export const CUENTO_MAESTRO_GRUPOS = {
-  categoria: 'CUENTO_CATEGORIA',
+  categoria: 'CATEGORIA_CUENTO',
   categoriaLegacy: 'CATEGORIA_CUENTO',
   edad: 'RANGO_EDAD',
   tipoEdicion: 'TIPO_EDICION'
