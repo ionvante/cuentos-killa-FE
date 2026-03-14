@@ -4,7 +4,7 @@ import { Pedido } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { BadgeComponent } from '../../badge/badge.component';
+import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { EstadoPedido } from '../../../model/estado-pedido.enum';
@@ -12,7 +12,7 @@ import { EstadoPedido } from '../../../model/estado-pedido.enum';
 @Component({
   selector: 'app-order-list',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, AppCurrencyPipe],
   templateUrl: './order-list.component.html',
   styleUrls: ['./order-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -58,7 +58,7 @@
           <span class="dot"></span>
           <span class="text">{{ getEstadoVisible(pedido.estado) }}</span>
         </div>
-        <p class="total-new">Total: <span>{{ pedido.total | currency:'PEN':'symbol':'1.2-2' }}</span></p>
+        <p class="total-new">Total: <span>{{ pedido.total | appCurrency }}</span></p>
       </div>
 
       <div class="items-list-new">

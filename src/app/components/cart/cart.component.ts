@@ -3,11 +3,12 @@ import { CartService } from '../../services/carrito.service';
 import { Cuento } from '../../model/cuento.model';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { AppCurrencyPipe } from '../../pipes/app-currency.pipe';
 
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, AppCurrencyPipe],
   templateUrl: './cart.component.html',
   styleUrls: ['./cart.component.scss']
 })

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule, ActivatedRoute } from '@angular/router';
+import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
 import { CommonModule } from '@angular/common';
 import { AlertBannerComponent } from '../../alert-banner/alert-banner.component';
 import { VoucherComponent } from '../voucher/voucher.component';
@@ -11,7 +12,7 @@ import { EstadoPedido } from '../../../model/estado-pedido.enum';
 @Component({
   selector: 'app-pago',
   standalone: true,
-  imports: [RouterModule, CommonModule, AlertBannerComponent, VoucherComponent],
+  imports: [RouterModule, CommonModule, AlertBannerComponent, VoucherComponent, AppCurrencyPipe],
   templateUrl: './pago.component.html',
   styleUrls: ['./pago.component.scss']
 })

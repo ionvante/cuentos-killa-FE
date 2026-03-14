@@ -100,12 +100,12 @@
               <span class="qty">x{{ item.cantidad || item.Cantidad || 1 }} unidad<span
                   *ngIf="(item.cantidad || item.Cantidad || 1) > 1">es</span></span>
               <span class="unit-price">{{ (item.precioUnitario || item.PrecioUnitario || ((item.subtotal ||
-                item.Subtotal || 0) / (item.cantidad || item.Cantidad || 1))) | currency:'PEN':'symbol':'1.2-2' }}
+                item.Subtotal || 0) / (item.cantidad || item.Cantidad || 1))) | appCurrency }}
                 c/u</span>
             </div>
           </div>
           <div class="item-subtotal">
-            {{ (item.subtotal || item.Subtotal || 0) | currency:'PEN':'symbol':'1.2-2' }}
+            {{ (item.subtotal || item.Subtotal || 0) | appCurrency }}
           </div>
         </div>
       </div>
@@ -113,7 +113,7 @@
       <div class="order-summary">
         <div class="summary-row total">
           <span>Total del Pedido</span>
-          <span class="amount">{{ (pedido.total || pedido.Total || 0) | currency:'PEN':'symbol':'1.2-2' }}</span>
+          <span class="amount">{{ (pedido.total || pedido.Total || 0) | appCurrency }}</span>
         </div>
       </div>
 

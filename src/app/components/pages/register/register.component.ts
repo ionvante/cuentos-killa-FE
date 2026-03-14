@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { MaestrosService } from '../../../services/maestros.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { FormErrorComponent } from '../../shared/form-error.component';
+import { ApiErrorComponent } from '../../shared/api-error/api-error.component';
 import { FormHelpComponent } from '../../shared/form-help.component';
 import { ToastService } from '../../../services/toast.service';
 import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } from '../../../utils/documento-utils';
@@ -13,7 +14,7 @@ import { getDocumentoErrorMessage, getDocumentoRule, getTipoDocumentoLabel } fro
 @Component({
   standalone: true,
   selector: 'app-register',
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent, FormHelpComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent, ApiErrorComponent, FormHelpComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
@@ -50,7 +51,7 @@ export class RegisterComponent implements OnInit {
       documentoNumero: ['', getDocumentoRule('DNI').validators],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmarPassword: ['', Validators.required]
-    });
+    }, { validators: this.passwordMatchValidator });
 
     this.loadingTiposDocumento = true;
     this.maestrosService.obtenerMaestrosPorGrupo('TIPO_DOCUMENTO').subscribe({
@@ -93,10 +94,25 @@ export class RegisterComponent implements OnInit {
     return getDocumentoErrorMessage(this.registerForm.get('documentoTipo')?.value);
   }
 
+  private passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const password = control.get('password');
+    const confirmarPassword = control.get('confirmarPassword');
+
+    if (password && confirmarPassword && password.value && confirmarPassword.value && password.value !== confirmarPassword.value) {
+      setTimeout(() => confirmarPassword.setErrors({ passwordMismatch: true }), 0);
+      return { passwordMismatch: true };
+    } else {
+      if (confirmarPassword?.hasError('passwordMismatch')) {
+        const errors = { ...confirmarPassword.errors };
+        delete errors['passwordMismatch'];
+        setTimeout(() => confirmarPassword.setErrors(Object.keys(errors).length ? errors : null), 0);
+      }
+    }
+    return null;
+  };
+
   get passwordMismatch(): boolean {
-    const p = this.registerForm.get('password')?.value;
-    const c = this.registerForm.get('confirmarPassword')?.value;
-    return c && p !== c;
+    return this.registerForm.hasError('passwordMismatch');
   }
 
   togglePassword(): void {

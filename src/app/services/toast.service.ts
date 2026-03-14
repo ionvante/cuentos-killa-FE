@@ -19,6 +19,8 @@ export class ToastService {
 
     const toast = this.document.createElement('div');
     toast.className = `alert alert--${type}`;
+    toast.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    toast.setAttribute('aria-live', type === 'error' ? 'assertive' : 'polite');
 
     if (typeof content === 'function') {
       content(toast);

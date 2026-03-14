@@ -34,8 +34,8 @@
           <div class="info-precio">
             <h3>Autor: {{ cuento?.autor }}</h3>
             <div class="precio">
-              <span class="original" *ngIf="hasDiscount">{{ cuento?.precio | currency:'PEN':'symbol':'1.2-2' }}</span>
-              <span class="final">{{ precioFinal | currency:'PEN':'symbol':'1.2-2' }}</span>
+              <span class="original" *ngIf="hasDiscount">{{ cuento?.precio | appCurrency }}</span>
+              <span class="final">{{ precioFinal | appCurrency }}</span>
             </div>
           </div>
           <div class="selector-cantidad">
@@ -119,7 +119,7 @@
               <img appLazyLoad="{{ book.imagenUrl || 'assets/placeholder-cuento.jpg' }}" alt="{{ book.titulo }}"
                 class="w-full rounded-lg" />
               <p class="titulo">{{ book.titulo }}</p>
-              <p class="precio">{{ book.precio | currency:'PEN':'symbol':'1.2-2' }}</p>
+              <p class="precio">{{ book.precio | appCurrency }}</p>
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@
       </div>
     </section>
     <div class="sticky-cta" *ngIf="cuento">
-      <span class="price">{{ precioFinal | currency:'PEN':'symbol':'1.2-2' }}</span>
+      <span class="price">{{ precioFinal | appCurrency }}</span>
       <div class="quantity">
         <button type="button" (click)="decrementarCantidad()" [disabled]="cantidad <= 1">-</button>
         <span class="amount">{{ cantidad }}</span>

@@ -7,11 +7,13 @@ import { AuthService } from '../../../services/auth.service';
 import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { ToastService } from '../../../services/toast.service';
 import { FormErrorComponent } from '../../shared/form-error.component';
+import { ApiErrorComponent } from '../../shared/api-error/api-error.component';
+import { FormHelpComponent } from '../../shared/form-help.component';
 import { User } from '../../../model/user.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, LazyLoadImageDirective, FormErrorComponent, ApiErrorComponent, FormHelpComponent],
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']

@@ -34,6 +34,8 @@
   </div>
 
   <form (ngSubmit)="registrarPedido()" [formGroup]="checkoutForm" class="checkout-form">
+    <app-api-error [message]="checkoutError"></app-api-error>
+
     <div class="checkout-card" *ngIf="pasoActual === 1">
       <div class="card-chip">Paso 1 - Capitulo 1</div>
 
@@ -347,24 +349,22 @@
               <p class="resumen-item-name">{{ item.cuento.titulo }}</p>
               <p class="resumen-item-type">x{{ item.cantidad }}</p>
               <div class="resumen-item-bottom">
-                <span class="resumen-item-price">{{ item.cuento.precio * item.cantidad | currency:'PEN':'S/ ':'1.2-2'
-                  }}</span>
+                <span class="resumen-item-price">{{ item.cuento.precio * item.cantidad | appCurrency }}</span>
               </div>
             </div>
           </div>
 
           <div class="resumen-total-row">
             <span class="resumen-total-label">Subtotal</span>
-            <span class="resumen-total-value">{{ calcularSubtotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+            <span class="resumen-total-value">{{ calcularSubtotal() | appCurrency }}</span>
           </div>
           <div class="resumen-total-row resumen-envio">
             <span class="resumen-total-label">Envio (estimado)</span>
-            <span class="resumen-total-value">{{ obtenerEstimacionEnvioSeleccionado().costo | currency:'PEN':'S/
-              ':'1.2-2' }}</span>
+            <span class="resumen-total-value">{{ obtenerEstimacionEnvioSeleccionado().costo | appCurrency }}</span>
           </div>
           <div class="resumen-total-row">
             <span class="resumen-total-label">Total a Pagar</span>
-            <span class="resumen-total-value">{{ calcularTotalConEnvio() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+            <span class="resumen-total-value">{{ calcularTotalConEnvio() | appCurrency }}</span>
           </div>
         </div>
       </div>

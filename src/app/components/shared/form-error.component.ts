@@ -58,6 +58,14 @@ export class FormErrorComponent {
             return 'Revisa el formato e intenta nuevamente.';
         }
 
+        if (this.control.hasError('passwordMismatch')) {
+            return 'Las contraseñas no coinciden.';
+        }
+
+        if (this.control.hasError('serverError')) {
+            return this.control.errors['serverError'];
+        }
+
         return 'Revisa este campo para continuar.';
     }
 }

@@ -21,10 +21,12 @@ import { FormHelpComponent } from '../../shared/form-help.component';
 import { Maestro } from '../../../model/maestro.model';
 import { Address } from '../../../model/address.model';
 import { EstadoPedido } from '../../../model/estado-pedido.enum';
+import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
+import { ApiErrorComponent } from '../../shared/api-error/api-error.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormErrorComponent, FormHelpComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormErrorComponent, FormHelpComponent, AppCurrencyPipe, ApiErrorComponent],
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
@@ -36,6 +38,7 @@ export class CheckoutComponent implements OnInit {
 
   pasoActual = 1;
   isLoading = false;
+  checkoutError: string | null = null;
   gpsLoading = false;
   loadingDepartamentos = false;
   loadingProvincias = false;
@@ -653,15 +656,19 @@ export class CheckoutComponent implements OnInit {
   }
 
   siguientePaso(): void {
+    this.checkoutError = null;
     if (this.esPasoValido(this.pasoActual)) {
       this.pasoActual++;
     } else {
+      const pasoNombre = this.pasoActual === 1 ? 'Datos de Contacto' : 'Datos de Envío';
+      this.checkoutError = `Por favor, completa correctamente los campos obligatorios (${pasoNombre}).`;
       this.marcarPasoComoTocado(this.pasoActual);
       this.focusFirstInvalidInCurrentStep();
     }
   }
 
   pasoAnterior(): void {
+    this.checkoutError = null;
     if (this.pasoActual > 1) {
       this.pasoActual--;
     }
@@ -874,18 +881,20 @@ export class CheckoutComponent implements OnInit {
     const tipoEntrega = this.checkoutForm.get('tipoEntrega');
 
     if (!nombre?.value || !docNum?.value || !correo?.valid || !telefono?.valid || !direccion?.value || !tipoEntrega?.value) {
+      this.checkoutError = 'Revisa los datos de envío y contacto antes de continuar.';
       this.checkoutForm.markAllAsTouched();
       this.focusFirstInvalidInCurrentStep();
       return;
     }
 
     if (this.itemsCarrito.length === 0) {
-      this.toast.show('Tu carrito esta vacio');
+      this.checkoutError = 'Tu carrito está vacío.';
       return;
     }
 
     if (this.isLoading) return;
     this.isLoading = true;
+    this.checkoutError = null;
 
     const usaDireccionGuardada = this.usaDireccionGuardada();
     const debeCrearDireccion = !usaDireccionGuardada && !!this.checkoutForm.get('guardarDireccion')?.value && !!this.user?.id;
@@ -955,7 +964,7 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al guardar direccion:', err);
-        this.toast.show('No pudimos guardar la direccion. Intenta nuevamente.');
+        this.checkoutError = 'No pudimos guardar la dirección. Intenta nuevamente.';
         this.isLoading = false;
       }
     });
@@ -970,7 +979,7 @@ export class CheckoutComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error al registrar pedido:', err);
-        this.toast.show('Ocurrio un error al registrar el pedido');
+        this.checkoutError = 'Ocurrió un error al registrar el pedido.';
         this.isLoading = false;
       }
     });

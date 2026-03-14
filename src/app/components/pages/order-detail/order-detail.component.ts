@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
 import { CommonModule } from '@angular/common'; // Import CommonModule
-import { LazyLoadImageDirective } from '../../../directives/lazy-load-image.directive';
 import { ModalComponent } from '../../app-modal/modal.component';
 import { ToastService } from '../../../services/toast.service';
-import { VoucherComponent } from '../voucher/voucher.component';
+import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
 import { forkJoin } from 'rxjs';
 
 import { MaestrosService } from '../../../services/maestros.service';
@@ -15,7 +14,7 @@ import { EstadoPedido } from '../../../model/estado-pedido.enum';
 @Component({
   selector: 'app-order-detail',
   standalone: true, // Ensure standalone is true
-  imports: [CommonModule, ModalComponent], // Add CommonModule here
+  imports: [CommonModule, RouterModule, AppCurrencyPipe, ModalComponent],
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss']
 })

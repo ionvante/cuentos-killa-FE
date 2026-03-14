@@ -55,7 +55,7 @@
           </p>
           <div class="item-bottom-row">
             <span class="item-qty-badge">x{{ item.cantidad }}</span>
-            <span class="item-price">{{ item.cuento.precio * item.cantidad | currency:'PEN':'S/ ':'1.2-2' }}</span>
+            <span class="item-price">{{ item.cuento.precio * item.cantidad | appCurrency }}</span>
           </div>
         </div>
       </div>
@@ -66,12 +66,12 @@
       <div class="summary-rows">
         <div class="summary-row">
           <span class="summary-label">Subtotal</span>
-          <span class="summary-value">{{ calcularTotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+          <span class="summary-value">{{ calcularTotal() | appCurrency }}</span>
         </div>
       </div>
       <div class="summary-total-row">
         <span class="total-label">Total a Pagar</span>
-        <span class="total-value">{{ calcularTotal() | currency:'PEN':'S/ ':'1.2-2' }}</span>
+        <span class="total-value">{{ calcularTotal() | appCurrency }}</span>
       </div>
 
       <a routerLink="/checkout" class="btn-checkout">

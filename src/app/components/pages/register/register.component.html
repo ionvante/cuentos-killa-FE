@@ -152,9 +152,7 @@
           </span>
         </div>
 
-        <div class="error-box" *ngIf="error" aria-live="polite">
-          <span>&#x26a0;&#xfe0f;</span> {{ error }}
-        </div>
+        <app-api-error [message]="error"></app-api-error>
 
         <button type="submit" class="btn-primary" [disabled]="isLoading">
           <span *ngIf="!isLoading">Crear mi cuenta</span>

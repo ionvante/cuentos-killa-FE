@@ -7,7 +7,7 @@
   </div>
 
   <section class="summary-row" aria-label="Resumen ejecutivo" *ngIf="!isLoading">
-    <app-stat-card icon="💰" [title]="'Ventas totales'" [value]="ventasTotales | currency:'PEN':'symbol'" ></app-stat-card>
+    <app-stat-card icon="💰" [title]="'Ventas totales'" [value]="ventasTotales | appCurrency" ></app-stat-card>
     <app-stat-card icon="🛒" [title]="'Pedidos nuevos'" [value]="pedidosNuevos" ></app-stat-card>
     <app-stat-card icon="💳" [title]="'Ticket promedio'" [value]="ticketPromedio | number:'1.0-2'" ></app-stat-card>
     <app-stat-card icon="🎯" [title]="'Conversión'" [value]="tasaConversion + '%'" ></app-stat-card>
