@@ -18,7 +18,8 @@ const routes: Routes = [
     FormsModule,
     RouterModule.forChild(routes),
     LazyLoadImageDirective,
-    BreadcrumbComponent
+    BreadcrumbComponent,
+    AppCurrencyPipe
   ]
 })
 export class DetalleCuentoModule { }
