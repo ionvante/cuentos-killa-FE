@@ -17,28 +17,43 @@
 
   <div *ngIf="pedido && !isLoading" class="pedido-content">
 
-    <div class="order-tracker" *ngIf="!isCancelledState()">
-      <div class="tracker-step" [class.active]="stepProgreso >= 1">
-        <div class="step-icon"><span class="material-icons">receipt_long</span></div>
-        <div class="step-label">Creado</div>
-      </div>
-      <div class="tracker-step" [class.active]="stepProgreso >= 2">
-        <div class="step-icon"><span class="material-icons">payment</span></div>
-        <div class="step-label">Pagado</div>
-      </div>
-      <div class="tracker-step" [class.active]="stepProgreso >= 3">
-        <div class="step-icon"><span class="material-icons">inventory_2</span></div>
-        <div class="step-label">Preparado</div>
-      </div>
-      <div class="tracker-step" [class.active]="stepProgreso >= 4">
-        <div class="step-icon"><span class="material-icons">local_shipping</span></div>
-        <div class="step-label">Enviado</div>
-      </div>
-      <div class="tracker-step" [class.active]="stepProgreso >= 5">
-        <div class="step-icon"><span class="material-icons">check_circle</span></div>
-        <div class="step-label">Entregado</div>
+    <!-- HU-R1-09: Timeline visual del estado del pedido -->
+    <div class="order-timeline" *ngIf="!isCancelledState()">
+      <h3 class="timeline-title">
+        <span class="material-icons">timeline</span> Seguimiento del pedido
+      </h3>
+      <div class="timeline-steps">
+        <div *ngFor="let step of timelineSteps; let last = last"
+             class="timeline-step"
+             [class.completed]="stepProgreso > step.step"
+             [class.active]="stepProgreso === step.step"
+             [class.pending]="stepProgreso < step.step">
+          <!-- Línea conectora -->
+          <div class="step-connector" *ngIf="!last"></div>
+          <!-- Ícono del paso -->
+          <div class="step-dot">
+            <span class="material-icons" *ngIf="stepProgreso > step.step">check</span>
+            <span class="material-icons" *ngIf="stepProgreso === step.step">{{ step.icon }}</span>
+            <span class="material-icons" *ngIf="stepProgreso < step.step">{{ step.icon }}</span>
+          </div>
+          <!-- Contenido del paso -->
+          <div class="step-content">
+            <p class="step-label">{{ step.label }}</p>
+            <p class="step-desc">{{ step.descripcion }}</p>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Estado cancelado / rechazado -->
+    <div class="order-cancelled" *ngIf="pedido && isCancelledState()">
+      <span class="material-icons cancelled-icon">cancel</span>
+      <div>
+        <p class="cancelled-title">{{ getEstadoVisible(pedido.estado) }}</p>
+        <p class="cancelled-desc">{{ estadoSvc.getDescripcion(pedido.estado) }}</p>
+      </div>
+    </div>
+
 
     <div class="detail-header">
       <div class="left-col">

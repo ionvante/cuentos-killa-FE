@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<releasePlan name="Los Cuentos de Killa - Roadmap de Sprints" version="1.0">
+  <sprint id="SPRINT-1" priority="P0">
+    <name>Estabilidad Critica (Core Hardening)</name>
+    <objective>Eliminar deuda tecnica que puede romper ventas y pagos.</objective>
+    <stories>
+      <story id="HU-S1-01" type="Backend" priority="P0">
+        <title>Refactor del dominio de pedidos (Order Core)</title>
+        <description>Centralizar toda la logica de pedidos en /orders.</description>
+        <tasks>
+          <task>Crear OrderAggregate</task>
+          <task>Unificar endpoints (/orders, /orders/{id})</task>
+          <task>Mover logica de pago y voucher dentro del dominio</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>No existen endpoints duplicados de pedidos</criterion>
+          <criterion>Un pedido contiene toda su informacion: estado, pago y voucher</criterion>
+          <criterion>El flujo completo funciona desde frontend</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Crear pedido -&gt; pagar -&gt; verificar -&gt; actualizar estado (E2E P0)</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S1-02" type="Fullstack" priority="P0">
+        <title>Contrato unico de estados (State Machine)</title>
+        <description>Unificar estados de pedido en frontend y backend.</description>
+        <tasks>
+          <task>Definir enum unico en backend</task>
+          <task>Sincronizar mapa de estados en frontend</task>
+          <task>Validar transiciones permitidas</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Frontend y backend usan los mismos estados</criterion>
+          <criterion>No existen estados invalidos ni transiciones inconsistentes</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar transicion correcta en todos los casos criticos</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S1-03" type="Backend" priority="P0">
+        <title>Resiliencia en pagos (idempotencia + retry)</title>
+        <description>Evitar perdida de pagos por fallos externos.</description>
+        <tasks>
+          <task>Implementar idempotencia en pagos</task>
+          <task>Agregar retry automatico en webhook</task>
+          <task>Manejar estados intermedios como PROCESSING</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>No se duplica un pago</criterion>
+          <criterion>Un fallo de Mercado Pago no rompe el pedido</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Simular pago duplicado</test>
+          <test>Simular caida de webhook</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S1-04" type="Backend" priority="P0">
+        <title>Seguridad de Webhook Mercado Pago</title>
+        <description>Asegurar que solo solicitudes validas puedan actualizar pagos.</description>
+        <tasks>
+          <task>Validar firma o token de Mercado Pago</task>
+          <task>Registrar logs de eventos webhook</task>
+          <task>Rechazar requests invalidos</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Solo Mercado Pago puede actualizar pagos</criterion>
+          <criterion>Los logs son auditables</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Intento de webhook falso es rechazado</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-2" priority="P1">
+    <name>Conversion (UX Critica)</name>
+    <objective>Reducir abandono en la compra y aumentar claridad de la experiencia.</objective>
+    <stories>
+      <story id="HU-S2-01" type="Frontend + Backend" priority="P1">
+        <title>Checkout Express</title>
+        <description>Permitir una compra rapida para usuarios autenticados con datos precargados.</description>
+        <tasks>
+          <task>Precargar datos del usuario</task>
+          <task>Agregar boton Comprar en 1 click</task>
+          <task>Reducir pasos visibles del checkout para usuarios logueados</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El usuario logueado puede completar la compra en un flujo corto</criterion>
+          <criterion>Los datos se precargan correctamente</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Flujo completo de compra sin errores (E2E P0)</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S2-02" type="Frontend" priority="P1">
+        <title>Trust Layer (confianza)</title>
+        <description>Mostrar elementos visuales y mensajes que refuercen confianza en pago y envio.</description>
+        <tasks>
+          <task>Mostrar metodos de pago visibles</task>
+          <task>Agregar mensajes de seguridad</task>
+          <task>Exponer informacion clara de envio y tiempos estimados</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El usuario entiende como paga y como recibe el producto</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Revisar presencia de componentes de confianza en catalogo, carrito y checkout</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S2-03" type="Fullstack" priority="P1">
+        <title>Simplificacion del flujo de pago</title>
+        <description>Reducir pasos innecesarios y mejorar el feedback al usuario durante el pago.</description>
+        <tasks>
+          <task>Eliminar pasos redundantes</task>
+          <task>Mostrar feedback inmediato del estado del pago</task>
+          <task>Unificar mensajes de exito y error</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El usuario siempre conoce el estado actual del pago</criterion>
+          <criterion>Se reducen las pantallas o interacciones innecesarias</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar pago aprobado, pendiente y fallido con mensajes claros</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S2-04" type="Frontend" priority="P1">
+        <title>Tracking visual del pedido</title>
+        <description>Agregar una linea de tiempo visual y estados amigables para el usuario.</description>
+        <tasks>
+          <task>Construir timeline visual del pedido</task>
+          <task>Mapear estados tecnicos a textos entendibles</task>
+          <task>Mostrar progreso segun estado actual</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El timeline refleja el estado correcto del pedido</criterion>
+          <criterion>Los textos son entendibles por el cliente</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar visualizacion correcta segun cada estado</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-3" priority="P1">
+    <name>Analitica (Data-Driven)</name>
+    <objective>Medir los flujos principales para optimizar conversion y detectar puntos de fuga.</objective>
+    <stories>
+      <story id="HU-S3-01" type="Frontend" priority="P1">
+        <title>Tracking de eventos</title>
+        <description>Disparar eventos de producto y conversion en los puntos clave del journey.</description>
+        <tasks>
+          <task>Emitir view_product</task>
+          <task>Emitir add_to_cart</task>
+          <task>Emitir checkout_started</task>
+          <task>Emitir payment_success</task>
+          <task>Emitir payment_failed</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Los eventos se disparan correctamente en cada accion</criterion>
+          <criterion>Los eventos contienen los datos minimos requeridos</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar emision de eventos desde herramientas de analitica</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S3-02" type="Fullstack" priority="P1">
+        <title>Integracion Analytics</title>
+        <description>Integrar una plataforma de analitica para construir funnel y seguimiento basico.</description>
+        <tasks>
+          <task>Integrar Google Analytics o Firebase Analytics</task>
+          <task>Configurar funnel basico</task>
+          <task>Definir propiedades y nomenclatura de eventos</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Se visualiza el funnel basico de conversion</criterion>
+          <criterion>La nomenclatura de eventos es consistente</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Revisar recepcion de eventos y panel de funnel</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S3-03" type="Backend" priority="P2">
+        <title>Logging backend de eventos criticos</title>
+        <description>Registrar eventos relevantes de pedidos y pagos para auditoria y debugging.</description>
+        <tasks>
+          <task>Loguear cambios de estado de pedidos</task>
+          <task>Loguear eventos de pago</task>
+          <task>Relacionar logs con orderId y paymentId</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Se puede rastrear el ciclo de vida de un pedido en logs</criterion>
+          <criterion>Los logs permiten auditoria basica</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Verificar trazabilidad completa de un pedido en backend</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-4" priority="P2">
+    <name>Growth y Escalabilidad</name>
+    <objective>Aumentar ventas recurrentes y preparar la aplicacion para mayor carga.</objective>
+    <stories>
+      <story id="HU-S4-01" type="Fullstack" priority="P1">
+        <title>Notificaciones post compra</title>
+        <description>Enviar confirmaciones y cambios de estado al usuario luego de la compra.</description>
+        <tasks>
+          <task>Enviar email automatico de confirmacion</task>
+          <task>Agregar opcion de notificacion por WhatsApp</task>
+          <task>Enviar actualizaciones segun cambios de estado</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El usuario recibe confirmacion inmediata luego de comprar</criterion>
+          <criterion>Las notificaciones se envian segun eventos configurados</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar envio de confirmacion y cambio de estado</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S4-02" type="Frontend + Backend" priority="P1">
+        <title>Carrito abandonado</title>
+        <description>Detectar carritos inactivos y mostrar o enviar recordatorios.</description>
+        <tasks>
+          <task>Detectar inactividad del carrito</task>
+          <task>Mostrar recordatorio en sesiones futuras</task>
+          <task>Preparar soporte para futuras notificaciones</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El sistema identifica un carrito abandonado</criterion>
+          <criterion>El usuario ve un recordatorio util al volver</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Simular abandono y regreso del usuario</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S4-03" type="Backend + Frontend" priority="P2">
+        <title>Recomendaciones de productos</title>
+        <description>Mostrar sugerencias basadas en categoria o edad recomendada.</description>
+        <tasks>
+          <task>Crear reglas basicas de recomendacion</task>
+          <task>Exponer endpoint o servicio de recomendaciones</task>
+          <task>Renderizar bloque Tambien te puede interesar</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Las recomendaciones aparecen en detalle y/o carrito</criterion>
+          <criterion>La logica devuelve productos relacionados</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Verificar recomendaciones coherentes por categoria o edad</test>
+        </qaCertification>
+      </story>
+      <story id="HU-S4-04" type="Backend + Infra" priority="P2">
+        <title>Performance (cache + optimizacion)</title>
+        <description>Optimizar tiempos de respuesta y carga para mejorar experiencia y escalabilidad.</description>
+        <tasks>
+          <task>Agregar cache para catalogo</task>
+          <task>Optimizar queries pesadas</task>
+          <task>Implementar lazy loading de imagenes</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Mejoran tiempos de carga en catalogo y detalle</criterion>
+          <criterion>Las consultas frecuentes reducen latencia</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Comparar tiempos antes y despues de la optimizacion</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+</releasePlan>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<releasePlan name="Release 2 - Growth y Optimizacion" version="2.0">
+  <sprint id="SPRINT-R2-1" priority="P1">
+    <name>Retencion y Recompra</name>
+    <objective>Incrementar ventas recurrentes mediante personalizacion y recompra rapida.</objective>
+    <stories>
+      <story id="HU-R2-01" type="Backend + Frontend" priority="P1">
+        <title>Perfil inteligente de usuario</title>
+        <description>Guardar historial de compras y preferencias para personalizacion.</description>
+        <tasks>
+          <task>Guardar historial de compras</task>
+          <task>Guardar preferencias (edad, categoria)</task>
+          <task>Exponer datos para personalizacion</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El sistema almacena historial correctamente</criterion>
+          <criterion>Los datos pueden ser consumidos por frontend</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar almacenamiento y consulta de historial de usuario</test>
+        </qaCertification>
+      </story>
+      <story id="HU-R2-02" type="Frontend + Backend" priority="P1">
+        <title>Recompra rapida</title>
+        <description>Permitir recrear un carrito desde un pedido anterior.</description>
+        <tasks>
+          <task>Boton Comprar de nuevo</task>
+          <task>Recrear carrito automaticamente</task>
+          <task>Redirigir a checkout</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El carrito se genera con los productos anteriores</criterion>
+          <criterion>El usuario puede comprar en pocos pasos</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar recompra completa desde historial</test>
+        </qaCertification>
+      </story>
+      <story id="HU-R2-03" type="Backend + Frontend" priority="P2">
+        <title>Sistema de fidelizacion</title>
+        <description>Sistema de puntos o beneficios por compras.</description>
+        <tasks>
+          <task>Asignar puntos por compra</task>
+          <task>Mostrar puntos acumulados</task>
+          <task>Aplicar descuentos por puntos</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Los puntos se asignan correctamente</criterion>
+          <criterion>El usuario puede usar beneficios</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar acumulacion y uso de puntos</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-R2-2" priority="P1">
+    <name>Marketing Automatizado</name>
+    <objective>Automatizar conversion y retencion mediante campañas.</objective>
+    <stories>
+      <story id="HU-R2-04" type="Backend + Integracion" priority="P1">
+        <title>Campanas automaticas</title>
+        <description>Automatizar envios de mensajes segun comportamiento del usuario.</description>
+        <tasks>
+          <task>Detectar carrito abandonado</task>
+          <task>Enviar email o WhatsApp</task>
+          <task>Crear triggers de eventos</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Se envian notificaciones segun eventos</criterion>
+          <criterion>El sistema detecta abandono correctamente</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Simular carrito abandonado y envio de mensaje</test>
+        </qaCertification>
+      </story>
+      <story id="HU-R2-05" type="Backend" priority="P2">
+        <title>Segmentacion de clientes</title>
+        <description>Clasificar usuarios por comportamiento.</description>
+        <tasks>
+          <task>Definir segmentos</task>
+          <task>Asignar usuarios a segmentos</task>
+          <task>Exponer segmentacion</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Usuarios segmentados correctamente</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar clasificacion de usuarios</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-R2-3" priority="P1">
+    <name>Logistica Real</name>
+    <objective>Mejorar gestion de envios y transparencia al usuario.</objective>
+    <stories>
+      <story id="HU-R2-07" type="Backend + Integracion" priority="P1">
+        <title>Tracking logistico real</title>
+        <description>Integrar con courier para obtener estado real del envio.</description>
+        <tasks>
+          <task>Integrar API courier</task>
+          <task>Guardar numero de guia</task>
+          <task>Actualizar estado automaticamente</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>El tracking refleja estado real</criterion>
+          <criterion>Numero de guia disponible</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar seguimiento con courier</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+  <sprint id="SPRINT-R2-4" priority="P2">
+    <name>Analitica Avanzada y Growth</name>
+    <objective>Optimizar conversion y decisiones con data.</objective>
+    <stories>
+      <story id="HU-R2-10" type="Analytics" priority="P2">
+        <title>Funnel avanzado</title>
+        <description>Analizar conversion por etapas.</description>
+        <tasks>
+          <task>Construir funnel</task>
+          <task>Medir drop-off</task>
+          <task>Visualizar etapas</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Funnel visible en dashboard</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar metricas correctas</test>
+        </qaCertification>
+      </story>
+      <story id="HU-R2-11" type="Frontend + Backend" priority="P2">
+        <title>Dashboard BI</title>
+        <description>Panel de indicadores clave de negocio.</description>
+        <tasks>
+          <task>Mostrar ventas</task>
+          <task>Mostrar conversion</task>
+          <task>Mostrar abandono</task>
+        </tasks>
+        <acceptanceCriteria>
+          <criterion>Dashboard muestra KPIs correctos</criterion>
+        </acceptanceCriteria>
+        <qaCertification>
+          <test>Validar datos contra base real</test>
+        </qaCertification>
+      </story>
+    </stories>
+  </sprint>
+</releasePlan>

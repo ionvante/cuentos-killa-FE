@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Pedido, PedidoItem } from '../../../model/pedido.model';
 import { PedidoService } from '../../../services/pedido.service';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../app-modal/modal.component';
 import { ToastService } from '../../../services/toast.service';
 import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
 import { forkJoin } from 'rxjs';
-
 import { MaestrosService } from '../../../services/maestros.service';
+import { PedidoEstadoService, TimelineStep } from '../../../services/pedido-estado.service';
 import { EstadoPedido } from '../../../model/estado-pedido.enum';
 
 @Component({
@@ -34,7 +34,8 @@ export class OrderDetailComponent implements OnInit {
     private router: Router,
     private pedidoService: PedidoService,
     private maestrosService: MaestrosService,
-    private toast: ToastService
+    private toast: ToastService,
+    public estadoSvc: PedidoEstadoService
   ) { }
 
   ngOnInit(): void {
@@ -90,32 +91,21 @@ export class OrderDetailComponent implements OnInit {
     }
   }
 
-  // Helper para verificar si el pedido está pendiente de pago
   isPagoPendiente(): boolean {
-    return this.pedido?.estado?.toUpperCase() === EstadoPedido.PAGO_PENDIENTE;
+    return this.pedido?.estado?.toUpperCase() === EstadoPedido.PAGO_PENDIENTE
+      || this.pedido?.estado?.toUpperCase() === EstadoPedido.GENERADO;
   }
 
   get stepProgreso(): number {
-    if (!this.pedido) return 0;
-    switch (this.pedido.estado) {
-      case EstadoPedido.PAGO_PENDIENTE:
-      case EstadoPedido.PAGO_ENVIADO:
-        return 1;
-      case EstadoPedido.PAGO_VERIFICADO:
-        return 2;
-      case EstadoPedido.EMPAQUETADO:
-        return 3;
-      case EstadoPedido.ENVIADO:
-        return 4;
-      case EstadoPedido.ENTREGADO:
-        return 5;
-      default:
-        return 0; // Cancelado/Rechazado
-    }
+    return this.estadoSvc.getStepProgreso(this.pedido?.estado ?? '');
   }
 
   isCancelledState(): boolean {
-    return this.pedido?.estado === EstadoPedido.CANCELADO || this.pedido?.estado === EstadoPedido.PAGO_RECHAZADO;
+    return this.estadoSvc.isCancelledState(this.pedido?.estado ?? '');
+  }
+
+  get timelineSteps(): TimelineStep[] {
+    return this.estadoSvc.timelineSteps;
   }
 
   confirmReplaceVoucher(): void {
@@ -153,29 +143,10 @@ export class OrderDetailComponent implements OnInit {
       }
     });
   }
-  // Helpers visuales para el diseño
-  estadoMap: Record<string, { texto: string; icon: string; theme: string }> = {
-    [EstadoPedido.PAGO_PENDIENTE]: { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente' },
-    [EstadoPedido.PAGO_ENVIADO]: { texto: 'Pago enviado', icon: 'sync', theme: 'enviado' },
-    [EstadoPedido.PAGO_VERIFICADO]: { texto: 'Pago verificado', icon: 'verified', theme: 'verificado' },
-    [EstadoPedido.ENVIADO]: { texto: 'En camino', icon: 'category', theme: 'encamino' },
-    [EstadoPedido.ENTREGADO]: { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado' },
-  };
-
-  getEstadoVisible(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.texto : estado;
-  }
-
-  getEstadoIcon(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.icon : 'info';
-  }
-
-  getEstadoTheme(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.theme : 'default';
-  }
+  // Helpers visuales — delegados al PedidoEstadoService
+  getEstadoVisible(estado: string): string { return this.estadoSvc.getTexto(estado); }
+  getEstadoIcon(estado: string): string     { return this.estadoSvc.getIcon(estado); }
+  getEstadoTheme(estado: string): string    { return this.estadoSvc.getTheme(estado); }
 
   getPedidoId(): number | string {
     if (!this.pedido) return '';

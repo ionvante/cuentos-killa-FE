@@ -58,10 +58,39 @@
       (agregar)="agregarAlCarrito($event)"></app-cuento-card>
   </div>
 
-  <div class="no-results" *ngIf="!isLoading && cuentos.length === 0">
-    <span class="icon">⚠</span>
-    <span>¡Uy! No encontramos historias con esos filtros. Intenta con otros.</span>
+
+  <!-- HU-R1-04: Empty state mejorado con CTA diferenciado -->
+  <div class="empty-state-catalogo" *ngIf="!isLoading && cuentos.length === 0">
+    <div class="empty-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" width="120" height="120">
+        <circle cx="60" cy="60" r="56" fill="#fff8ed" stroke="#ffad60" stroke-width="3"/>
+        <path d="M36 44c0-2.2 1.8-4 4-4h40c2.2 0 4 1.8 4 4v8H36v-8z" fill="#ffad60" opacity=".5"/>
+        <rect x="36" y="52" width="48" height="32" rx="2" fill="#fff" stroke="#ffad60" stroke-width="2"/>
+        <line x1="44" y1="62" x2="76" y2="62" stroke="#ffad60" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="44" y1="70" x2="68" y2="70" stroke="#ffad60" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="88" cy="88" r="18" fill="#FDF6EC" stroke="#A66E38" stroke-width="2.5"/>
+        <line x1="83" y1="88" x2="93" y2="88" stroke="#A66E38" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="88" y1="83" x2="88" y2="93" stroke="#A66E38" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <ng-container *ngIf="hasFiltros; else emptySinFiltros">
+      <h3 class="empty-title">No encontramos historias con esos filtros</h3>
+      <p class="empty-subtitle">Prueba combinaciones diferentes o limpia los filtros para ver todo el catálogo.</p>
+      <button class="btn-empty-cta" type="button" (click)="limpiarFiltros()">
+        <span class="material-icons">filter_alt_off</span>
+        Limpiar filtros
+      </button>
+    </ng-container>
+    <ng-template #emptySinFiltros>
+      <h3 class="empty-title">¡El catálogo está cargando nuevas historias!</h3>
+      <p class="empty-subtitle">Pronto tendremos cuentos mágicos para ti. Vuelve en un momento.</p>
+      <a class="btn-empty-cta" routerLink="/">
+        <span class="material-icons">home</span>
+        Ir al inicio
+      </a>
+    </ng-template>
   </div>
+
 
   <!-- RM-01: Paginación server-side -->
   <div class="pagination" *ngIf="!isLoading && totalPages > 1">

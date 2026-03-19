@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { AppCurrencyPipe } from '../../../pipes/app-currency.pipe';
 import { AuthService } from '../../../services/auth.service';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { EstadoPedido } from '../../../model/estado-pedido.enum';
+import { PedidoEstadoService } from '../../../services/pedido-estado.service';
 
 @Component({
   selector: 'app-order-list',
@@ -37,19 +37,14 @@ export class OrderListComponent implements OnInit {
   itemsPerPage: number = 5;
   itemsExpanded: { [id: number]: boolean } = {};
 
-  estadoMap: Record<string, { texto: string; icon: string; theme: string; cornerIcon: string }> = {
-    [EstadoPedido.PAGO_PENDIENTE]: { texto: 'Pago pendiente', icon: 'local_mall', theme: 'pendiente', cornerIcon: 'menu_book' },
-    [EstadoPedido.PAGO_ENVIADO]: { texto: 'Pago enviado', icon: 'sync', theme: 'enviado', cornerIcon: 'pending_actions' },
-    [EstadoPedido.PAGO_VERIFICADO]: { texto: 'Pago verificado', icon: 'verified', theme: 'verificado', cornerIcon: 'check_circle' },
-    [EstadoPedido.ENVIADO]: { texto: 'En camino', icon: 'category', theme: 'encamino', cornerIcon: 'toys' },
-    [EstadoPedido.ENTREGADO]: { texto: 'Entregado', icon: 'local_shipping', theme: 'entregado', cornerIcon: 'auto_stories' },
-  };
+  estadoMap = undefined; // Eliminado: usar PedidoEstadoService
 
   constructor(
     private pedidoService: PedidoService,
     private router: Router,
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public estadoSvc: PedidoEstadoService
   ) { }
 
   ngOnInit(): void {
@@ -90,25 +85,10 @@ export class OrderListComponent implements OnInit {
     this.router.navigate(['/pago', pedidoId]);
   }
 
-  getEstadoVisible(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.texto : estado;
-  }
-
-  getEstadoIcon(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.icon : 'info';
-  }
-
-  getEstadoTheme(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.theme : 'default';
-  }
-
-  getCornerIcon(estado: string): string {
-    const info = this.estadoMap[estado];
-    return info ? info.cornerIcon : 'star';
-  }
+  getEstadoVisible(estado: string): string { return this.estadoSvc.getTexto(estado); }
+  getEstadoIcon(estado: string): string     { return this.estadoSvc.getIcon(estado); }
+  getEstadoTheme(estado: string): string    { return this.estadoSvc.getTheme(estado); }
+  getCornerIcon(estado: string): string     { return this.estadoSvc.getCornerIcon(estado); }
 
   toggleItems(id: number): void {
     this.itemsExpanded[id] = !this.itemsExpanded[id];

@@ -156,20 +156,66 @@
   gap: 1.5rem;
 }
 
-/* No results */
-.no-results {
-  margin-top: 1.5rem;
+
+/* HU-R1-04: Empty state del catálogo */
+.empty-state-catalogo {
+  margin-top: 2rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  background: #fdf5eb;
-  color: #a47653;
-  border-radius: 16px;
-  padding: 1.5rem;
-  font-weight: 600;
-  border: 1px dashed #cca77b;
+  text-align: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  background: #fff8ed;
+  border-radius: 24px;
+  border: 1.5px dashed #ffad60;
+
+  .empty-icon {
+    opacity: 0.9;
+  }
+
+  .empty-title {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #3B2A1A;
+  }
+
+  .empty-subtitle {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #7a5c3a;
+    max-width: 360px;
+  }
+
+  .btn-empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #A66E38;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.15s, background 0.2s;
+    box-shadow: 0 4px 12px rgba(166, 110, 56, 0.2);
+
+    &:hover {
+      background: #8a5a2e;
+      transform: translateY(-2px);
+    }
+
+    &:active { transform: scale(0.97); }
+
+    span { font-size: 1.1rem; }
+  }
 }
+
 
 @media (max-width: 600px) {
   .grid-cuentos {

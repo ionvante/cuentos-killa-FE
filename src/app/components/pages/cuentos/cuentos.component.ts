@@ -190,7 +190,8 @@ export class CuentosComponent implements OnInit, OnDestroy {
       categoria: normalizarCodigoCategoria(cuento.categoria, this.categorias),
       edadRecomendada: normalizarCodigoEdad(cuento.edadRecomendada, this.edades),
       rating: cuento.rating ?? undefined,
-      badge: cuento.badge ?? (idx === 0 ? 'Top Ventas' : idx === 1 ? 'Recomendado' : '')
+      // HU-R1-03: El badge se toma del backend; no se asigna por posición (era dato falso)
+      badge: cuento.badge ?? undefined
     };
   }
 

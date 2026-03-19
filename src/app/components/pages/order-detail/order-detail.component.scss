@@ -66,92 +66,154 @@
     gap: 1.5rem;
   }
 
-  /* Order Tracker */
-  .order-tracker {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+
+  /* HU-R1-09: Timeline vertical del pedido */
+  .order-timeline {
     background: #fff;
     padding: 1.5rem;
     border-radius: 1.5rem;
     box-shadow: 0 4px 16px rgba(166, 110, 56, 0.06);
-    position: relative;
-    overflow: hidden;
 
-    &::before {
-      content: '';
-      position: absolute;
-      top: calc(1.5rem + 24px); // padding-top + half icon
-      left: 10%;
-      right: 10%;
-      height: 4px;
-      background: #f3f4f6;
-      z-index: 1;
-    }
-
-    .tracker-step {
+    .timeline-title {
       display: flex;
-      flex-direction: column;
       align-items: center;
       gap: 0.5rem;
-      position: relative;
-      z-index: 2;
-      flex: 1;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #7a5c3a;
+      margin: 0 0 1.25rem 0;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #f3f4f6;
 
-      .step-icon {
-        width: 48px;
-        height: 48px;
-        background: #f3f4f6;
-        color: #9ca3af;
+      span { color: #A66E38; }
+    }
+
+    .timeline-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .timeline-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      position: relative;
+      padding-bottom: 1.5rem;
+
+      &:last-child { padding-bottom: 0; }
+
+      /* Línea vertical conectora */
+      .step-connector {
+        position: absolute;
+        left: 19px;
+        top: 40px;
+        bottom: 0;
+        width: 2px;
+        background: #e5e7eb;
+        z-index: 0;
+      }
+
+      /* Punto / ícono del paso */
+      .step-dot {
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease;
-        border: 4px solid #fff; // to cut the line
-        z-index: 2;
-
-        span {
-          font-size: 1.5rem;
-        }
-      }
-
-      .step-label {
-        font-size: 0.8rem;
-        font-weight: 700;
+        flex-shrink: 0;
+        z-index: 1;
+        background: #f3f4f6;
         color: #9ca3af;
-        text-align: center;
+        border: 3px solid #e5e7eb;
         transition: all 0.3s ease;
+
+        span { font-size: 1.2rem; }
       }
 
-      &.active {
-        .step-icon {
-          background: #A66E38;
-          color: #fff;
-          box-shadow: 0 4px 12px rgba(166, 110, 56, 0.3);
-        }
+      .step-content {
+        padding-top: 0.2rem;
 
         .step-label {
-          color: #A66E38;
+          margin: 0;
+          font-size: 0.95rem;
+          font-weight: 700;
+          color: #9ca3af;
+          transition: color 0.3s ease;
         }
 
-        &::after {
-            content: '';
-            position: absolute;
-            top: 24px;
-            left: -50%;
-            width: 100%;
-            height: 4px;
-            background: #A66E38;
-            z-index: 1;
+        .step-desc {
+          margin: 0.2rem 0 0 0;
+          font-size: 0.82rem;
+          color: #d1d5db;
+          transition: color 0.3s ease;
         }
       }
-      
-      &:first-child::after {
-        display: none;
+
+      /* Estado: completado */
+      &.completed {
+        .step-connector { background: #A66E38; }
+        .step-dot {
+          background: #d1fae5;
+          color: #059669;
+          border-color: #6ee7b7;
+        }
+        .step-label { color: #059669; }
+        .step-desc  { color: #6b7280; }
+      }
+
+      /* Estado: activo (paso actual) */
+      &.active {
+        .step-connector { background: linear-gradient(#A66E38, #e5e7eb); }
+        .step-dot {
+          background: #A66E38;
+          color: #fff;
+          border-color: #A66E38;
+          box-shadow: 0 0 0 4px rgba(166, 110, 56, 0.15);
+          animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .step-label { color: #A66E38; font-size: 1rem; }
+        .step-desc  { color: #7a5c3a; }
       }
     }
   }
+
+  /* Bloque de pedido cancelado/rechazado */
+  .order-cancelled {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    padding: 1.25rem 1.5rem;
+    border-radius: 1.5rem;
+
+    .cancelled-icon {
+      font-size: 2.5rem;
+      color: #ef4444;
+      flex-shrink: 0;
+    }
+
+    .cancelled-title {
+      margin: 0 0 0.25rem 0;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #b91c1c;
+    }
+
+    .cancelled-desc {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #7f1d1d;
+    }
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(166, 110, 56, 0.15); }
+    50%       { box-shadow: 0 0 0 8px rgba(166, 110, 56, 0.05); }
+  }
+
 
   .detail-header {
     display: flex;
@@ -204,6 +266,16 @@
         &.enviado {
           background: #e0e7ff;
           color: #6366f1;
+        }
+
+        &.empaquetado {
+          background: #fef3c7;
+          color: #d97706;
+        }
+
+        &.cancelado {
+          background: #fee2e2;
+          color: #ef4444;
         }
       }
 
@@ -308,6 +380,30 @@
 
           .text {
             color: #3730a3;
+          }
+        }
+
+        &.empaquetado {
+          background: #fef9c3;
+
+          .dot {
+            background: #ca8a04;
+          }
+
+          .text {
+            color: #713f12;
+          }
+        }
+
+        &.cancelado {
+          background: #fef2f2;
+
+          .dot {
+            background: #ef4444;
+          }
+
+          .text {
+            color: #7f1d1d;
           }
         }
       }
