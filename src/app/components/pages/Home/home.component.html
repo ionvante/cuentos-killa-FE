@@ -1,5 +1,20 @@
 <section class="home-page">
 
+    <!-- HU-R1-12: Banner de carrito abandonado -->
+    <div class="banner-carrito-abandonado" *ngIf="mostrarBannerCarrito" role="alert">
+      <div class="banner-inner">
+        <span class="banner-icon">🛒</span>
+        <div class="banner-text">
+          <strong>¡Tienes {{ itemsCarritoCount }} {{ itemsCarritoCount === 1 ? 'cuento' : 'cuentos' }} en tu carrito!</strong>
+          <span>Continúa donde lo dejaste y finaliza tu compra.</span>
+        </div>
+        <a routerLink="/carrito" class="banner-cta" (click)="cerrarBannerCarrito()">
+          Ver mi carrito
+        </a>
+        <button class="banner-close" (click)="cerrarBannerCarrito()" aria-label="Cerrar aviso">✕</button>
+      </div>
+    </div>
+
     <!-- HERO BANNER -->
     <app-hero-banner></app-hero-banner>
 

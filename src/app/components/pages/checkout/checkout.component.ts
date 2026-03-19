@@ -614,6 +614,17 @@ export class CheckoutComponent implements OnInit {
       : `Sin cobertura courier en ${departamento}, ${provincia}, ${distrito}`;
 
     this.checkoutForm.patchValue({ coberturaCourier: tieneCobertura, fallbackMotivo }, { emitEvent: false });
+
+    // HU-R1-05: Preselección automática del tipo de entrega según cobertura
+    // Solo auto-selecciona si el usuario no ha elegido nada aún
+    const tipoEntregaActual = this.checkoutForm.get('tipoEntrega')?.value;
+    if (!tipoEntregaActual && departamento && provincia && distrito) {
+      const tipoSugerido = tieneCobertura
+        ? this.CODIGO_ENVIO_COURIER  // Lima / cobertura courier → Courier
+        : this.CODIGO_ENVIO_SHALOM;  // Provincia sin cobertura → Shalom
+      this.checkoutForm.patchValue({ tipoEntrega: tipoSugerido }, { emitEvent: true });
+    }
+
     this.actualizarMensajeCobertura();
   }
 

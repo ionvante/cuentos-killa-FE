@@ -145,6 +145,16 @@
         class="btn-action outline warning">
         <span class="material-icons">receipt_long</span> Reemplazar voucher
       </button>
+      <!-- HU-R1-11: Botón de descarga confidencial de boleta -->
+      <button *ngIf="puedeDescargarBoleta()"
+              (click)="descargarBoleta()"
+              class="btn-action outline"
+              [disabled]="descargandoBoleta"
+              title="Descargar boleta electrónica PDF">
+        <span class="material-icons" *ngIf="!descargandoBoleta">picture_as_pdf</span>
+        <span class="material-icons spin-icon" *ngIf="descargandoBoleta">refresh</span>
+        {{ descargandoBoleta ? 'Generando...' : 'Descargar Boleta' }}
+      </button>
     </div>
 
   </div>

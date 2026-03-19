@@ -29,6 +29,9 @@ export class OrderDetailComponent implements OnInit {
   uploading = false;
   voucherNombre = '';
 
+  // HU-R1-10/11: Descarga de boleta PDF
+  descargandoBoleta = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -168,5 +171,49 @@ export class OrderDetailComponent implements OnInit {
     if (!codigo) return '';
     const tipo = this.tiposDocumento.find(t => t.codigo === codigo);
     return tipo ? (tipo.valor || tipo.descripcion || codigo) : codigo;
+  }
+
+  // ── HU-R1-11: Descarga confidencial de Boleta ────────────────────────────
+  /**
+   * La boleta solo está disponible cuando el pago fue verificado
+   * (estados post-PAGO_VERIFICADO).
+   */
+  puedeDescargarBoleta(): boolean {
+    const estadosConBoleta = [
+      EstadoPedido.PAGADO,
+      EstadoPedido.VERIFICADO,
+      EstadoPedido.PAGO_VERIFICADO,
+      EstadoPedido.EMPAQUETADO,
+      EstadoPedido.ENVIADO,
+      EstadoPedido.ENTREGADO
+    ];
+    return estadosConBoleta.includes(this.pedido?.estado as EstadoPedido);
+  }
+
+  descargarBoleta(): void {
+    const id = this.getPedidoId();
+    if (!id || this.descargandoBoleta) return;
+
+    this.descargandoBoleta = true;
+    this.pedidoService.downloadInvoice(+id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `boleta-killa-${id}.pdf`;
+        a.click();
+        URL.revokeObjectURL(url);
+        this.descargandoBoleta = false;
+        this.toast.show('✅ Boleta descargada correctamente');
+      },
+      error: (err) => {
+        this.descargandoBoleta = false;
+        if (err.status === 404) {
+          this.toast.show('⚠️ La boleta aún no fue generada. Inténtalo en unos minutos.');
+        } else {
+          this.toast.show('❌ No se pudo descargar la boleta. Inténtalo nuevamente.');
+        }
+      }
+    });
   }
 }
